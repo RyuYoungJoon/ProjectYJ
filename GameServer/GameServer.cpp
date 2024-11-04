@@ -1,10 +1,16 @@
 ﻿#include "pch.h"
-#include <iostream>
-#include "CorePch.h"
-#include <boost/thread.hpp>
-
+#include "AsioNetwork.h"
 
 int main()
 {
-    HelloWorld();
+    try
+    {
+        AsioNetwork* cAsioNetwork;
+        cAsioNetwork->Run();
+
+    }
+    catch(std::exception& exception)
+    {
+        std::cerr << "Exception : " << exception.what() << endl;
+    }
 }

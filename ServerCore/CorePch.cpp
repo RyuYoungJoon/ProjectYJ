@@ -3,5 +3,5 @@
 
 void HelloWorld()
 {
-	std::cout << "Hello Server" << std::endl;
+	std::cout << "Hello Server2" << std::endl;
 }
