@@ -46,4 +46,6 @@
 
 # Visual Studio 관련 디렉토리
 .vs/
+.x64/
 /Binaries
+.Debug/
