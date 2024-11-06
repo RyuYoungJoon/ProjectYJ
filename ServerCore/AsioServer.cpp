@@ -3,7 +3,7 @@
 
 void AsioServer::DoAccept()
 {
-	auto aConnection = std::make_shared<tcp::socket>(m_Acceptor.get_executor().context());
+	auto aConnection = std::make_shared<tcp::socket>(m_Acceptor.get_executor());
 
 	// 클라이언트 받아주기
 	m_Acceptor.async_accept(*aConnection, [this, aConnection](const boost::system::error_code& error) {
