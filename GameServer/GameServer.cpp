@@ -1,16 +1,11 @@
 ﻿#include "pch.h"
-#include "AsioNetwork.h"
+#include "AsioServer.h"
+
 
 int main()
 {
-    try
-    {
-        AsioNetwork* cAsioNetwork;
-        cAsioNetwork->Run();
-
-    }
-    catch(std::exception& exception)
-    {
-        std::cerr << "Exception : " << exception.what() << endl;
-    }
+	boost::asio::io_context ioContext;
+	AsioServer server(ioContext, 0);
+	
+	//ioContext.run();
 }

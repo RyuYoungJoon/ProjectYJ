@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "AsioSession.h"
 
+AsioSession::~AsioSession()
+{
+	std::cout << "Destroy" << std::endl;
+}
+
 void AsioSession::Send(const std::string& message)
 {
 	auto buffer = std::make_shared<std::string>(message);
@@ -14,19 +19,29 @@ void AsioSession::Send(const std::string& message)
 
 }
 
-void AsioSession::Recv()
-{
-	auto buffer = std::make_shared<std::vector<char>>(1024); // 사이즈 변경 예정
-	m_socket.async_read_some(boost::asio::buffer(*buffer), [this, buffer](const boost::system::error_code& error, std::size_t transferredBytes) {
-		if (!error)
-		{
-			std::cout << "Received data: " << std::string(buffer->data(), transferredBytes) << std::endl;
-			Recv();
-		}
-		else
-		{
-			std::cerr << "Receive failed: " << error.message() << std::endl;
-		}
-	});
+// PacketSession
 
+PacketSession::~PacketSession()
+{
+
+}
+
+void PacketSession::Start()
+{
+	// Recv 시작
+	RecvPacket();
+}
+
+void PacketSession::RecvPacket()
+{
+	auto buffer = std::make_shared<std::vector<char>>(1024);
+
+	GetSocket().async_read_some(boost::asio::buffer(*buffer), [this, buffer](const boost::system::error_code& errorcode, std::size_t transferredbytes) {
+		if (!errorcode)
+		{
+			std::string packet(buffer->data(), transferredbytes);
+			HandlePacket(packet);
+			RecvPacket();
+		}
+		});
 }

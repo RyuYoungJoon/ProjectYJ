@@ -18,12 +18,6 @@
     <ClInclude Include="Types.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="NetAdress.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="SocketUtils.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="AsioServer.h">
       <Filter>Network</Filter>
     </ClInclude>
@@ -37,12 +31,6 @@
     </ClCompile>
     <ClCompile Include="CorePch.cpp">
       <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="NetAdress.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="SocketUtils.cpp">
-      <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="AsioServer.cpp">
       <Filter>Network</Filter>
