@@ -24,9 +24,6 @@
     <ClInclude Include="SocketUtils.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="AsioNetwork.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="AsioServer.h">
       <Filter>Network</Filter>
     </ClInclude>
@@ -45,9 +42,6 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="SocketUtils.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="AsioNetwork.cpp">
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="AsioServer.cpp">

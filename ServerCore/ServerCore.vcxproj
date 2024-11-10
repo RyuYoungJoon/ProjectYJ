@@ -171,7 +171,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AsioNetwork.h" />
     <ClInclude Include="AsioServer.h" />
     <ClInclude Include="AsioSession.h" />
     <ClInclude Include="CorePch.h" />
@@ -181,7 +180,6 @@
     <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AsioNetwork.cpp" />
     <ClCompile Include="AsioServer.cpp" />
     <ClCompile Include="AsioSession.cpp" />
     <ClCompile Include="CorePch.cpp" />
