@@ -173,6 +173,7 @@
   <ItemGroup>
     <ClInclude Include="AsioNetwork.h" />
     <ClInclude Include="AsioServer.h" />
+    <ClInclude Include="AsioSession.h" />
     <ClInclude Include="CorePch.h" />
     <ClInclude Include="NetAdress.h" />
     <ClInclude Include="pch.h" />
@@ -182,6 +183,7 @@
   <ItemGroup>
     <ClCompile Include="AsioNetwork.cpp" />
     <ClCompile Include="AsioServer.cpp" />
+    <ClCompile Include="AsioSession.cpp" />
     <ClCompile Include="CorePch.cpp" />
     <ClCompile Include="NetAdress.cpp" />
     <ClCompile Include="pch.cpp">
