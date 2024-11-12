@@ -4,6 +4,8 @@
 
 AsioIoContext::AsioIoContext()
 {
+    m_ioContext = nullptr;
+    m_work = nullptr;
 }
 
 
