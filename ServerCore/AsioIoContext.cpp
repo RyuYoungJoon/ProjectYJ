@@ -48,4 +48,6 @@ bool AsioIoContext::Stop()
 
     delete m_work;
     m_work = nullptr;
+
+    return true;
 }

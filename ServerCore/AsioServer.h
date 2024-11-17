@@ -3,7 +3,7 @@
 
 using boost::asio::ip::tcp;
 
-class AsioServer : public PacketSession
+class AsioServer
 {
 public:
 	AsioServer() = default;
@@ -18,9 +18,11 @@ public:
 	~AsioServer();
 
 public:
+
+	// TODO : 상속받아서 Run Start HandlePacket 개발 해야함!
 	//void Run(); 
-	void Start() override;
-	void HandlePacket(const std::string& packet) override;
+	//void Start() override;
+	//void HandlePacket(const std::string& packet) override;
 
 private:
 	void DoAccept();

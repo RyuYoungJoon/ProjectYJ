@@ -3,7 +3,7 @@
 
 AsioSession::~AsioSession()
 {
-	std::cout << "Destroy" << std::endl;
+	
 }
 
 void AsioSession::Send(const std::string& message)
@@ -20,7 +20,6 @@ void AsioSession::Send(const std::string& message)
 }
 
 // PacketSession
-
 PacketSession::~PacketSession()
 {
 
@@ -35,6 +34,7 @@ void PacketSession::Start()
 void PacketSession::RecvPacket()
 {
 	auto buffer = std::make_shared<std::vector<char>>(1024);
+	auto self(shared_from_this());
 
 	GetSocket().async_read_some(boost::asio::buffer(*buffer), [this, buffer](const boost::system::error_code& errorcode, std::size_t transferredbytes) {
 		if (!errorcode)

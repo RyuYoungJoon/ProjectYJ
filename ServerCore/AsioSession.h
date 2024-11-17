@@ -2,14 +2,13 @@
 
 using boost::asio::ip::tcp;
 
-class AsioSession
+class AsioSession : public std::enable_shared_from_this<AsioSession>
 {
 public:
-	AsioSession() = default;
+	AsioSession() = delete;
+	AsioSession(boost::asio::io_context& ioContext)
+		: m_socket(ioContext){}
 
-	//AsioSession(boost::asio::io_context& ioContext)
-	//	: m_socket(ioContext) {}
-	//
 	virtual ~AsioSession();
 
 	// 연결 시작.
@@ -23,20 +22,12 @@ private:
 	tcp::socket m_socket;
 
 public:
-	//AsioSession() = default;
-
 };
 
 class PacketSession : public AsioSession
 {
 public:
-	PacketSession() = default;
-
 	using AsioSession::AsioSession;
-
-	/*PacketSession(boost::asio::io_context& ioContext)
-		: AsioSession::AsioSession(ioContext) {}*/
-
 	virtual ~PacketSession();
 
 	void Start() override;

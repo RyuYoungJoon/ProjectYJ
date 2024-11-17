@@ -59,15 +59,15 @@ AsioServer::~AsioServer()
 {
 
 }
-
-void AsioServer::Start()
-{
-	ioContext.run();
-}
-
-void AsioServer::HandlePacket(const std::string& packet)
-{
-	// TODO : 핸들러 만들기
-	int a;
-	a = 1;
-}
+//
+//void AsioServer::Start()
+//{
+//	ioContext.run();
+//}
+//
+//void AsioServer::HandlePacket(const std::string& packet)
+//{
+//	// TODO : 핸들러 만들기
+//	int a;
+//	a = 1;
+//}
