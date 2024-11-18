@@ -1,11 +1,13 @@
 ﻿#include "pch.h"
 #include "AsioServer.h"
-
+#include "AsioIoContext.h"
 
 int main()
 {
-	boost::asio::io_context ioContext;
-	AsioServer server(ioContext, 0);
-	
-	//ioContext.run();
+	AsioIoContext ioContext;
+	ioContext.Init();
+
+	AsioServer server(*ioContext.GetIoContext(), 12345);
+
+	ioContext.Run();
 }

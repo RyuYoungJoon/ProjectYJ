@@ -5,15 +5,16 @@ using boost::asio::ip::tcp;
 class AsioSession : public std::enable_shared_from_this<AsioSession>
 {
 public:
-	AsioSession() = delete;
-	AsioSession(boost::asio::io_context& ioContext)
-		: m_socket(ioContext){}
+	AsioSession(tcp::socket socket)
+		: m_socket(std::move(socket)) {}
 
 	virtual ~AsioSession();
 
 	// 연결 시작.
-	virtual void Start() = 0;
+	void Start();
 	void Send(const std::string& message); // 일단 string
+	void DoRead();
+	void DoWrite();
 
 protected:
 	tcp::socket& GetSocket() { return m_socket; }
@@ -21,21 +22,8 @@ protected:
 private:
 	tcp::socket m_socket;
 
+	// TODO : string 대신 패킷버퍼로 변경 예정
+	std::queue<string> writeBuffer;
+	std::string readBuffer;
 public:
-};
-
-class PacketSession : public AsioSession
-{
-public:
-	using AsioSession::AsioSession;
-	virtual ~PacketSession();
-
-	void Start() override;
-
-protected:
-	// Recv
-	void RecvPacket();
-
-	// Handler
-	virtual void HandlePacket(const std::string& packet) = 0;
 };
