@@ -16,5 +16,4 @@ private:
 	boost::asio::io_context* m_ioContext;
 	boost::asio::executor_work_guard<boost::asio::io_context::executor_type>* m_work;
 	std::vector<std::thread*> m_asioThread;
-
 };

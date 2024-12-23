@@ -4,31 +4,22 @@
 
 using boost::asio::ip::tcp;
 
+
 class AsioServer
 {
 public:
-	AsioServer(boost::asio::io_context& ioContext, uint16 port)
-		: m_Acceptor(ioContext, tcp::endpoint(tcp::v4(), port))
-	{
-		DoAccept();
-		std::cout << "Server Init" << std::endl;
-	}
-
-	~AsioServer();
-
-public:
-
-	// TODO : 상속받아서 Run Start HandlePacket 개발 해야함!
-	//void Run(); 
-	//void Start() override;
-	//void HandlePacket(const std::string& packet) override;
+    AsioServer(boost::asio::io_context& iocontext, short port)
+        : m_IoContext(iocontext),
+        m_Acceptor(iocontext, tcp::endpoint(tcp::v4(), port))
+    {
+        Listen();
+    }
 
 private:
-	void DoAccept();
+    void Listen();
 
+    void DoAccept(AsioSession* new_session, const boost::system::error_code& error);
 
-private:
-	AsioIoContext* m_ioContext;
-	tcp::acceptor m_Acceptor;
+    boost::asio::io_context& m_IoContext;
+    tcp::acceptor m_Acceptor;
 };
-

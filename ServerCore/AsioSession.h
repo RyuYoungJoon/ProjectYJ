@@ -2,28 +2,28 @@
 
 using boost::asio::ip::tcp;
 
-class AsioSession : public std::enable_shared_from_this<AsioSession>
+class AsioSession
 {
 public:
-	AsioSession(tcp::socket socket)
-		: m_socket(std::move(socket)) {}
+    AsioSession(boost::asio::io_context& iocontext)
+        : m_socket(iocontext)
+    {
+    }
 
-	virtual ~AsioSession();
+    tcp::socket& socket()
+    {
+        return m_socket;
+    }
 
-	// 연결 시작.
-	void Start();
-	void Send(const std::string& message); // 일단 string
-	void DoRead();
-	void DoWrite();
-
-protected:
-	tcp::socket& GetSocket() { return m_socket; }
+    void Start();
 
 private:
-	tcp::socket m_socket;
+    void DoRead(const boost::system::error_code& error, size_t bytes_transferred);
 
-	// TODO : string 대신 패킷버퍼로 변경 예정
-	std::queue<string> writeBuffer;
-	std::string readBuffer;
-public:
+    void DoWrite(const boost::system::error_code& error);
+
+    tcp::socket m_socket;
+
+    enum { max_length = 1024 };
+    char data_[max_length];
 };

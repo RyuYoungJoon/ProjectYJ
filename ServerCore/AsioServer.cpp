@@ -1,39 +1,28 @@
 #include "pch.h"
 #include "AsioServer.h"
 
-void AsioServer::DoAccept()
+void AsioServer::Listen()
 {
-	// 클라이언트 받아주기
-	m_Acceptor.async_accept([this](const boost::system::error_code& error, tcp::socket socket) {
-		if (!error)
-		{
-			// TODO : Session Count로 풀에 관리
-			std::cout << "Connected!" << std::endl;
-			std::make_shared<AsioSession>(std::move(socket))->Start();
-		}
-		else
-		{
-			std::cout << "Connected Fail!" << std::endl;
-		}
+	// 서버가 Listen하고 Session을 생성한다.
+	AsioSession* NewSession = new AsioSession(m_IoContext);
 
-		DoAccept(); // 다른 클라이언트 받아오자.
-	});
+	m_Acceptor.async_accept(NewSession->socket(),
+		boost::bind(&AsioServer::DoAccept, this, NewSession,
+			boost::asio::placeholders::error));
 }
 
-AsioServer::~AsioServer()
+void AsioServer::DoAccept(AsioSession* new_session, const boost::system::error_code& error)
 {
-	// TODO : 객체 소멸
-}
+    if (!error)
+    {
+        new_session->Start();
+    }
+    else
+    {
+        // 에러 발생하면 제거!
+        delete new_session;
+    }
 
-//
-//void AsioServer::Start()
-//{
-//	ioContext.run();
-//}
-//
-//void AsioServer::HandlePacket(const std::string& packet)
-//{
-//	// TODO : 핸들러 만들기
-//	int a;
-//	a = 1;
-//}
+    // 서버 Listen
+    Listen();
+}

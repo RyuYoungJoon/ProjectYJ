@@ -4,10 +4,16 @@
 
 int main()
 {
-	AsioIoContext ioContext;
-	ioContext.Init();
+	try
+	{
+		boost::asio::io_context IoContext;
 
-	AsioServer server(*ioContext.GetIoContext(), 12345);
+		AsioServer MyServer(IoContext, 12345);
 
-	ioContext.Run();
+		IoContext.run();
+	}
+	catch (const std::exception& e)
+	{
+
+	}
 }
