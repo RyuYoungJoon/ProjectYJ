@@ -14,6 +14,6 @@ int main()
 	}
 	catch (const std::exception& e)
 	{
-
+		e.what();
 	}
 }
