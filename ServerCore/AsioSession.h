@@ -19,7 +19,7 @@ public:
 
 public:
     void SetService(shared_ptr<AsioService> service) { m_service = service; }
-
+    shared_ptr<AsioService> GetService() { return m_service.lock(); }
 
 private:
     tcp::socket m_socket;

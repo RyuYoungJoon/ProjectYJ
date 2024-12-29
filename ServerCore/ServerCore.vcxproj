@@ -175,6 +175,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AsioAcceptor.h" />
     <ClInclude Include="AsioIoContext.h" />
     <ClInclude Include="AsioServer.h" />
     <ClInclude Include="AsioService.h" />
@@ -184,6 +185,7 @@
     <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AsioAcceptor.cpp" />
     <ClCompile Include="AsioIoContext.cpp" />
     <ClCompile Include="AsioServer.cpp" />
     <ClCompile Include="AsioService.cpp" />

@@ -10,6 +10,11 @@ AsioService::~AsioService()
 {
 }
 
+bool AsioService::CanStart()
+{
+	return false;
+}
+
 void AsioService::CloseService()
 {
 }
@@ -24,8 +29,7 @@ std::shared_ptr<class AsioSession> AsioService::CreateSession()
 
 void AsioService::AddSession(std::shared_ptr<class AsioSession> session)
 {
-	// TODO : Lock을 걸어줘야하나?
-
+	// TODO : Lock을 걸어줘야하나?;
 	m_SessionCount++;
 	m_Sessions.insert(session);
 }
@@ -45,7 +49,8 @@ AsioServerService::AsioServerService(boost::asio::io_context& iocontext, short p
 
 bool AsioServerService::Start()
 {
-	return false;
+	std::shared_ptr<AsioServerService> service = static_pointer_cast<AsioServerService>(shared_from_this());
+
 }
 
 void AsioServerService::CloseService()

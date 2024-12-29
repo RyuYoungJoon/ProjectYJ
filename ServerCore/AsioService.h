@@ -12,10 +12,10 @@ class AsioService : public std::enable_shared_from_this<AsioService>
 {
 public:
     AsioService(ServiceType type, boost::asio::io_context& iocontext, short port ,SessionMaker sessionmaker, int32 maxSessionCount = 1);
-    ~AsioService();
+    virtual ~AsioService();
 
     virtual bool Start() abstract;
-    void CanStart();
+    bool CanStart();
 
     virtual void CloseService();
 
@@ -25,7 +25,6 @@ public:
 
 public:
     ServiceType GetServiceType() { return m_type; }
-
 
 protected:
     ServiceType m_type;
@@ -42,7 +41,7 @@ class AsioServerService : public AsioService
 {
 public:
     AsioServerService(boost::asio::io_context& iocontext, short port, SessionMaker sessionmaker, int32 maxSessionCount = 1);
-    ~AsioServerService();
+    virtual ~AsioServerService();
 
 public:
     virtual bool Start() override;
@@ -50,6 +49,7 @@ public:
     void Listen();
 
     void DoAccept(AsioSession* new_session, const boost::system::error_code& error);
+
 
 private:
     boost::asio::io_context& m_IoContext;
@@ -60,7 +60,7 @@ class AsioClientService : public AsioService
 {
 public:
     AsioClientService(boost::asio::io_context& iocontext, short port, SessionMaker sessionmaker, int32 maxSessionCount = 1);
-    ~AsioClientService();
+    virtual ~AsioClientService();
 
     virtual bool Start() override;
 };
