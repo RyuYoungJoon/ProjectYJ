@@ -27,6 +27,9 @@
     <ClInclude Include="AsioIoContext.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="AsioService.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -42,6 +45,9 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="AsioIoContext.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="AsioService.cpp">
       <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>

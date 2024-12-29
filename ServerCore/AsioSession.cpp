@@ -1,9 +1,15 @@
 #include "pch.h"
 #include "AsioSession.h"
 
+AsioSession::AsioSession(boost::asio::io_context& iocontext)
+    :m_socket(iocontext)
+{
+
+}
+
 void AsioSession::Start()
 {
-	m_socket.async_read_some(boost::asio::buffer(data_, max_length),
+	m_socket.async_read_some(boost::asio::buffer(m_data, max_length),
 		boost::bind(&AsioSession::DoRead, this,
 			boost::asio::placeholders::error,
 			boost::asio::placeholders::bytes_transferred));
@@ -14,7 +20,7 @@ void AsioSession::DoRead(const boost::system::error_code& error, size_t bytes_tr
     if (!error)
     {
         boost::asio::async_write(m_socket,
-            boost::asio::buffer(data_, bytes_transferred),
+            boost::asio::buffer(m_data, bytes_transferred),
             boost::bind(&AsioSession::DoWrite, this,
                 boost::asio::placeholders::error));
     }
@@ -28,7 +34,7 @@ void AsioSession::DoWrite(const boost::system::error_code& error)
 {
     if (!error)
     {
-        m_socket.async_read_some(boost::asio::buffer(data_, max_length),
+        m_socket.async_read_some(boost::asio::buffer(m_data, max_length),
             boost::bind(&AsioSession::DoRead, this,
                 boost::asio::placeholders::error,
                 boost::asio::placeholders::bytes_transferred));

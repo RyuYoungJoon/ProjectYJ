@@ -177,6 +177,7 @@
   <ItemGroup>
     <ClInclude Include="AsioIoContext.h" />
     <ClInclude Include="AsioServer.h" />
+    <ClInclude Include="AsioService.h" />
     <ClInclude Include="AsioSession.h" />
     <ClInclude Include="CorePch.h" />
     <ClInclude Include="pch.h" />
@@ -185,6 +186,7 @@
   <ItemGroup>
     <ClCompile Include="AsioIoContext.cpp" />
     <ClCompile Include="AsioServer.cpp" />
+    <ClCompile Include="AsioService.cpp" />
     <ClCompile Include="AsioSession.cpp" />
     <ClCompile Include="CorePch.cpp" />
     <ClCompile Include="pch.cpp">
