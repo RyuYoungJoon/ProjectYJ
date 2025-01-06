@@ -18,9 +18,6 @@
     <ClInclude Include="Types.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="AsioServer.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="AsioSession.h">
       <Filter>Network</Filter>
     </ClInclude>
@@ -33,6 +30,9 @@
     <ClInclude Include="AsioAcceptor.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="PacketBuffer.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -40,9 +40,6 @@
     </ClCompile>
     <ClCompile Include="CorePch.cpp">
       <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="AsioServer.cpp">
-      <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="AsioSession.cpp">
       <Filter>Network</Filter>
@@ -54,6 +51,9 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="AsioAcceptor.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketBuffer.cpp">
       <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>

@@ -177,20 +177,20 @@
   <ItemGroup>
     <ClInclude Include="AsioAcceptor.h" />
     <ClInclude Include="AsioIoContext.h" />
-    <ClInclude Include="AsioServer.h" />
     <ClInclude Include="AsioService.h" />
     <ClInclude Include="AsioSession.h" />
     <ClInclude Include="CorePch.h" />
+    <ClInclude Include="PacketBuffer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AsioAcceptor.cpp" />
     <ClCompile Include="AsioIoContext.cpp" />
-    <ClCompile Include="AsioServer.cpp" />
     <ClCompile Include="AsioService.cpp" />
     <ClCompile Include="AsioSession.cpp" />
     <ClCompile Include="CorePch.cpp" />
+    <ClCompile Include="PacketBuffer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
