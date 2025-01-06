@@ -1,23 +1,24 @@
 #pragma once
 
-class AsioServerService;
+class AsioService;
 
-class AsioAcceptor
+class AsioAcceptor : public std::enable_shared_from_this<AsioAcceptor>
 {
 public:
-	AsioAcceptor();
-	~AsioAcceptor();
+    AsioAcceptor(boost::asio::io_context& iocontext, short port, std::shared_ptr<AsioService> service)
+        : m_IoContext(iocontext), m_Acceptor(iocontext, tcp::endpoint(tcp::v4(), port)), m_Service(service)
+    {
+    }
 
-public:
-	bool StartAccept(std::shared_ptr<AsioServerService> service);
-	void CloseSocket();
+    virtual ~AsioAcceptor() = default;
+
+    void Start();
+private:
+    void DoAccept();
+    void HandleAccept(boost::system::error_code ec);
 
 private:
-
-	void DoAccept(AsioSession* session, const boost::system::error_code& error);
-
-	tcp::socket m_socket;
-	std::shared_ptr<AsioServerService> m_service;
-	tcp::acceptor m_Acceptor;
+    boost::asio::io_context& m_IoContext;
+    tcp::acceptor m_Acceptor;
+    std::shared_ptr<AsioService> m_Service; // Reference to the parent service
 };
-

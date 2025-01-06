@@ -8,6 +8,8 @@ enum class ServiceType : uint8
 
 using SessionMaker = std::function<std::shared_ptr<class AsioSession>(void)>;
 
+class AsioAcceptor;
+
 class AsioService : public std::enable_shared_from_this<AsioService>
 {
 public:
@@ -46,14 +48,10 @@ public:
 public:
     virtual bool Start() override;
     virtual void CloseService() override;
-    void Listen();
-
-    void DoAccept(AsioSession* new_session, const boost::system::error_code& error);
-
 
 private:
     boost::asio::io_context& m_IoContext;
-    tcp::acceptor m_Acceptor;
+    std::shared_ptr<AsioAcceptor> m_Acceptor;
 };
 
 class AsioClientService : public AsioService

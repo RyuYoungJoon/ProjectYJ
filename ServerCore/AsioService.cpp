@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "AsioAcceptor.h"
 #include "AsioService.h"
 #include "AsioSession.h"
 
@@ -42,15 +43,20 @@ void AsioService::ReleaseSession(std::shared_ptr<class AsioSession> session)
 
 AsioServerService::AsioServerService(boost::asio::io_context& iocontext, short port, SessionMaker sessionmaker, int32 maxSessionCount)
 	:AsioService(ServiceType::Server, iocontext, port, sessionmaker, maxSessionCount), 
-	m_IoContext(iocontext),
-	m_Acceptor(iocontext, tcp::endpoint(tcp::v4(), port))
+	m_IoContext(iocontext)
+{
+	 m_Acceptor = std::make_shared<AsioAcceptor>(iocontext, port, shared_from_this());
+}
+
+AsioServerService::~AsioServerService()
 {
 }
 
 bool AsioServerService::Start()
 {
-	std::shared_ptr<AsioServerService> service = static_pointer_cast<AsioServerService>(shared_from_this());
+	m_Acceptor->Start();
 
+	return true;
 }
 
 void AsioServerService::CloseService()
@@ -64,4 +70,13 @@ void AsioServerService::CloseService()
 AsioClientService::AsioClientService(boost::asio::io_context& iocontext, short port, SessionMaker sessionmaker, int32 maxSessionCount)
 	: AsioService(ServiceType::Client, iocontext, port, sessionmaker, maxSessionCount)
 {
+}
+
+AsioClientService::~AsioClientService()
+{
+}
+
+bool AsioClientService::Start()
+{
+	return false;
 }

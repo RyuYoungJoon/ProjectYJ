@@ -1,46 +1,75 @@
 #include "pch.h"
 #include "AsioSession.h"
 
-AsioSession::AsioSession(boost::asio::io_context& iocontext)
-    :m_socket(iocontext)
-{
-
-}
-
 void AsioSession::Start()
 {
-	m_socket.async_read_some(boost::asio::buffer(m_data, max_length),
-		boost::bind(&AsioSession::DoRead, this,
-			boost::asio::placeholders::error,
-			boost::asio::placeholders::bytes_transferred));
+    DoRead();
 }
 
-void AsioSession::DoRead(const boost::system::error_code& error, size_t bytes_transferred)
+void AsioSession::Send(const std::string& message)
 {
-    if (!error)
+    auto self(shared_from_this());
+    boost::asio::async_write(m_Socket, boost::asio::buffer(message),
+        std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+}
+
+void AsioSession::SetService(std::shared_ptr<AsioService> service)
+{
+    m_Service = service;
+}
+
+void AsioSession::DoRead()
+{
+    auto self(shared_from_this());
+    m_Socket.async_read_some(boost::asio::buffer(m_ReadBuffer),
+        std::bind(&AsioSession::HandleRead, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+}
+
+void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
+{
+    if (!ec)
     {
-        boost::asio::async_write(m_socket,
-            boost::asio::buffer(m_data, bytes_transferred),
-            boost::bind(&AsioSession::DoWrite, this,
-                boost::asio::placeholders::error));
+        m_PacketBuffer.Write(m_ReadBuffer.data(), length);
+
+        // Process packets from the buffer
+        while (m_PacketBuffer.ReadableSize() > 0)
+        {
+            // Example: Read a fixed-size packet (e.g., 4 bytes for testing)
+            char packet[4];
+            if (m_PacketBuffer.ReadableSize() >= sizeof(packet))
+            {
+                m_PacketBuffer.Read(packet, sizeof(packet));
+                std::string message(packet, sizeof(packet));
+                std::cout << "Received Packet: " << message << std::endl;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        // Continue reading
+        DoRead();
     }
     else
     {
-        delete this;
+        CloseSession();
     }
 }
 
-void AsioSession::DoWrite(const boost::system::error_code& error)
+void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
 {
-    if (!error)
+    if (ec)
     {
-        m_socket.async_read_some(boost::asio::buffer(m_data, max_length),
-            boost::bind(&AsioSession::DoRead, this,
-                boost::asio::placeholders::error,
-                boost::asio::placeholders::bytes_transferred));
+        CloseSession();
     }
-    else
+}
+
+void AsioSession::CloseSession()
+{
+    m_Socket.close();
+    if (m_Service)
     {
-        delete this;
+        m_Service->ReleaseSession(shared_from_this());
     }
 }

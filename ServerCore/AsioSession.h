@@ -1,30 +1,40 @@
 #pragma once
 
+#include "pch.h"
+#include "AsioService.h"
+#include "PacketBuffer.h"
 
-class AsioSession
+class AsioSession : public std::enable_shared_from_this<AsioSession>
 {
-    friend class AsioService;
-
 public:
-    AsioSession(boost::asio::io_context& iocontext);
+    AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
+        : m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(4096)
+    {
+    }
 
-    tcp::socket& GetSocket() { return m_socket; }
+    virtual ~AsioSession()
+    {
+    }
 
     void Start();
+    void Send(const std::string& message);
 
-public:
-    void DoRead(const boost::system::error_code& error, size_t bytes_transferred);
-    
-    void DoWrite(const boost::system::error_code& error);
-
-public:
-    void SetService(shared_ptr<AsioService> service) { m_service = service; }
-    shared_ptr<AsioService> GetService() { return m_service.lock(); }
+    void SetService(std::shared_ptr<AsioService> service);
+    tcp::socket& GetSocket() { return m_Socket; }
 
 private:
-    tcp::socket m_socket;
-    weak_ptr<AsioService> m_service;
+    void DoRead();
 
-    enum { max_length = 1024 };
-    char m_data[max_length]{};
+    void HandleRead(boost::system::error_code ec, std::size_t length);
+
+    void HandleWrite(boost::system::error_code ec, std::size_t length);
+
+    void CloseSession();
+
+private:
+    boost::asio::io_context& m_IoContext;
+    tcp::socket m_Socket;
+    std::array<char, 1024> m_ReadBuffer;
+    PacketBuffer m_PacketBuffer;
+    std::shared_ptr<AsioService> m_Service;
 };

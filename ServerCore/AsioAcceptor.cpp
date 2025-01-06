@@ -1,39 +1,37 @@
 #include "pch.h"
-#include "AsioAcceptor.h"
 #include "AsioSession.h"
 #include "AsioService.h"
+#include "AsioAcceptor.h"
 
-AsioAcceptor::AsioAcceptor()
+void AsioAcceptor::Start()
 {
+    DoAccept();
 }
 
-AsioAcceptor::~AsioAcceptor()
+void AsioAcceptor::DoAccept()
 {
+    // 새로운 소켓 생성
+    auto newSocket = std::make_shared<tcp::socket>(m_IoContext);
+
+    // 새 연결 받기
+    m_Acceptor.async_accept(*newSocket, std::bind(&AsioAcceptor::HandleAccept, shared_from_this(), std::placeholders::_1));
 }
 
-bool AsioAcceptor::StartAccept(std::shared_ptr<AsioServerService> service)
+void AsioAcceptor::HandleAccept(boost::system::error_code ec)
 {
-	std::shared_ptr<AsioSession> session = service->CreateSession();
-
-	m_Acceptor.async_accept(session->GetSocket(),
-		boost::bind(&AsioAcceptor::DoAccept, this, session,
-			boost::asio::placeholders::error));
-}
-
-void AsioAcceptor::CloseSocket()
-{
-}
-
-void AsioAcceptor::DoAccept(AsioSession* session, const boost::system::error_code& error)
-{
-    if (!error)
+    if (!ec)
     {
+        // 세션 만들고 세션 스타트
+        auto session = m_Service->CreateSession();
         session->Start();
+
+        std::cout << "New client connected!" << std::endl;
+
+        // 또 받으러 가기
+        DoAccept();
     }
     else
     {
-        // 에러 발생하면 제거!
-        delete session;
+        std::cerr << "Accept error: " << ec.message() << std::endl;
     }
-
 }
