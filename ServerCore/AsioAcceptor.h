@@ -15,7 +15,7 @@ public:
     void Start();
 private:
     void DoAccept();
-    void HandleAccept(boost::system::error_code ec);
+    void HandleAccept(std::shared_ptr<tcp::socket> newSocket, boost::system::error_code ec);
 
 private:
     boost::asio::io_context& m_IoContext;

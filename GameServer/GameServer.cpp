@@ -14,7 +14,7 @@ int main()
 				return std::make_shared<AsioSession>(IoContext, tcp::socket(IoContext));
 			};
 
-		short port = 12345;
+		short port = 27931;
 		auto serverService = std::make_shared<AsioServerService>(IoContext, port, sessionMaker);
 
 		if (serverService->Start())

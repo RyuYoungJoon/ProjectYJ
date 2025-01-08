@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "AsioSession.h"
+#include "AsioService.h"
 
 void AsioSession::Start()
 {
@@ -51,8 +52,19 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
         // Continue reading
         DoRead();
     }
+    else if (ec == boost::asio::error::eof)
+    {
+        std::cerr << "Connection closed by peer." << std::endl;
+        CloseSession();
+    }
+    else if (ec == boost::asio::error::operation_aborted)
+    {
+        std::cerr << "Operation aborted." << std::endl;
+        CloseSession();
+    }
     else
     {
+        std::cerr << "Read error: " << ec.message() << " (code: " << ec.value() << ")" << std::endl;
         CloseSession();
     }
 }

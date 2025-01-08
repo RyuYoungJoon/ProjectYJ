@@ -1,8 +1,9 @@
 #pragma once
 
 #include "pch.h"
-#include "AsioService.h"
 #include "PacketBuffer.h"
+
+class AsioService;
 
 class AsioSession : public std::enable_shared_from_this<AsioSession>
 {
