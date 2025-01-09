@@ -52,3 +52,9 @@
 /Client/x64
 /ServerCore/x64/Debug
 /GameServer/x64/Debug
+ServerCore/x64/Release/std.ixx.ifc.dt.module.json.command
+ServerCore/x64/Release/std.ixx.ifc.dt.module.json
+ServerCore/x64/Release/std.ixx.ifc.dt.d.json
+ServerCore/x64/Release/std.compat.ixx.ifc.dt.module.json.command
+ServerCore/x64/Release/std.compat.ixx.ifc.dt.module.json
+ServerCore/x64/Release/std.compat.ixx.ifc.dt.d.json
