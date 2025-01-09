@@ -20,5 +20,6 @@
     <ClInclude Include="pch.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Protocol.h" />
   </ItemGroup>
 </Project>
