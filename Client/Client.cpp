@@ -29,7 +29,20 @@ int main()
             return -1;
         }
 
-        ioContext.run();
+
+        std::vector<std::thread> m_asioThread;
+        for (int i = 0; i < 4; ++i)
+        {
+            m_asioThread.emplace_back([&IoContext]() {
+                IoContext.run();
+                });
+        }
+
+        for (auto& thread : m_asioThread)
+        {
+            if (thread.joinable())
+                thread.join();
+        }
     }
     catch (const std::exception& e)
     {
