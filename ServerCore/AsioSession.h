@@ -23,6 +23,12 @@ public:
     void SetService(std::shared_ptr<AsioService> service);
     tcp::socket& GetSocket() { return m_Socket; }
 
+protected:
+    virtual void OnSend(int32 len) { }
+    virtual int32 OnRecv(BYTE* buffer, int32 len) { return len; }
+    virtual void OnConnected() { }
+    virtual void OnDisconnected() { }
+
 private:
     void DoRead();
 
