@@ -2,6 +2,7 @@
 #include "AsioService.h"
 #include "AsioAcceptor.h"
 #include "AsioSession.h"
+#include "GameSession.h"
 
 int main()
 {
@@ -14,14 +15,17 @@ int main()
 	{
 		boost::asio::io_context IoContext;
 
-		auto sessionMaker = [&IoContext]() -> std::shared_ptr<AsioSession>
-			{
-				return std::make_shared<AsioSession>(IoContext, tcp::socket(IoContext));
-			};
+		//auto sessionMaker = [&IoContext]() -> std::shared_ptr<AsioSession>
+		//	{
+		//		return std::make_shared<AsioSession>(IoContext, tcp::socket(IoContext));
+		//	};
 
 		// Temporary Test Port
 		short port = 27931;
-		auto serverService = std::make_shared<AsioServerService>(IoContext, port, sessionMaker);
+		auto serverService = std::make_shared<AsioServerService>(
+			IoContext, 
+			port, 
+			std::make_shared<GameSession>);
 
 		if (serverService->Start())
 		{
@@ -32,6 +36,10 @@ int main()
 			std::cerr << "[ERROR] Failed to start the server." << std::endl;
 			return -1;
 		}
+
+		// WorkerThread 생성
+
+
 
 		IoContext.run();
 	}

@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "GameSession.h"
 
+GameSession::GameSession()
+{
+
+}
+
 void GameSession::OnSend(int32 len)
 {
 	cout << "OnSend È£Ãâ" << endl;

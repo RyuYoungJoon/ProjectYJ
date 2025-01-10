@@ -4,6 +4,7 @@
 class GameSession : public AsioSession
 {
 public:
+	GameSession();
 	~GameSession()
 	{
 		cout << "~GameSession" << endl;
