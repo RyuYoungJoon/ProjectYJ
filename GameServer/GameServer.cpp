@@ -2,21 +2,27 @@
 #include "AsioService.h"
 #include "AsioAcceptor.h"
 #include "AsioSession.h"
+#include "AsioIoContext.h"
+#include "Protocol.h"
 
 int main()
 {
 	try
 	{
 		boost::asio::io_context IoContext;
+		AsioIoContext ioContext(IoContext);
 
-		auto sessionMaker = [&IoContext]() -> std::shared_ptr<AsioSession>
+		ioContext.Init();
+
+        auto sessionMaker = [ioContext](boost::asio::io_context& IoContext) -> std::shared_ptr<AsioSession>
 			{
-				return std::make_shared<AsioSession>(IoContext, tcp::socket(IoContext));
+			    return std::make_shared<AsioSession>(IoContext, tcp::socket(IoContext));
 			};
+		
 
 		short port = 27931;
-		auto serverService = std::make_shared<AsioServerService>(IoContext, port, sessionMaker);
-
+		auto serverService = std::make_shared<AsioServerService>(ioContext.GetIoContext(), port, sessionMaker);
+		 
 		if (serverService->Start())
 		{
 			std::cout << "Server is running and waiting for connections on port " << port << std::endl;
@@ -27,7 +33,7 @@ int main()
 			return -1;
 		}
 
-		IoContext.run();
+		ioContext.Run();
 	}
 	catch (const std::exception& e)
 	{
