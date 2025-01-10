@@ -8,6 +8,7 @@ class AsioService;
 class AsioSession : public std::enable_shared_from_this<AsioSession>
 {
 public:
+    AsioSession();
     AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
         : m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(4096)
     {
