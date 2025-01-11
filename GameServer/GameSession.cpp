@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "GameSession.h"
 
-GameSession::GameSession()
+GameSession::GameSession(boost::asio::io_context& iocontext, tcp::socket socket)
+	: AsioSession(iocontext, std::move(socket))
 {
-
 }
 
 void GameSession::OnSend(int32 len)

@@ -1,10 +1,10 @@
 #pragma once
-#include "AsioSession.h"
+#include <AsioSession.h>
 
 class GameSession : public AsioSession
 {
 public:
-	GameSession();
+	GameSession(boost::asio::io_context& iocontext, tcp::socket socket);
 	~GameSession()
 	{
 		cout << "~GameSession" << endl;

@@ -3,8 +3,8 @@
 #include "AsioAcceptor.h"
 #include "AsioService.h"
 
-AsioService::AsioService(ServiceType type, boost::asio::io_context& iocontext, short port, SessionMaker sessionmaker, int32 maxSessionCount)
-	:m_type(type), iocontext(iocontext), m_Port(port), m_SessionMaker(sessionmaker)
+AsioService::AsioService(ServiceType type, boost::asio::io_context& iocontext, short port, SessionMaker SessionMaker, int32 maxSessionCount)
+	:m_type(type), iocontext(iocontext), m_Port(port), m_SessionMaker(SessionMaker)
 {
 }
 
@@ -12,18 +12,13 @@ AsioService::~AsioService()
 {
 }
 
-bool AsioService::CanStart()
-{
-	return true;
-}
-
 void AsioService::CloseService()
 {
 }
 
-std::shared_ptr<class AsioSession> AsioService::CreateSession()
+std::shared_ptr<class AsioSession> AsioService::CreateSession(boost::asio::io_context& iocontext, tcp::socket socket)
 {
-	std::shared_ptr<class AsioSession> session = m_SessionMaker();
+	std::shared_ptr<class AsioSession> session = m_SessionMaker(iocontext, std::move(socket));
 	session->SetService(shared_from_this());
 
 	return session;
@@ -42,8 +37,8 @@ void AsioService::ReleaseSession(std::shared_ptr<class AsioSession> session)
 	m_SessionCount--;
 }
 
-AsioServerService::AsioServerService(boost::asio::io_context& iocontext, short port, SessionMaker sessionmaker, int32 maxSessionCount)
-	:AsioService(ServiceType::Server, iocontext, port, sessionmaker, maxSessionCount), 
+AsioServerService::AsioServerService(boost::asio::io_context& iocontext, short port, SessionMaker SessionMaker, int32 maxSessionCount)
+	:AsioService(ServiceType::Server, iocontext, port, SessionMaker, maxSessionCount), 
 	m_IoContext(iocontext)
 {
 }
@@ -54,6 +49,9 @@ AsioServerService::~AsioServerService()
 
 bool AsioServerService::Start()
 {
+    if (!CanStart())
+        return false;
+
     m_Acceptor = std::make_shared<AsioAcceptor>(m_IoContext, m_Port, shared_from_this());
 
 	m_Acceptor->Start();
@@ -69,8 +67,8 @@ void AsioServerService::CloseService()
 	AsioService::CloseService();
 }
 
-AsioClientService::AsioClientService(boost::asio::io_context& iocontext, const std::string& host, short port, SessionMaker sessionmaker, int32 maxSessionCount)
-	: AsioService(ServiceType::Client, iocontext, port, sessionmaker, maxSessionCount),
+AsioClientService::AsioClientService(boost::asio::io_context& iocontext, const std::string& host, short port, SessionMaker SessionMaker, int32 maxSessionCount)
+	: AsioService(ServiceType::Client, iocontext, port, SessionMaker, maxSessionCount),
 	m_Resolver(iocontext),
 	m_Host(host),
 	m_Port(port),
@@ -103,7 +101,7 @@ void AsioClientService::DoConnect()
                         {
                             std::cout << "[INFO] Successfully connected to " << endpoint << std::endl;
                            
-                            auto session = std::make_shared<AsioSession>(iocontext, std::move(m_Socket));
+                            auto session = CreateSession(iocontext, std::move(m_Socket));
                             session->Start();
                         }
                         else

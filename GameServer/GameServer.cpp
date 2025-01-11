@@ -15,17 +15,14 @@ int main()
 	{
 		boost::asio::io_context IoContext;
 
-		//auto sessionMaker = [&IoContext]() -> std::shared_ptr<AsioSession>
-		//	{
-		//		return std::make_shared<AsioSession>(IoContext, tcp::socket(IoContext));
-		//	};
-
 		// Temporary Test Port
 		short port = 27931;
 		auto serverService = std::make_shared<AsioServerService>(
 			IoContext, 
 			port, 
-			std::make_shared<GameSession>);
+			[](boost::asio::io_context& ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
+				return std::make_shared<GameSession>(ioContext, std::move(socket));
+			});
 
 		if (serverService->Start())
 		{

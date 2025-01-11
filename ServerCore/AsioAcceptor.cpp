@@ -33,7 +33,8 @@ void AsioAcceptor::HandleAccept(std::shared_ptr<tcp::socket> newSocket, boost::s
     if (!ec)
     {
         // 세션 만들고 세션 스타트
-        auto session = std::make_shared<AsioSession>(m_IoContext, std::move(*newSocket));
+        auto session = m_Service->CreateSession(m_IoContext, std::move(*newSocket));
+
         session->Start();
 
         std::cout << "New client connected!" << std::endl;
