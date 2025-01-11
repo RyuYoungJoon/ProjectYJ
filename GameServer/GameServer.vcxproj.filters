@@ -18,6 +18,9 @@
     <ClCompile Include="GameSession.cpp">
       <Filter>Main</Filter>
     </ClCompile>
+    <ClCompile Include="PacketHandler.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -25,6 +28,9 @@
     </ClInclude>
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="GameSession.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketHandler.h">
       <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
