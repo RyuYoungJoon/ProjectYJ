@@ -37,6 +37,8 @@ void AsioAcceptor::HandleAccept(std::shared_ptr<tcp::socket> newSocket, boost::s
 
         session->Start();
 
+        m_Service->AddSession(session);
+
         std::cout << "New client connected!" << std::endl;
 
         // 또 받으러 가기

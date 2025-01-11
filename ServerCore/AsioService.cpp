@@ -103,6 +103,8 @@ void AsioClientService::DoConnect()
                            
                             auto session = CreateSession(iocontext, std::move(m_Socket));
                             session->Start();
+
+                            AddSession(session);
                         }
                         else
                         {
