@@ -7,22 +7,22 @@ enum class ServiceType : uint8
     Client
 };
 
-using SessionMaker = std::function<std::shared_ptr<class AsioSession>(void)>;
+using SessionMaker = std::function<std::shared_ptr<class AsioSession>(boost::asio::io_context&, tcp::socket)>;
 
 class AsioAcceptor;
 
 class AsioService : public std::enable_shared_from_this<AsioService>
 {
 public:
-    AsioService(ServiceType type, boost::asio::io_context& iocontext, short port ,SessionMaker sessionmaker, int32 maxSessionCount = 1);
+    AsioService(ServiceType type, boost::asio::io_context& iocontext, short port ,SessionMaker SessionMaker, int32 maxSessionCount = 1);
     virtual ~AsioService();
 
     virtual bool Start() abstract;
-    bool CanStart();
+    bool CanStart() { return m_SessionMaker != nullptr; }
 
     virtual void CloseService();
 
-    std::shared_ptr<class AsioSession> CreateSession();
+    std::shared_ptr<class AsioSession> CreateSession(boost::asio::io_context& iocontext, tcp::socket socket);
     void AddSession(std::shared_ptr<class AsioSession> session);
     void ReleaseSession(std::shared_ptr<class AsioSession> session);
 
@@ -45,7 +45,7 @@ protected:
 class AsioServerService : public AsioService
 {
 public:
-    AsioServerService(boost::asio::io_context& iocontext, short port, SessionMaker sessionmaker, int32 maxSessionCount = 1);
+    AsioServerService(boost::asio::io_context& iocontext, short port, SessionMaker SessionMaker, int32 maxSessionCount = 1);
     virtual ~AsioServerService();
 
 public:
@@ -64,7 +64,7 @@ class AsioSession;
 class AsioClientService : public AsioService
 {
 public:
-    AsioClientService(boost::asio::io_context& iocontext, const std::string& host, short port, SessionMaker sessionmaker, int32 maxSessionCount = 1);
+    AsioClientService(boost::asio::io_context& iocontext, const std::string& host, short port, SessionMaker SessionMaker, int32 maxSessionCount = 1);
 
     virtual ~AsioClientService() = default;
 

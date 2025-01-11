@@ -8,11 +8,8 @@ class AsioService;
 class AsioSession : public std::enable_shared_from_this<AsioSession>
 {
 public:
-    AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
-        : m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(4096)
-    {
-    }
-
+    AsioSession(boost::asio::io_context& iocontext, tcp::socket socket);
+    
     virtual ~AsioSession()
     {
     }
@@ -22,6 +19,12 @@ public:
 
     void SetService(std::shared_ptr<AsioService> service);
     tcp::socket& GetSocket() { return m_Socket; }
+
+protected:
+    virtual void OnSend(int32 len) { }
+    virtual int32 OnRecv(BYTE* buffer, int32 len) { return len; }
+    virtual void OnConnected() { }
+    virtual void OnDisconnected() { }
 
 private:
     void DoRead();
