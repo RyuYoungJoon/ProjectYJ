@@ -59,3 +59,6 @@ ServerCore/x64/Release/std.compat.ixx.ifc.dt.module.json.command
 ServerCore/x64/Release/std.compat.ixx.ifc.dt.module.json
 ServerCore/x64/Release/std.compat.ixx.ifc.dt.d.json
 /boost_1_85_0
+/GameServer/x64
+/ServerCore/x64
+/GameServer/x64
