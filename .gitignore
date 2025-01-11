@@ -62,3 +62,5 @@ ServerCore/x64/Release/std.compat.ixx.ifc.dt.d.json
 /GameServer/x64
 /ServerCore/x64
 /GameServer/x64
+GameServer/x64/Release/GameServer.iobj
+GameServer/x64/Release/GameServer.ipdb
