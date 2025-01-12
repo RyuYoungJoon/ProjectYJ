@@ -30,36 +30,6 @@ public:
     {
         cout << "[Info] Disconnected Server!" << endl;
     }
-};
-
-class ServerSession : public AsioSession
-{
-public:
-    ServerSession(boost::asio::io_context& iocontext, tcp::socket socket)
-        : AsioSession(iocontext, std::move(socket))
-    {
-
-    }
-
-    void OnSend(int32 len)
-    {
-        cout << "OnSend 호출" << endl;
-    }
-
-    int32 OnRecv(BYTE* buffer, int32 len)
-    {
-        return len;
-    }
-
-    void OnConnected()
-    {
-        cout << "[Info] Connected Server!" << endl;
-    }
-
-    void OnDisconnected()
-    {
-        cout << "[Info] Disconnected Server!" << endl;
-    }
 
     void SendPacket(const std::string& message)
     {
@@ -133,13 +103,17 @@ int main()
     auto session = std::make_shared<ServerSession>(IoContext, std::move(socket));
     
     session->Start(); // 응답 수신 시작
+    
+    while (true)
+    {
+        std::string message(u8"안녕하세요.");
+        cout << "[Client] Send Packet : " << message << endl;
+        session->SendPacket(message); // 패킷 송신
+        this_thread::sleep_for(1s);
+    }
 
     IoContext.run();
 
-    while (true)
-    {
-        session->SendPacket("안녕하세요."); // 패킷 송신
-        this_thread::sleep_for(1s);
-    }
+    
     return 0;
 }
