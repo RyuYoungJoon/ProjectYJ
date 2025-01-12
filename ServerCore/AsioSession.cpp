@@ -41,30 +41,39 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
     if (!ec)
     {
         // 데이터 파싱
-        if (length >= sizeof(PacketHeader))
+        if (!ec)
         {
-            Packet packet;
-            std::memcpy(&packet.header, m_ReadBuffer.data(), sizeof(PacketHeader));
+            // 수신된 데이터를 PacketBuffer에 기록
+            m_PacketBuffer.Write(m_ReadBuffer.data(), length);
 
-            if (length >= packet.header.size)
+            // 패킷 처리
+            while (m_PacketBuffer.ReadableSize() >= sizeof(PacketHeader))
             {
-                std::memcpy(packet.payload, m_ReadBuffer.data() + sizeof(PacketHeader), packet.header.size - sizeof(PacketHeader));
+                PacketHeader header;
+                m_PacketBuffer.Peek(&header, sizeof(PacketHeader));
+
+                if (m_PacketBuffer.ReadableSize() < header.size)
+                {
+                    // 전체 패킷이 아직 도착하지 않음
+                    break;
+                }
+
+                // 완전한 패킷을 읽음
+                Packet packet;
+                m_PacketBuffer.Read(&packet.header, sizeof(PacketHeader));
+                m_PacketBuffer.Read(packet.payload, header.size - sizeof(PacketHeader));
 
                 // OnRecv 호출
-                OnRecv(packet.payload, sizeof(PacketHeader));
+                OnRecv(packet);
             }
-            else
-            {
-                std::cerr << "[ERROR] Incomplete packet received." << std::endl;
-            }
-        }
-        else
-        {
-            std::cerr << "[ERROR] Invalid packet size: " << length << std::endl;
-        }
 
-        // 다음 읽기 작업 시작
-        DoRead();
+            // 읽은 데이터를 버림
+            m_PacketBuffer.DiscardReadData();
+
+            // 다음 읽기 작업 시작
+            DoRead();
+        }
+        }
     }
     else if (ec == boost::asio::error::eof)
     {
