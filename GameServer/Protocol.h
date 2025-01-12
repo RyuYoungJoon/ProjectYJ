@@ -1,7 +1,7 @@
 #pragma once
-#include <Types.h>
+//#include <Types.h>
 
-enum class PacketType : uint8
+enum class PacketType : uint8_t
 {
 	defEchoString = 100,
 };
@@ -10,19 +10,19 @@ enum class PacketType : uint8
 #pragma pack(push, 1)
 struct PacketHeader {
 	PacketType type;           // 기본 : 100
-	BYTE checkSum[16];
-	uint32 size;
+	uint8_t checkSum[16];
+	uint32_t size;
 };
 
 // 1 byte
 struct PacketTail {
-	uint8 value;
+	uint8_t value;
 };
 
 // 150 bytes
 struct Packet {
 	PacketHeader header;
-	BYTE		 payload[128];
+	uint8_t		 payload[128];
 	PacketTail	 tail;              // 기본 : 255
 };
 #pragma pack (pop)

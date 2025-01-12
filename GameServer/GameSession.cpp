@@ -14,6 +14,8 @@ GameSession::GameSession(boost::asio::io_context& iocontext, tcp::socket socket)
 
 			// 응답 전송
 			//SendResponse("OK");
+			std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
+			std::cout << "Server Received : " << message << std::endl;
 		}
 	);
 }
@@ -29,7 +31,8 @@ void GameSession::OnDisconnected()
 
 int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 {
-	return int32();
+	Packet packet = reinterpret_cast<Packet&>(buffer);
+	m_PacketHandler.HandlePacket(packet);
 }
 
 void GameSession::OnConnected()

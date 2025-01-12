@@ -12,10 +12,16 @@ void AsioSession::Start()
     DoRead();
 }
 
-void AsioSession::Send(const std::string& message)
+void AsioSession::Send(const Packet& message)
 {
-    auto self(shared_from_this());
-    boost::asio::async_write(m_Socket, boost::asio::buffer(message),
+    std::vector<char> buffer;
+    buffer.resize(message.header.size);
+
+    std::memcpy(buffer.data(), &message.header, sizeof(PacketHeader));
+
+    std::memcpy(buffer.data() + sizeof(PacketHeader), message.payload, message.header.size - sizeof(PacketHeader));
+
+    boost::asio::async_write(m_Socket, boost::asio::buffer(buffer),
         std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
@@ -26,7 +32,6 @@ void AsioSession::SetService(std::shared_ptr<AsioService> service)
 
 void AsioSession::DoRead()
 {
-    auto self(shared_from_this());
     m_Socket.async_read_some(boost::asio::buffer(m_ReadBuffer),
         std::bind(&AsioSession::HandleRead, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
@@ -35,26 +40,30 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
 {
     if (!ec)
     {
-        m_PacketBuffer.Write(m_ReadBuffer.data(), length);
-
-        // Process packets from the buffer
-        while (m_PacketBuffer.ReadableSize() > 0)
+        // 데이터 파싱
+        if (length >= sizeof(PacketHeader))
         {
-            // Example: Read a fixed-size packet (e.g., 4 bytes for testing)
-            char packet[4];
-            if (m_PacketBuffer.ReadableSize() >= sizeof(packet))
+            Packet packet;
+            std::memcpy(&packet.header, m_ReadBuffer.data(), sizeof(PacketHeader));
+
+            if (length >= packet.header.size)
             {
-                m_PacketBuffer.Read(packet, sizeof(packet));
-                std::string message(packet, sizeof(packet));
-                std::cout << "Received Packet: " << message << std::endl;
+                std::memcpy(packet.payload, m_ReadBuffer.data() + sizeof(PacketHeader), packet.header.size - sizeof(PacketHeader));
+
+                // OnRecv 호출
+                OnRecv(packet.payload, sizeof(PacketHeader));
             }
             else
             {
-                break;
+                std::cerr << "[ERROR] Incomplete packet received." << std::endl;
             }
         }
+        else
+        {
+            std::cerr << "[ERROR] Invalid packet size: " << length << std::endl;
+        }
 
-        // Continue reading
+        // 다음 읽기 작업 시작
         DoRead();
     }
     else if (ec == boost::asio::error::eof)
