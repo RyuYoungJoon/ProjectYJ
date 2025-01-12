@@ -32,7 +32,6 @@ public:
     }
 };
 
-int main()
 class ServerSession : public AsioSession
 {
 public:
