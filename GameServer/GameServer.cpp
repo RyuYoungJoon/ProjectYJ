@@ -26,7 +26,7 @@ int main()
 
 		if (serverService->Start())
 		{
-			std::cout << "[INFO] Server is running and waiting for connections on port " << port << std::endl;
+			std::cout << "[SERVER INFO] Server is running and waiting for connections on port " << port << std::endl;
 		}
 		else
 		{
