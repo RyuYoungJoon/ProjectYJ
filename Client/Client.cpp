@@ -103,10 +103,10 @@ int main()
     auto session = std::make_shared<ServerSession>(IoContext, std::move(socket));
     
     session->Start(); // 응답 수신 시작
-    
+
     while (true)
     {
-        std::string message(u8"안녕하세요.");
+        std::string message(u8"Hello Server.");
         cout << "[Client] Send Packet : " << message << endl;
         session->SendPacket(message); // 패킷 송신
         this_thread::sleep_for(1s);

@@ -40,40 +40,36 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
 {
     if (!ec)
     {
-        // 데이터 파싱
-        if (!ec)
+        m_PacketBuffer.Write(m_ReadBuffer.data(), length);
+
+        while (m_PacketBuffer.ReadableSize() >= sizeof(PacketHeader))
         {
-            // 수신된 데이터를 PacketBuffer에 기록
-            m_PacketBuffer.Write(m_ReadBuffer.data(), length);
+            // Step 1: 헤더 읽기
+            PacketHeader header;
+            m_PacketBuffer.Peek(&header, sizeof(PacketHeader));
 
-            // 패킷 처리
-            while (m_PacketBuffer.ReadableSize() >= sizeof(PacketHeader))
+            // Step 2: 유효성 검사
+            /*if (header.checkSum != '0x1234')
             {
-                PacketHeader header;
-                m_PacketBuffer.Peek(&header, sizeof(PacketHeader));
+                std::cerr << "Invalid Packet: CheckValue mismatch." << std::endl;
+                m_PacketBuffer.DiscardReadData();
+                break;
+            }*/
 
-                if (m_PacketBuffer.ReadableSize() < header.size)
-                {
-                    // 전체 패킷이 아직 도착하지 않음
-                    break;
-                }
+            // Step 3: 패킷 전체 크기 확인
+            if (m_PacketBuffer.ReadableSize() < header.size)
+                break; // 패킷 전체가 도착하지 않음
 
-                // 완전한 패킷을 읽음
-                Packet packet;
-                m_PacketBuffer.Read(&packet.header, sizeof(PacketHeader));
-                m_PacketBuffer.Read(packet.payload, header.size - sizeof(PacketHeader));
+            // Step 4: 패킷 데이터 읽기
+            std::vector<BYTE> packetData(header.size);
+            m_PacketBuffer.Read(packetData.data(), header.size);
 
-                // OnRecv 호출
-                OnRecv(packet);
-            }
-
-            // 읽은 데이터를 버림
-            m_PacketBuffer.DiscardReadData();
-
-            // 다음 읽기 작업 시작
-            DoRead();
+            // Step 5: OnRecv 호출
+            OnRecv(packetData.data(), static_cast<int32>(packetData.size()));
         }
-        }
+
+        // 다음 비동기 읽기 시작
+        DoRead();
     }
     else if (ec == boost::asio::error::eof)
     {

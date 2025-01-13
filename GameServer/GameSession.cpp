@@ -31,7 +31,7 @@ void GameSession::OnDisconnected()
 
 int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 {
-	Packet packet = reinterpret_cast<Packet&>(buffer);
+	Packet* packet = reinterpret_cast<Packet*>(buffer);
 	m_PacketHandler.HandlePacket(packet);
 
 	return int32();
