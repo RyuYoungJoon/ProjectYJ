@@ -17,6 +17,6 @@ void PacketHandler::HandlePacket(const Packet* packet)
 	}
 	else
 	{
-		std::cerr << "[ERROR] Unknown Packet Type : " << static_cast<int16>(packet.header.type) << std::endl;
+		std::cerr << "[ERROR] Unknown Packet Type : " << static_cast<int16>(packet->header.type) << std::endl;
 	}
 }

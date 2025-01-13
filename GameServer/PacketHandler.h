@@ -8,7 +8,7 @@ public:
 	
 	void RegisterHandler(PacketType packetType, HandlerFunc handler);
 
-	void HandlePacket(const Packet& packet);
+	void HandlePacket(const Packet* packet);
 
 private:
 	std::unordered_map<PacketType, HandlerFunc> m_Handlers;
