@@ -20,3 +20,36 @@ void PacketHandler::HandlePacket(const Packet* packet)
 		std::cerr << "[ERROR] Unknown Packet Type : " << static_cast<int16>(packet->header.type) << std::endl;
 	}
 }
+
+void PacketHandler::HandledefEchoString(const Packet& packet)
+{
+	std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
+
+	std::cout << "PacketHandler::HandledefEchoString received: " << message << std::endl;
+
+}
+
+void PacketHandler::HandleJH(const Packet& packet)
+{
+	std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
+
+	std::cout << "PacketHandler::HandleJH received: " << message << std::endl;
+
+	// 추가 처리 로직
+}
+
+void PacketHandler::HandleYJ(const Packet& packet)
+{
+	std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
+
+	std::cout << "PacketHandler::HandleYJ received: " << message << std::endl;
+
+}
+
+void PacketHandler::HandleES(const Packet& packet)
+{
+	std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
+
+	std::cout << "PacketHandler::HandleES received: " << message << std::endl;
+
+}

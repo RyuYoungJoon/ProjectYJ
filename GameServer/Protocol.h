@@ -4,6 +4,9 @@
 enum class PacketType : uint8_t
 {
 	defEchoString = 100,
+	JH = 101,
+	YJ = 102,
+	ES = 103,
 };
 
 // 21 bytes

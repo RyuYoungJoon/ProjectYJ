@@ -40,6 +40,8 @@ private:
     tcp::socket m_Socket;
     std::array<char, 1024> m_ReadBuffer;
     std::vector<char> m_RecvBuffer;
-    PacketBuffer m_PacketBuffer;
     std::shared_ptr<AsioService> m_Service;
+
+protected:
+    PacketBuffer m_PacketBuffer;
 };
