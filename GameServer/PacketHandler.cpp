@@ -1,6 +1,14 @@
 #include "pch.h"
 #include "PacketHandler.h"
 
+void PacketHandler::Init()
+{
+	RegisterHandler(PacketType::defEchoString, std::bind(&PacketHandler::HandledefEchoString, this, std::placeholders::_1));
+	RegisterHandler(PacketType::JH, std::bind(&PacketHandler::HandleJH, this, std::placeholders::_1));
+	RegisterHandler(PacketType::YJ, std::bind(&PacketHandler::HandleYJ, this, std::placeholders::_1));
+	RegisterHandler(PacketType::ES, std::bind(&PacketHandler::HandleES, this, std::placeholders::_1));
+}
+
 void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
 {
 	auto iter = m_Handlers.find(packetType);

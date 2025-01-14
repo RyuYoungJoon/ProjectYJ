@@ -36,9 +36,10 @@ public:
         Packet packet;
         std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
         std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
-        packet.header.type = PacketType::defEchoString;
-        packet.header.size = sizeof(PacketHeader) + message.size();
+        packet.header.type = PacketType::YJ;
+        packet.header.size = message.size();
         std::memcpy(packet.payload, message.c_str(), message.size());
+        packet.tail.value = 255;
 
         Send(packet);
     }
@@ -106,10 +107,11 @@ int main()
 
     while (true)
     {
-        std::string message(u8"Hello Server.");
-        cout << "[Client] Send Packet : " << message << endl;
+        std::string message(u8"Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.");
+
+        cout << "[Client] Send Packet : " << message<< "size : " << sizeof(message) << endl;
         session->SendPacket(message); // 패킷 송신
-        this_thread::sleep_for(1s);
+        this_thread::sleep_for(100ms);
     }
 
     IoContext.run();
