@@ -31,6 +31,7 @@ public:
 
     std::vector<uint8_t> m_Buffer;
 private:
+    std::mutex m_Mutex;
     std::size_t m_ReadPos;
     std::size_t m_WritePos;
 };
