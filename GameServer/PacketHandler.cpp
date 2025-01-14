@@ -33,7 +33,7 @@ void PacketHandler::HandledefEchoString(const Packet& packet)
 {
 	std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
 
-	std::cout << "PacketHandler::HandledefEchoString received: " << message << std::endl;
+	std::cout << "[SERVER INFO] PacketHandler::HandledefEchoString received: " << message << std::endl;
 
 }
 
@@ -41,7 +41,7 @@ void PacketHandler::HandleJH(const Packet& packet)
 {
 	std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
 
-	std::cout << "PacketHandler::HandleJH received: " << message << std::endl;
+	std::cout << "[SERVER INFO] PacketHandler::HandleJH received: " << message << std::endl;
 
 	// 추가 처리 로직
 }
@@ -50,7 +50,7 @@ void PacketHandler::HandleYJ(const Packet& packet)
 {
 	std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
 
-	std::cout << "PacketHandler::HandleYJ received: " << message << std::endl;
+	std::cout << "[SERVER INFO] PacketHandler::HandleYJ received: " << message << std::endl;
 
 }
 
@@ -58,6 +58,6 @@ void PacketHandler::HandleES(const Packet& packet)
 {
 	std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
 
-	std::cout << "PacketHandler::HandleES received: " << message << std::endl;
+	std::cout << "[SERVER INFO] PacketHandler::HandleES received: " << message << std::endl;
 
 }

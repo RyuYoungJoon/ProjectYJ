@@ -3,6 +3,8 @@
 
 void PacketBuffer::Write(const void* data, std::size_t size)
 {
+    std::lock_guard<std::mutex> lock(m_Mutex);
+
     if (WritableSize() < size)
     {
         throw std::overflow_error("Not enough space in buffer to write data.");
@@ -14,6 +16,8 @@ void PacketBuffer::Write(const void* data, std::size_t size)
 
 void PacketBuffer::Read(void* outData, std::size_t size)
 {
+    std::lock_guard<std::mutex> lock(m_Mutex);
+
     if (ReadableSize() < size)
     {
         throw std::underflow_error("Not enough data in buffer to read.");
