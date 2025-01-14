@@ -61,11 +61,11 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
                 break; // 패킷 전체가 도착하지 않음
 
             // Step 4: 패킷 데이터 읽기
-            std::vector<BYTE> packetData(header.size);
-            m_PacketBuffer.Read(packetData.data(), header.size);
+            m_RecvBuffer.resize(header.size);
+            m_PacketBuffer.Read(m_RecvBuffer.data(), header.size);
 
             // Step 5: OnRecv 호출
-            OnRecv(packetData.data(), static_cast<int32>(packetData.size()));
+            OnRecv(m_RecvBuffer.data(), static_cast<int32>(m_RecvBuffer.size()));
         }
 
         // 다음 비동기 읽기 시작
