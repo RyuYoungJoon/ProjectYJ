@@ -13,6 +13,9 @@
 
 #include <iostream>
 #include <boost/asio.hpp>
+#include <boost/pool/singleton_pool.hpp>
+#include <boost/pool/pool_alloc.hpp>
+
 using namespace std;
 
 using boost::asio::ip::tcp;

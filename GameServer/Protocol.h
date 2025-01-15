@@ -25,7 +25,7 @@ struct PacketTail {
 // 150 bytes
 struct Packet {
 	PacketHeader header;
-	uint8_t		 payload[128];
+	uint8_t		 payload[128]{};
 	PacketTail	 tail;              // ±âº» : 255
 };
 #pragma pack (pop)

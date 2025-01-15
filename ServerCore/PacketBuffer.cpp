@@ -29,6 +29,8 @@ void PacketBuffer::Read(void* outData, std::size_t size)
 
 void PacketBuffer::Peek(void* outData, std::size_t size)
 {
+    std::lock_guard<std::mutex> lock(m_Mutex);
+
     if (ReadableSize() < size)
     {
         throw std::underflow_error("Not enough data in buffer to peek.");
@@ -39,6 +41,8 @@ void PacketBuffer::Peek(void* outData, std::size_t size)
 
 void PacketBuffer::DiscardReadData()
 {
+    std::lock_guard<std::mutex> lock(m_Mutex);
+
     if (m_ReadPos > 0)
     {
         std::size_t readable = ReadableSize();
