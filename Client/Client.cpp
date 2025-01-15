@@ -84,7 +84,6 @@ void WorkerThread(boost::asio::io_context& ioContext, int socketCount)
                     std::cerr << "[Error] Connection failed: " << ec.message() << std::endl;
                 }
             });
-        this_thread::sleep_for(100ms);
     }
 
     ioContext.run();

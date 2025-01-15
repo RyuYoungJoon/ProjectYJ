@@ -10,17 +10,6 @@ void AsioAcceptor::Start()
 
 void AsioAcceptor::DoAccept()
 {
-    // 이미 열려 있는 경우 닫기
-    if (m_Acceptor.is_open())
-    {
-        m_Acceptor.close();
-    }
-
-    m_Acceptor.open(tcp::v4());
-    m_Acceptor.set_option(boost::asio::socket_base::reuse_address(true));
-    m_Acceptor.bind(tcp::endpoint(tcp::v4(), 27931));
-    m_Acceptor.listen();
-
     // 새로운 소켓 생성
     auto newSocket = std::make_shared<tcp::socket>(m_IoContext);
     // 새 연결 받기
