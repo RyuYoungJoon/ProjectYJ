@@ -180,6 +180,8 @@
     <ClInclude Include="AsioService.h" />
     <ClInclude Include="AsioSession.h" />
     <ClInclude Include="CorePch.h" />
+    <ClInclude Include="MemoryPool.h" />
+    <ClInclude Include="MemoryPoolManager.h" />
     <ClInclude Include="PacketBuffer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Types.h" />
@@ -190,6 +192,8 @@
     <ClCompile Include="AsioService.cpp" />
     <ClCompile Include="AsioSession.cpp" />
     <ClCompile Include="CorePch.cpp" />
+    <ClCompile Include="MemoryPool.cpp" />
+    <ClCompile Include="MemoryPoolManager.cpp" />
     <ClCompile Include="PacketBuffer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
