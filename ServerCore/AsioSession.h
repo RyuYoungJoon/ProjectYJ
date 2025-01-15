@@ -44,6 +44,6 @@ private:
     std::shared_ptr<AsioService> m_Service;
 
 protected:
-    std::queue<Packet> m_SendQueue;
+    //std::queue<Packet> m_SendQueue;
     PacketBuffer m_PacketBuffer;
 };

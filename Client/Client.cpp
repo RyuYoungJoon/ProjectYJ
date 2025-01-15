@@ -3,7 +3,7 @@
 #include "AsioSession.h"
 #include <format>
 
-const int THREAD_COUNT = 2;      // 총 스레드 수
+const int THREAD_COUNT = 10;      // 총 스레드 수
 const int SOCKETS_PER_THREAD = 10; // 스레드당 소켓 개수
 const std::string SERVER_HOST = "127.0.0.1";
 const short SERVER_PORT = 27931;
@@ -54,7 +54,7 @@ public:
 
 void WorkerThread(boost::asio::io_context& ioContext, int socketCount)
 {
-    std::list<std::shared_ptr<ServerSession>> sessions;
+    std::vector<std::shared_ptr<ServerSession>> sessions;
 
     std::string message(u8"Hello Server.");
 
