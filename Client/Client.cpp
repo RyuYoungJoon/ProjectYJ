@@ -1,12 +1,12 @@
 ﻿#include "pch.h"
 #include "AsioService.h"
 #include "AsioSession.h"
-#include <format>
+#include <..\ThirdParty\plog\Log.h>
 
 const int THREAD_COUNT = 10;      // 총 스레드 수
-const int SOCKETS_PER_THREAD = 10; // 스레드당 소켓 개수
-const std::string SERVER_HOST = "127.0.0.1";
-const short SERVER_PORT = 27931;
+const int SOCKETS_PER_THREAD = 100; // 스레드당 소켓 개수
+const std::string SERVER_HOST = "192.168.21.96";
+const short SERVER_PORT = 7777;
 
 using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_context::executor_type>;
 
@@ -30,12 +30,12 @@ public:
 
     void OnConnected()
     {
-        cout << "[Info] Connected Server!" << endl;
+        cout << Logger::DLog("[Info] Connected Server!") << endl;
     }
 
     void OnDisconnected()
     {
-        cout << "[Info] Disconnected Server!" << endl;
+        cout << Logger::DLog("[Info] Disconnected Server!") << endl;
     }
 
     void SendPacket(const std::string& message)
@@ -56,35 +56,34 @@ void WorkerThread(boost::asio::io_context& ioContext, int socketCount)
 {
     std::vector<std::shared_ptr<ServerSession>> sessions;
 
-    std::string message(u8"Hello Server.");
+    std::string message(u8"Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.",128);
+        for (int i = 0; i < socketCount; ++i)
+        {
+            // 세션 생성 및 소켓 관리
+            auto session = std::make_shared<ServerSession>(ioContext, tcp::socket(ioContext));
+            sessions.push_back(session);
 
-    for (int i = 0; i < socketCount; ++i)
-    {
-        // 세션 생성 및 소켓 관리
-        auto session = std::make_shared<ServerSession>(ioContext, tcp::socket(ioContext));
-        sessions.push_back(session);
+            tcp::resolver resolver(ioContext);
+            auto endpoints = resolver.resolve(SERVER_HOST, std::to_string(SERVER_PORT));
 
-        tcp::resolver resolver(ioContext);
-        auto endpoints = resolver.resolve(SERVER_HOST, std::to_string(SERVER_PORT));
-
-        auto self = session; // 세션의 수명을 보장하기 위해 self 참조 유지
-        boost::asio::async_connect(session->GetSocket(), endpoints,
-            [session, message](boost::system::error_code ec, tcp::endpoint)
-            {
-                if (!ec)
+            auto self = session; // 세션의 수명을 보장하기 위해 self 참조 유지
+            boost::asio::async_connect(session->GetSocket(), endpoints,
+                [session, message](boost::system::error_code ec, tcp::endpoint)
                 {
-                    session->Start();
-                    std::cout << "[Info] Connected to server!" << std::endl;
+                    if (!ec)
+                    {
+                        session->Start();
+                        std::cout << Logger::DLog("[Info] Connected to server!") << std::endl;
 
-                    // 패킷 송신
-                    session->SendPacket(message);
-                }
-                else
-                {
-                    std::cerr << "[Error] Connection failed: " << ec.message() << std::endl;
-                }
-            });
-    }
+                        // 패킷 송신
+                        session->SendPacket(message);
+                    }
+                    else
+                    {
+                        std::cerr << Logger::DLog("[Error] Connection failed: ") << ec.message() << std::endl;
+                    }
+                });
+        }
 
     ioContext.run();
 }

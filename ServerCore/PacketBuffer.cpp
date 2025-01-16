@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "PacketBuffer.h"
+#include "Logger.h"
 
 void PacketBuffer::Write(const void* data, std::size_t size)
 {
@@ -7,6 +8,8 @@ void PacketBuffer::Write(const void* data, std::size_t size)
 
     if (WritableSize() < size)
     {
+        std::string str = std::format("[ERROR] Write Buffer overflow: WritePos= {}, ReadPos = {} ,BufferSize = {}, DataSize = {}", m_WritePos, m_ReadPos ,m_BufferSize, size);
+        cout << Logger::DLog(str);
         throw std::overflow_error("Not enough space in buffer to write data.");
     }
 

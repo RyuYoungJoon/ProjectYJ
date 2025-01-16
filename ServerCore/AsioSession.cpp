@@ -2,6 +2,7 @@
 #include "AsioSession.h"
 #include "AsioService.h"
 #include "MemoryPoolManager.h"
+#include "Logger.h"
 
 AsioSession::AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
     : m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(4096)
@@ -74,6 +75,10 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
             // Step 5: OnRecv 호출
             OnRecv(packetData, static_cast<int32>(m_RecvBuffer.size()));
             MemoryPoolManager::GetMemoryPool(packetSize).Deallocate(packetData);
+
+
+            // Step 6: 버퍼 초기화
+            m_PacketBuffer.DiscardReadData();
         }
 
         // 다음 비동기 읽기 시작
@@ -81,17 +86,21 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
     }
     else if (ec == boost::asio::error::eof)
     {
-        std::cerr << "Connection closed by peer." << std::endl;
+        cout << Logger::DLog("Connection closed by peer.") << endl;
         CloseSession();
     }
     else if (ec == boost::asio::error::operation_aborted)
     {
-        std::cerr << "Operation aborted." << std::endl;
+        cout << Logger::DLog("Operation aborted.") << endl;
         CloseSession();
     }
     else
     {
-        std::cerr << "Read error: " << ec.message() << " (code: " << ec.value() << ")" << std::endl;
+        if (ec.value() == boost::asio::error::connection_reset)
+            cout << Logger::DLog("CloseSession") << endl;
+        else
+            std::cerr << "Read error: " << ec.message() << " (code: " << ec.value() << ")" << std::endl;
+        
         CloseSession();
     } 
 }

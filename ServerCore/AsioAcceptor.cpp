@@ -2,6 +2,7 @@
 #include "AsioSession.h"
 #include "AsioService.h"
 #include "AsioAcceptor.h"
+#include "Logger.h"
 
 void AsioAcceptor::Start()
 {
@@ -27,7 +28,7 @@ void AsioAcceptor::HandleAccept(std::shared_ptr<tcp::socket> newSocket, boost::s
 
         m_Service->AddSession(session);
 
-        std::cout << "New client connected!" << std::endl;
+        cout << Logger::DLog("New Client Connected!") << endl;
 
         // 또 받으러 가기
         DoAccept();

@@ -6,10 +6,7 @@ class GameSession : public AsioSession
 {
 public:
 	GameSession(boost::asio::io_context& iocontext, tcp::socket socket);
-	~GameSession()
-	{
-		cout << "~GameSession" << endl;
-	}
+	~GameSession();
 
 	virtual void OnSend(int32 len) override;
 	virtual void OnDisconnected() override;
