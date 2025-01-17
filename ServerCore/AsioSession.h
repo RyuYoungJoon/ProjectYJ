@@ -1,7 +1,7 @@
 #pragma once
-
 #include "pch.h"
 #include "PacketBuffer.h"
+#include "..\GameServer\Protocol.h"
 
 class AsioService;
 
@@ -15,7 +15,7 @@ public:
     }
 
     void Start();
-    void Send(const std::string& message);
+    void Send(const Packet& message);
 
     void SetService(std::shared_ptr<AsioService> service);
     tcp::socket& GetSocket() { return m_Socket; }
