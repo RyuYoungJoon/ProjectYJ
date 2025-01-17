@@ -10,7 +10,6 @@ void AsioAcceptor::Start()
 
 void AsioAcceptor::DoAccept()
 {
-
     // 이미 열려 있는 경우 닫기
     if (m_Acceptor.is_open())
     {

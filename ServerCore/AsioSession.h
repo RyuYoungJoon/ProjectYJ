@@ -39,6 +39,9 @@ private:
     boost::asio::io_context& m_IoContext;
     tcp::socket m_Socket;
     std::array<char, 1024> m_ReadBuffer;
-    PacketBuffer m_PacketBuffer;
+    std::vector<BYTE> m_RecvBuffer;
     std::shared_ptr<AsioService> m_Service;
+
+protected:
+    PacketBuffer m_PacketBuffer;
 };
