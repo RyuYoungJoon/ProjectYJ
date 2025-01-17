@@ -34,7 +34,7 @@ int main()
 		if (serverService->Start())
 		{
 			string message("[SERVER INFO] Server is running and waiting for connections on port ");
-			cout <</* Logger::DLog(message + to_string(port))*/"" << endl;
+			cout <</* Logger::MyLog(message + to_string(port))*/"" << endl;
 		}
 		else
 		{

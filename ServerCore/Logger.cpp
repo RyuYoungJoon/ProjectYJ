@@ -3,7 +3,7 @@
 
 std::mutex Logger::m_Mutex;
 
-string Logger::DLog(const std::string& strMsg)
+string Logger::MyLog(const std::string& strMsg)
 {
     std::lock_guard<std::mutex> Lock(m_Mutex);
 

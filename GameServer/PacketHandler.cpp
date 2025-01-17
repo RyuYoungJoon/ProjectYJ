@@ -35,7 +35,7 @@ void PacketHandler::HandledefEchoString(const Packet& packet)
 	std::string InfoMessage("[SERVER INFO] PacketHandler::HandledefEchoString");
 	std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
 	
-	cout << Logger::DLog(InfoMessage + message) << endl;
+	cout << Logger::MyLog(InfoMessage + message) << endl;
 
 }
 
@@ -44,7 +44,7 @@ void PacketHandler::HandleJH(const Packet& packet)
 	std::string InfoMessage("[SERVER INFO] PacketHandler::HandleJH");
 	std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
 	
-	cout << Logger::DLog(InfoMessage + message) << endl;
+	cout << Logger::MyLog(InfoMessage + message) << endl;
 
 	// 추가 처리 로직
 }
@@ -54,7 +54,7 @@ void PacketHandler::HandleYJ(const Packet& packet)
 	std::string InfoMessage("[SERVER INFO] PacketHandler::HandleYJ");
 	std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
 	
-	cout << Logger::DLog(InfoMessage + message) << endl;
+	cout << Logger::MyLog(InfoMessage + message) << endl;
 
 	//std::cout << "[SERVER INFO] PacketHandler::HandleYJ received: " << message << std::endl;
 
@@ -65,6 +65,6 @@ void PacketHandler::HandleES(const Packet& packet)
 	std::string InfoMessage("[SERVER INFO] PacketHandler::HandleES");
 	std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
 
-	cout << Logger::DLog(InfoMessage + message) << endl;
+	cout << Logger::MyLog(InfoMessage + message) << endl;
 
 }

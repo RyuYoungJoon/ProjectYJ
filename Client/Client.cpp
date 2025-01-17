@@ -30,12 +30,12 @@ public:
 
     void OnConnected()
     {
-        cout << Logger::DLog("[Info] Connected Server!") << endl;
+        cout << Logger::MyLog("[Info] Connected Server!") << endl;
     }
 
     void OnDisconnected()
     {
-        cout << Logger::DLog("[Info] Disconnected Server!") << endl;
+        cout << Logger::MyLog("[Info] Disconnected Server!") << endl;
     }
 
     void SendPacket(const std::string& message)
@@ -73,14 +73,14 @@ void WorkerThread(boost::asio::io_context& ioContext, int socketCount)
                     if (!ec)
                     {
                         session->Start();
-                        std::cout << Logger::DLog("[Info] Connected to server!") << std::endl;
+                        std::cout << Logger::MyLog("[Info] Connected to server!") << std::endl;
 
                         // 패킷 송신
                         session->SendPacket(message);
                     }
                     else
                     {
-                        std::cerr << Logger::DLog("[Error] Connection failed: ") << ec.message() << std::endl;
+                        std::cerr << Logger::MyLog("[Error] Connection failed: ") << ec.message() << std::endl;
                     }
                 });
         }

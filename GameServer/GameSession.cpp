@@ -11,7 +11,7 @@ GameSession::GameSession(boost::asio::io_context& iocontext, tcp::socket socket)
 
 GameSession::~GameSession()
 {
-	cout << Logger::DLog("[SERVER INFO] Delete GameSession") << endl;
+	cout << Logger::MyLog("[SERVER INFO] Delete GameSession") << endl;
 }
 
 void GameSession::OnSend(int32 len)
