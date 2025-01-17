@@ -1,15 +1,14 @@
 #pragma once
-#include <vector>
-#include <cstdint>
-#include <cstring>
-#include <stdexcept>
+#include "MemoryPoolManager.h"
+
 
 class PacketBuffer
 {
 public:
-    PacketBuffer(std::size_t bufferSize = 4096)
-        : m_Buffer(bufferSize), m_ReadPos(0), m_WritePos(0)
+    PacketBuffer(std::size_t bufferSize)
+        : m_Buffer(nullptr), m_BufferSize(bufferSize), m_ReadPos(0), m_WritePos(0)
     {
+        m_Buffer = static_cast<BYTE*>(MemoryPoolManager::GetMemoryPool(bufferSize).Allocate());
     }
 
     ~PacketBuffer() = default;
@@ -21,7 +20,7 @@ public:
     void DiscardReadData();
 
     std::size_t ReadableSize() const { return m_WritePos - m_ReadPos; }
-    std::size_t WritableSize() const { return m_Buffer.size() - m_WritePos; }
+    std::size_t WritableSize() const { return m_BufferSize - m_WritePos; }
 
     void Clear()
     {
@@ -29,8 +28,9 @@ public:
         m_WritePos = 0;
     }
 
-    std::vector<uint8_t> m_Buffer;
 private:
+    BYTE* m_Buffer;
+    size_t m_BufferSize;
     std::mutex m_Mutex;
     std::size_t m_ReadPos;
     std::size_t m_WritePos;

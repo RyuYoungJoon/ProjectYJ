@@ -36,12 +36,14 @@ private:
     void CloseSession();
 
 private:
+    std::mutex m_Mutex;
     boost::asio::io_context& m_IoContext;
     tcp::socket m_Socket;
     std::array<char, 1024> m_ReadBuffer;
-    std::vector<BYTE> m_RecvBuffer;
+    std::array<BYTE, 4096> m_RecvBuffer;
     std::shared_ptr<AsioService> m_Service;
 
 protected:
+    //std::queue<Packet> m_SendQueue;
     PacketBuffer m_PacketBuffer;
 };

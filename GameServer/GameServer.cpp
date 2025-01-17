@@ -2,10 +2,17 @@
 #include "AsioService.h"
 #include "AsioAcceptor.h"
 #include "AsioSession.h"
+//#include "Logger.h"
 #include "GameSession.h"
+
 
 int main()
 {
+	static plog::ColorConsoleAppender<plog::TxtFormatter> cConsoleAppeder;
+	plog::get()->addAppender(&cConsoleAppeder);
+	//plog::init(plog::debug, &consoleAppender);
+
+	PLOG_INFO << "서버 시작됨";
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
@@ -16,7 +23,7 @@ int main()
 		boost::asio::io_context IoContext;
 
 		// Temporary Test Port
-		short port = 27931;
+		short port = 77777;
 		auto serverService = std::make_shared<AsioServerService>(
 			IoContext, 
 			port, 
@@ -26,7 +33,8 @@ int main()
 
 		if (serverService->Start())
 		{
-			std::cout << "[SERVER INFO] Server is running and waiting for connections on port " << port << std::endl;
+			string message("[SERVER INFO] Server is running and waiting for connections on port ");
+			cout <</* Logger::MyLog(message + to_string(port))*/"" << endl;
 		}
 		else
 		{

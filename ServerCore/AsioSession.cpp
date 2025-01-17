@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "AsioSession.h"
 #include "AsioService.h"
+#include "MemoryPoolManager.h"
+#include "Logger.h"
 
 AsioSession::AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
     : m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(4096)
@@ -14,14 +16,17 @@ void AsioSession::Start()
 
 void AsioSession::Send(const Packet& message)
 {
-    std::vector<char> buffer;
-    buffer.resize(message.header.size);
+    // 메모리풀 매니저에서 메모리를 가져오자.
+    size_t bufferSize = message.header.size;
 
-    std::memcpy(buffer.data(), &message.header, sizeof(PacketHeader));
+    // 메모리풀에 버퍼 사이즈만큼 메모리를 가져와서 buffer 생성
+    BYTE* buffer = static_cast<BYTE*>(MemoryPoolManager::GetMemoryPool(bufferSize).Allocate());
 
-    std::memcpy(buffer.data() + sizeof(PacketHeader), message.payload, message.header.size - sizeof(PacketHeader));
+    std::memcpy(buffer, &message.header, sizeof(PacketHeader));
+    std::memcpy(buffer + sizeof(PacketHeader), message.payload, message.header.size - sizeof(PacketHeader));
 
-    boost::asio::async_write(m_Socket, boost::asio::buffer(buffer),
+    auto self = shared_from_this();
+    boost::asio::async_write(m_Socket, boost::asio::buffer(buffer,bufferSize),
         std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
@@ -32,6 +37,8 @@ void AsioSession::SetService(std::shared_ptr<AsioService> service)
 
 void AsioSession::DoRead()
 {
+    std::lock_guard<mutex> Lock(m_Mutex);
+
     m_Socket.async_read_some(boost::asio::buffer(m_ReadBuffer),
         std::bind(&AsioSession::HandleRead, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
@@ -61,11 +68,17 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
                 break; // 패킷 전체가 도착하지 않음
 
             // Step 4: 패킷 데이터 읽기
-            m_RecvBuffer.resize(header.size);
-            m_PacketBuffer.Read(m_RecvBuffer.data(), header.size);
+            size_t packetSize = header.size;
+            BYTE* packetData = static_cast<BYTE*>(MemoryPoolManager::GetMemoryPool(packetSize).Allocate());
+            m_PacketBuffer.Read(packetData, packetSize);
 
             // Step 5: OnRecv 호출
-            OnRecv(m_RecvBuffer.data(), static_cast<int32>(m_RecvBuffer.size()));
+            OnRecv(packetData, static_cast<int32>(m_RecvBuffer.size()));
+            MemoryPoolManager::GetMemoryPool(packetSize).Deallocate(packetData);
+
+
+            // Step 6: 버퍼 초기화
+            m_PacketBuffer.DiscardReadData();
         }
 
         // 다음 비동기 읽기 시작
@@ -73,26 +86,32 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
     }
     else if (ec == boost::asio::error::eof)
     {
-        std::cerr << "Connection closed by peer." << std::endl;
+        cout << Logger::MyLog("Connection closed by peer.") << endl;
         CloseSession();
     }
     else if (ec == boost::asio::error::operation_aborted)
     {
-        std::cerr << "Operation aborted." << std::endl;
+        cout << Logger::MyLog("Operation aborted.") << endl;
         CloseSession();
     }
     else
     {
-        std::cerr << "Read error: " << ec.message() << " (code: " << ec.value() << ")" << std::endl;
+        if (ec.value() == boost::asio::error::connection_reset)
+            cout << Logger::MyLog("CloseSession") << endl;
+        else
+            std::cerr << "Read error: " << ec.message() << " (code: " << ec.value() << ")" << std::endl;
+        
         CloseSession();
-    }
+    } 
 }
 
 void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
 {
     if (ec)
     {
-        CloseSession();
+        cout << "Session Close" << endl;
+
+        //CloseSession();
     }
 }
 
