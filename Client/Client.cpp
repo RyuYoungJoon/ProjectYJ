@@ -1,11 +1,10 @@
 ﻿#include "pch.h"
 #include "AsioService.h"
 #include "AsioSession.h"
-#include <..\ThirdParty\plog\Log.h>
 
 const int THREAD_COUNT = 10;      // 총 스레드 수
 const int SOCKETS_PER_THREAD = 100; // 스레드당 소켓 개수
-const std::string SERVER_HOST = "192.168.21.96";
+const std::string SERVER_HOST = "127.0.0.1";
 const short SERVER_PORT = 7777;
 
 using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_context::executor_type>;
@@ -30,12 +29,12 @@ public:
 
     void OnConnected()
     {
-        cout << Logger::MyLog("[Info] Connected Server!") << endl;
+        LOGI << "Connected Server!";
     }
 
     void OnDisconnected()
     {
-        cout << Logger::MyLog("[Info] Disconnected Server!") << endl;
+        LOGI << "Disconnected Server!";
     }
 
     void SendPacket(const std::string& message)
@@ -73,14 +72,14 @@ void WorkerThread(boost::asio::io_context& ioContext, int socketCount)
                     if (!ec)
                     {
                         session->Start();
-                        std::cout << Logger::MyLog("[Info] Connected to server!") << std::endl;
+                        LOGI << "Connection to Server!";
 
                         // 패킷 송신
                         session->SendPacket(message);
                     }
                     else
                     {
-                        std::cerr << Logger::MyLog("[Error] Connection failed: ") << ec.message() << std::endl;
+                        LOGE << "Connection Failed! Message : " << ec.message();
                     }
                 });
         }
@@ -90,6 +89,11 @@ void WorkerThread(boost::asio::io_context& ioContext, int socketCount)
 
 int main()
 {
+    static plog::RollingFileAppender<plog::TxtFormatter> fileAppender("ClientLog.txt");
+
+    static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
+    plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
+
     try
     {
         boost::asio::io_context ioContext;

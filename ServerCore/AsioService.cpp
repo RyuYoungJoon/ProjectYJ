@@ -99,7 +99,7 @@ void AsioClientService::DoConnect()
                     {
                         if (!ec)
                         {
-                            std::cout << "[INFO] Successfully connected to " << endpoint << std::endl;
+                            LOGI << "Successfully connected to " << endpoint;
                            
                             auto session = CreateSession(iocontext, std::move(m_Socket));
                             session->Start();

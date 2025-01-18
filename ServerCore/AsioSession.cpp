@@ -86,20 +86,20 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
     }
     else if (ec == boost::asio::error::eof)
     {
-        cout << Logger::MyLog("Connection closed by peer.") << endl;
+        LOGE << "Connection closed by peer" << endl;
         CloseSession();
     }
     else if (ec == boost::asio::error::operation_aborted)
     {
-        cout << Logger::MyLog("Operation aborted.") << endl;
+        LOGE << "Operation aborted.";
         CloseSession();
     }
     else
     {
         if (ec.value() == boost::asio::error::connection_reset)
-            cout << Logger::MyLog("CloseSession") << endl;
+            LOGE << "CloseSession";
         else
-            std::cerr << "Read error: " << ec.message() << " (code: " << ec.value() << ")" << std::endl;
+            LOGE << "Read error : " << ec.message() << " (code : " << ec.value() << ")";
         
         CloseSession();
     } 
@@ -109,7 +109,7 @@ void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
 {
     if (ec)
     {
-        cout << "Session Close" << endl;
+        LOGE << "Session Close";
 
         //CloseSession();
     }

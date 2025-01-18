@@ -94,7 +94,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)ThirdParty\plog;C:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/IC:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -118,7 +118,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)ThirdParty\plog;C:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/IC:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -142,7 +142,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)ThirdParty\plog;C:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/IC:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -166,7 +166,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)ThirdParty\plog;C:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/IC:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>

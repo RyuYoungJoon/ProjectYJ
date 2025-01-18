@@ -12,9 +12,17 @@
 #include <utility>
 #include <chrono>
 #include <format>
+#include <filesystem>
 
-#include <plog/Log.h>
-#include <plog/Appenders/ConsoleAppender.h>
+#include <..\include\plog\Log.h>
+#include <..\include\plog\Appenders\ColorConsoleAppender.h>
+#include <..\include\plog\Formatters\TxtFormatter.h>
+#include <..\include\plog\Initializers\ConsoleInitializer.h>
+#include <..\include\plog\Appenders\RollingFileAppender.h>
+
+
+#include <..\include\plog\Formatters\CsvFormatter.h>
+
 #include <iostream>
 #include <boost/asio.hpp>
 #include <boost/pool/singleton_pool.hpp>

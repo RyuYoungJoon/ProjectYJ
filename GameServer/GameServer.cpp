@@ -8,22 +8,39 @@
 
 int main()
 {
-	static plog::ColorConsoleAppender<plog::TxtFormatter> cConsoleAppeder;
-	plog::get()->addAppender(&cConsoleAppeder);
-	//plog::init(plog::debug, &consoleAppender);
-
-	PLOG_INFO << "서버 시작됨";
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
 	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_DEBUG);
+
+	//plog::ConsoleAppender<plog::TxtFormatter> consoleAppender;
+	//plog::init(plog::debug, &consoleAppender);
+	
+	std::string folderName = "log";
+	std::string FileName = folderName + "/ServerLog.txt";
+
+	try 
+	{
+		if (std::filesystem::exists("log"))
+		{
+			std::filesystem::create_directories("log");
+		}
+	}
+	catch(const std::filesystem::filesystem_error& e)
+	{
+		cerr << e.what() << endl;
+	}
+
+	static plog::RollingFileAppender<plog::TxtFormatter> fileAppender("ServerLog.txt");
+	static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
+	plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
 
 	try
 	{
 		boost::asio::io_context IoContext;
 
 		// Temporary Test Port
-		short port = 77777;
+		short port = 7777;
 		auto serverService = std::make_shared<AsioServerService>(
 			IoContext, 
 			port, 
@@ -33,8 +50,7 @@ int main()
 
 		if (serverService->Start())
 		{
-			string message("[SERVER INFO] Server is running and waiting for connections on port ");
-			cout <</* Logger::MyLog(message + to_string(port))*/"" << endl;
+			LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << endl;
 		}
 		else
 		{
