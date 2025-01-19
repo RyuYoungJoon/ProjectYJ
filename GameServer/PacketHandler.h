@@ -17,6 +17,8 @@ public:
 	void HandleYJ(const Packet& packet);
 	void HandleES(const Packet& packet);
 
+	static void HandleInvalid(const Packet& packet);
+
 private:
 	std::map<PacketType, HandlerFunc> m_Handlers;
 };

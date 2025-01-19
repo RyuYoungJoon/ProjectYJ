@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "PacketHandler.h"
+#include "GameSession.h"
 #include "Logger.h"
 
 void PacketHandler::Init()
@@ -27,6 +28,7 @@ void PacketHandler::HandlePacket(const Packet* packet)
 	else
 	{
 		LOGE << "Unknown Packet Type : " << static_cast<int16>(packet->header.type);
+		HandleInvalid(*packet);
 	}
 }
 
@@ -61,4 +63,9 @@ void PacketHandler::HandleES(const Packet& packet)
 		return;
 
 	LOGD << packet.payload;
+}
+
+void PacketHandler::HandleInvalid(const Packet& packet)
+{
+	LOGE << "Unknown Packet Type : " << static_cast<int16>(packet.header.type);
 }

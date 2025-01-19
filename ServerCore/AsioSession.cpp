@@ -2,6 +2,7 @@
 #include "AsioSession.h"
 #include "AsioService.h"
 #include "MemoryPoolManager.h"
+#include "TaskQueue.h"
 
 
 AsioSession::AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
@@ -11,6 +12,8 @@ AsioSession::AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
 
 void AsioSession::Start()
 {
+    m_SessionUID.fetch_add(1);
+
     DoRead();
 }
 
@@ -25,6 +28,7 @@ void AsioSession::Send(const Packet& message)
     std::memcpy(buffer, &message.header, sizeof(PacketHeader));
     std::memcpy(buffer + sizeof(PacketHeader), message.payload, message.header.size - sizeof(PacketHeader));
 
+    // TODO : 메모리 DeAllocate 구조잡기
     auto self = shared_from_this();
     boost::asio::async_write(m_Socket, boost::asio::buffer(buffer,bufferSize),
         std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
@@ -47,40 +51,62 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
 {
     if (!ec)
     {
-        m_PacketBuffer.Write(m_ReadBuffer.data(), length);
+        //m_PacketBuffer.Write(m_ReadBuffer.data(), length);
 
-        while (m_PacketBuffer.ReadableSize() >= sizeof(PacketHeader))
+        //while (m_PacketBuffer.ReadableSize() >= sizeof(PacketHeader))
+        //{
+        //    // Step 1: 헤더 읽기
+        //    PacketHeader header;
+        //    m_PacketBuffer.Peek(&header, sizeof(PacketHeader));
+
+        //    // Step 2: 유효성 검사
+        //    /*if (header.checkSum != '0x1234')
+        //    {
+        //        std::cerr << "Invalid Packet: CheckValue mismatch." << std::endl;
+        //        m_PacketBuffer.DiscardReadData();
+        //        break;
+        //    }*/
+
+        //    // Step 3: 패킷 전체 크기 확인
+        //    if (m_PacketBuffer.ReadableSize() < header.size)
+        //        break; // 패킷 전체가 도착하지 않음
+
+        //    // Step 4: 패킷 데이터 읽기
+        //    size_t packetSize = header.size;
+        //    BYTE* packetData = static_cast<BYTE*>(MemoryPoolManager::GetMemoryPool(packetSize).Allocate());
+        //    m_PacketBuffer.Read(packetData, packetSize);
+
+        //    // Step 5: OnRecv 호출
+        //    OnRecv(packetData, static_cast<int32>(m_RecvBuffer.size()));
+        //    MemoryPoolManager::GetMemoryPool(packetSize).Deallocate(packetData);
+
+
+        //    // Step 6: 버퍼 초기화
+        //    m_PacketBuffer.DiscardReadData();
+        //}
+
+        BYTE* packetData = static_cast<BYTE*>(MemoryPoolManager::GetMemoryPool(length).Allocate());
+        std::memcpy(packetData, m_ReadBuffer.data(), length);
+
+        PacketBuffer* packetBuffer = static_cast<PacketBuffer*>(MemoryPoolManager::GetMemoryPool(length).Allocate());
+        std::memcpy(packetBuffer, m_ReadBuffer.data(), length);
+
+        while (packetBuffer->ReadableSize() >= sizeof(PacketHeader))
         {
-            // Step 1: 헤더 읽기
             PacketHeader header;
-            m_PacketBuffer.Peek(&header, sizeof(PacketHeader));
+            packetBuffer->Peek(&header, sizeof(PacketHeader));
 
-            // Step 2: 유효성 검사
-            /*if (header.checkSum != '0x1234')
-            {
-                std::cerr << "Invalid Packet: CheckValue mismatch." << std::endl;
-                m_PacketBuffer.DiscardReadData();
+            // readablesize == 읽어들어온 사이즈
+            if (packetBuffer->ReadableSize() < header.size)
                 break;
-            }*/
 
-            // Step 3: 패킷 전체 크기 확인
-            if (m_PacketBuffer.ReadableSize() < header.size)
-                break; // 패킷 전체가 도착하지 않음
-
-            // Step 4: 패킷 데이터 읽기
-            size_t packetSize = header.size;
-            BYTE* packetData = static_cast<BYTE*>(MemoryPoolManager::GetMemoryPool(packetSize).Allocate());
-            m_PacketBuffer.Read(packetData, packetSize);
-
-            // Step 5: OnRecv 호출
-            OnRecv(packetData, static_cast<int32>(m_RecvBuffer.size()));
-            MemoryPoolManager::GetMemoryPool(packetSize).Deallocate(packetData);
-
-
-            // Step 6: 버퍼 초기화
-            m_PacketBuffer.DiscardReadData();
+            TaskQueue::GetInstance().PushTask([this, packetData, length]() {
+                OnRecv(packetData, static_cast<int32>(length));
+                MemoryPoolManager::GetMemoryPool(length).Deallocate(packetData);
+                });
         }
 
+        
         // 다음 비동기 읽기 시작
         DoRead();
     }

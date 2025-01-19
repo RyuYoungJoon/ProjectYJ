@@ -3,7 +3,7 @@
 #include "AsioAcceptor.h"
 #include "AsioSession.h"
 #include "GameSession.h"
-
+#include "TaskQueue.h"
 
 int main()
 {
@@ -38,6 +38,10 @@ int main()
 			LOGE << "Failed to Start the Server";
 			return -1;
 		}
+		
+		std::thread WorkerThread([]() {
+			TaskQueue::GetInstance().ProcessTask();
+			});
 
 
 		std::vector<std::thread> m_asioThread;
@@ -47,6 +51,8 @@ int main()
 				IoContext.run();
 				});
 		}
+
+		WorkerThread.detach();
 
 		for (auto& thread : m_asioThread)
 		{
