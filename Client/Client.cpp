@@ -43,9 +43,10 @@ public:
         std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
         std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
         packet.header.type = PacketType::YJ;
-        packet.header.size = static_cast<uint32>(sizeof(PacketBuffer) + message.size());
+        packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + message.size());
         std::memcpy(packet.payload, message.c_str(), message.size());
         packet.tail.value = 255;
+        LOGD << "PacketBuffer size : " << sizeof(PacketBuffer);
 
         Send(packet);
     }
