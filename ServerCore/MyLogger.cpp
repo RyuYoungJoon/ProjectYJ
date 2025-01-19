@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "Logger.h"
+#include "MyLogger.h"
 
-std::mutex Logger::m_Mutex;
+std::mutex MyLogger::m_Mutex;
 
-string Logger::MyLog(const std::string& strMsg)
+string MyLogger::MyLog(const std::string& strMsg)
 {
     std::lock_guard<std::mutex> Lock(m_Mutex);
 

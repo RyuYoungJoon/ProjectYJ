@@ -19,8 +19,6 @@
 #include <..\include\plog\Formatters\TxtFormatter.h>
 #include <..\include\plog\Initializers\ConsoleInitializer.h>
 #include <..\include\plog\Appenders\RollingFileAppender.h>
-
-
 #include <..\include\plog\Formatters\CsvFormatter.h>
 
 #include <iostream>

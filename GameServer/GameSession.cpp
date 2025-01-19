@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "GameSession.h"
 #include "PacketHandler.h"
-#include "Logger.h"
 
 GameSession::GameSession(boost::asio::io_context& iocontext, tcp::socket socket)
 	: AsioSession(iocontext, std::move(socket))
@@ -11,7 +10,7 @@ GameSession::GameSession(boost::asio::io_context& iocontext, tcp::socket socket)
 
 GameSession::~GameSession()
 {
-	//cout << Logger::MyLog("[SERVER INFO] Delete GameSession") << endl;
+	LOGD << "Delete GameSession";
 }
 
 void GameSession::OnSend(int32 len)

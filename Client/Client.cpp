@@ -55,7 +55,7 @@ void WorkerThread(boost::asio::io_context& ioContext, int socketCount)
 {
     std::vector<std::shared_ptr<ServerSession>> sessions;
 
-    std::string message(u8"Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.",128);
+    std::string message(u8"Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server. Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.",128);
         for (int i = 0; i < socketCount; ++i)
         {
             // 세션 생성 및 소켓 관리
@@ -101,7 +101,6 @@ int main()
 
         // 스레드 풀 생성
         std::vector<std::thread> threads;
-        //std::array<std::thread, 10> threads;
 
         for (int i = 0; i < THREAD_COUNT; ++i)
         {

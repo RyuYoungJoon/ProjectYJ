@@ -108,13 +108,13 @@ void AsioClientService::DoConnect()
                         }
                         else
                         {
-                            std::cerr << "[ERROR] Connection failed: " << ec.message() << std::endl;
+                            LOGE << "Connection Failed : " << ec.message();
                         }
                     });
             }
             else
             {
-                std::cerr << "[ERROR] Resolve failed: " << ec.message() << std::endl;
+                LOGE << "Resolve Failed : " << ec.message();
             }
         });
 }

@@ -2,7 +2,6 @@
 #include "AsioService.h"
 #include "AsioAcceptor.h"
 #include "AsioSession.h"
-//#include "Logger.h"
 #include "GameSession.h"
 
 
@@ -12,24 +11,6 @@ int main()
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
 	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_DEBUG);
-
-	//plog::ConsoleAppender<plog::TxtFormatter> consoleAppender;
-	//plog::init(plog::debug, &consoleAppender);
-	
-	std::string folderName = "log";
-	std::string FileName = folderName + "/ServerLog.txt";
-
-	try 
-	{
-		if (std::filesystem::exists("log"))
-		{
-			std::filesystem::create_directories("log");
-		}
-	}
-	catch(const std::filesystem::filesystem_error& e)
-	{
-		cerr << e.what() << endl;
-	}
 
 	static plog::RollingFileAppender<plog::TxtFormatter> fileAppender("ServerLog.txt");
 	static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
@@ -54,7 +35,7 @@ int main()
 		}
 		else
 		{
-			std::cerr << "[ERROR] Failed to start the server." << std::endl;
+			LOGE << "Failed to Start the Server";
 			return -1;
 		}
 
@@ -76,6 +57,6 @@ int main()
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "Exception : " << e.what() << std::endl;
+		LOGE << "Exception : " << e.what();
 	}
 }

@@ -42,7 +42,7 @@
     <ClInclude Include="MemoryPoolManager.h">
       <Filter>Memory</Filter>
     </ClInclude>
-    <ClInclude Include="Logger.h">
+    <ClInclude Include="MyLogger.h">
       <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,7 +74,7 @@
     <ClCompile Include="MemoryPoolManager.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
-    <ClCompile Include="Logger.cpp">
+    <ClCompile Include="MyLogger.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,5 +1,5 @@
 #pragma once
-class Logger
+class MyLogger
 {
 public:
 

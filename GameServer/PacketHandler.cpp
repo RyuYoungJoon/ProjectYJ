@@ -32,45 +32,33 @@ void PacketHandler::HandlePacket(const Packet* packet)
 
 void PacketHandler::HandledefEchoString(const Packet& packet)
 {
-	//std::string InfoMessage("[SERVER INFO] PacketHandler::HandledefEchoString");
-	//std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
+	if (packet.header.type != PacketType::defEchoString)
+		return;
+
 	LOGD << packet.payload;
-
-	//cout << Logger::MyLog(InfoMessage + message) << endl;
-
 }
 
 void PacketHandler::HandleJH(const Packet& packet)
 {
-	//std::string InfoMessage("[SERVER INFO] PacketHandler::HandleJH");
-	//std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
-	
+	if (packet.header.type != PacketType::JH)
+		return;
+
 	LOGD << packet.payload;
-
-	//cout << Logger::MyLog(InfoMessage + message) << endl;
-
 	// 추가 처리 로직
 }
 
 void PacketHandler::HandleYJ(const Packet& packet)
 {
-	//std::string InfoMessage("[SERVER INFO] PacketHandler::HandleYJ");
-	//std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
-	
+	if (packet.header.type != PacketType::YJ)
+		return;
+
 	LOGD << packet.payload;
-
-	//cout << Logger::MyLog(InfoMessage + message) << endl;
-
-	//std::cout << "[SERVER INFO] PacketHandler::HandleYJ received: " << message << std::endl;
-
 }
 
 void PacketHandler::HandleES(const Packet& packet)
 {
-	std::string InfoMessage("[SERVER INFO] PacketHandler::HandleES");
-	std::string message(packet.payload, packet.payload + packet.header.size - sizeof(PacketHeader));
-
-	//cout << Logger::MyLog(InfoMessage + message) << endl;
+	if (packet.header.type != PacketType::ES)
+		return;
 
 	LOGD << packet.payload;
 }
