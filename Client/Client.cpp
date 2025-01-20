@@ -46,7 +46,6 @@ public:
         packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + message.size());
         std::memcpy(packet.payload, message.c_str(), message.size());
         packet.tail.value = 255;
-        LOGD << "PacketBuffer size : " << sizeof(PacketBuffer);
 
         Send(packet);
     }

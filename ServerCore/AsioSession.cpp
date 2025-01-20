@@ -6,7 +6,7 @@
 
 
 AsioSession::AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
-    : m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(4096)
+    : m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(65536)
 {
 }
 
@@ -42,8 +42,8 @@ void AsioSession::SetService(std::shared_ptr<AsioService> service)
 void AsioSession::DoRead()
 {
     std::lock_guard<mutex> Lock(m_Mutex);
-
-    m_Socket.async_read_some(boost::asio::buffer(m_ReadBuffer),
+    
+    m_Socket.async_read_some(boost::asio::buffer(m_PacketBuffer.WritePos(), m_PacketBuffer.FreeSize()),
         std::bind(&AsioSession::HandleRead, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
@@ -51,62 +51,24 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
 {
     if (!ec)
     {
-        //m_PacketBuffer.Write(m_ReadBuffer.data(), length);
-
-        //while (m_PacketBuffer.ReadableSize() >= sizeof(PacketHeader))
-        //{
-        //    // Step 1: 헤더 읽기
-        //    PacketHeader header;
-        //    m_PacketBuffer.Peek(&header, sizeof(PacketHeader));
-
-        //    // Step 2: 유효성 검사
-        //    /*if (header.checkSum != '0x1234')
-        //    {
-        //        std::cerr << "Invalid Packet: CheckValue mismatch." << std::endl;
-        //        m_PacketBuffer.DiscardReadData();
-        //        break;
-        //    }*/
-
-        //    // Step 3: 패킷 전체 크기 확인
-        //    if (m_PacketBuffer.ReadableSize() < header.size)
-        //        break; // 패킷 전체가 도착하지 않음
-
-        //    // Step 4: 패킷 데이터 읽기
-        //    size_t packetSize = header.size;
-        //    BYTE* packetData = static_cast<BYTE*>(MemoryPoolManager::GetMemoryPool(packetSize).Allocate());
-        //    m_PacketBuffer.Read(packetData, packetSize);
-
-        //    // Step 5: OnRecv 호출
-        //    OnRecv(packetData, static_cast<int32>(m_RecvBuffer.size()));
-        //    MemoryPoolManager::GetMemoryPool(packetSize).Deallocate(packetData);
-
-
-        //    // Step 6: 버퍼 초기화
-        //    m_PacketBuffer.DiscardReadData();
-        //}
-
-        BYTE* packetData = static_cast<BYTE*>(MemoryPoolManager::GetMemoryPool(length).Allocate());
-        std::memcpy(packetData, m_ReadBuffer.data(), length);
-
-        PacketBuffer* packetBuffer = static_cast<PacketBuffer*>(MemoryPoolManager::GetMemoryPool(length).Allocate());
-        std::memcpy(packetBuffer, m_ReadBuffer.data(), length);
-
-        while (packetBuffer->ReadableSize() >= sizeof(PacketHeader))
+        if (m_PacketBuffer.OnWrite(length) == false)
         {
-            PacketHeader header;
-            packetBuffer->Peek(&header, sizeof(PacketHeader));
-
-            // readablesize == 읽어들어온 사이즈
-            if (packetBuffer->ReadableSize() < header.size)
-                break;
-
-            TaskQueue::GetInstance().PushTask([this, packetData, length]() {
-                OnRecv(packetData, static_cast<int32>(length));
-                MemoryPoolManager::GetMemoryPool(length).Deallocate(packetData);
-                });
+            LOGE << "OnWrite OverFlow";
+            CloseSession();
+            return;
         }
-
+            
+        int32 dataSize = m_PacketBuffer.DataSize();
+        int32 processLen = OnRecvPacket(m_PacketBuffer.ReadPos(), dataSize);
+        if (processLen < 0 || dataSize < processLen || m_PacketBuffer.OnRead(processLen) == false)
+        {
+            LOGE << "OnRead OverFlow";
+            CloseSession();
+            return;
+        }
         
+        m_PacketBuffer.DiscardReadData();
+
         // 다음 비동기 읽기 시작
         DoRead();
     }
@@ -139,6 +101,28 @@ void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
 
         //CloseSession();
     }
+}
+
+int32 AsioSession::OnRecvPacket(BYTE* buffer, int32 len)
+{
+    int32 processLen = 0;
+
+    while (true)
+    {
+        int32 dataSize = len - processLen;
+        if (dataSize < sizeof(PacketHeader))
+            break;
+
+        PacketHeader header = *(reinterpret_cast<PacketHeader*>(&buffer[processLen]));
+        if (dataSize < header.size)
+            break;
+
+        OnRecv(&buffer[processLen], header.size);
+
+        processLen += header.size;
+    }
+
+    return processLen;
 }
 
 void AsioSession::CloseSession()

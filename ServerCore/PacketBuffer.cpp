@@ -1,58 +1,49 @@
 #include "pch.h"
 #include "PacketBuffer.h"
 
-void PacketBuffer::Write(const void* data, std::size_t size)
+
+PacketBuffer::PacketBuffer(int32 bufferSize)
+    : m_BufferSize(bufferSize)
 {
-    std::lock_guard<std::mutex> lock(m_Mutex);
+    m_Capacity = bufferSize * 10;
+    m_Buffer.resize(m_Capacity);
+}
 
-    if (WritableSize() < size)
-    {
-        LOGE << "Write Buffer overflow WritePos = " << m_WritePos 
-                                  << ", ReadPos = " << m_ReadPos 
-                                  << ", BufferSize = "  << m_BufferSize 
-                                  << ", DataSize = " << size;
-        throw std::overflow_error("Not enough space in buffer to write data.");
-    }
+bool PacketBuffer::OnWrite(int32 size)
+{
+    if (size > FreeSize())
+        return false;
 
-    std::memcpy(&m_Buffer[m_WritePos], data, size);
     m_WritePos += size;
+    return true;
 }
 
-void PacketBuffer::Read(void* outData, std::size_t size)
+bool PacketBuffer::OnRead(int32 size)
 {
-    std::lock_guard<std::mutex> lock(m_Mutex);
+    if (size > DataSize())
+        return false;
 
-    if (ReadableSize() < size)
-    {
-        throw std::underflow_error("Not enough data in buffer to read.");
-    }
-
-    std::memcpy(outData, &m_Buffer[m_ReadPos], size);
     m_ReadPos += size;
-}
-
-void PacketBuffer::Peek(void* outData, std::size_t size)
-{
-    std::lock_guard<std::mutex> lock(m_Mutex);
-
-    if (ReadableSize() < size)
-    {
-        throw std::underflow_error("Not enough data in buffer to peek.");
-    }
-
-    std::memcpy(outData, &m_Buffer[m_ReadPos], size);
+    return true;
 }
 
 void PacketBuffer::DiscardReadData()
 {
-    std::lock_guard<std::mutex> lock(m_Mutex);
-
-    if (m_ReadPos > 0)
+    int32 dataSize = DataSize();
+    if (dataSize == 0)
     {
-        std::size_t readable = ReadableSize();
-        std::memmove(&m_Buffer[0], &m_Buffer[m_ReadPos], readable);
-        m_ReadPos = 0;
-        m_WritePos = readable;
+        // 딱 마침 읽기+쓰기 커서가 동일한 위치라면, 둘 다 리셋.
+        m_ReadPos = m_WritePos = 0;
+    }
+    else
+    {
+        // 여유 공간이 버퍼 1개 크기 미만이면, 데이터를 앞으로 땅긴다.
+        if (FreeSize() < m_BufferSize)
+        {
+            ::memcpy(&m_Buffer[0], &m_Buffer[m_ReadPos], dataSize);
+            m_ReadPos = 0;
+            m_WritePos = dataSize;
+        }
     }
 }
 

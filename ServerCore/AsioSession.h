@@ -38,6 +38,7 @@ private:
     void HandleRead(boost::system::error_code ec, std::size_t length);
     void HandleWrite(boost::system::error_code ec, std::size_t length);
 
+    int32 OnRecvPacket(BYTE* buffer, int32 len);
     void CloseSession();
 
 private:
