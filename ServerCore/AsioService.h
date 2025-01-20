@@ -33,7 +33,7 @@ protected:
     ServiceType m_type;
     boost::asio::io_context& iocontext;
     std::set<std::shared_ptr<class AsioSession>> m_Sessions;
-    int32 m_SessionCount = 0;
+    atomic<int32> m_SessionCount = 0;
     int32 m_MaxSessionCount = 0;
 
     short m_Port;

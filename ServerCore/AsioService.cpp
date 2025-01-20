@@ -27,14 +27,14 @@ std::shared_ptr<class AsioSession> AsioService::CreateSession(boost::asio::io_co
 void AsioService::AddSession(std::shared_ptr<class AsioSession> session)
 {
 	// TODO : Lock을 걸어줘야하나?;
-	m_SessionCount++;
+    m_SessionCount.fetch_add(1);
 	m_Sessions.insert(session);
 }
 
 void AsioService::ReleaseSession(std::shared_ptr<class AsioSession> session)
 {
 	m_Sessions.erase(session);
-	m_SessionCount--;
+    m_SessionCount.fetch_sub(1);
 }
 
 AsioServerService::AsioServerService(boost::asio::io_context& iocontext, short port, SessionMaker SessionMaker, int32 maxSessionCount)
