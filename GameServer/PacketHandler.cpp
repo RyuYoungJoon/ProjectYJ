@@ -5,10 +5,10 @@
 
 void PacketHandler::Init()
 {
-	RegisterHandler(PacketType::defEchoString, std::bind(&PacketHandler::HandledefEchoString, this, std::placeholders::_1));
-	RegisterHandler(PacketType::JH, std::bind(&PacketHandler::HandleJH, this, std::placeholders::_1));
-	RegisterHandler(PacketType::YJ, std::bind(&PacketHandler::HandleYJ, this, std::placeholders::_1));
-	RegisterHandler(PacketType::ES, std::bind(&PacketHandler::HandleES, this, std::placeholders::_1));
+	RegisterHandler(PacketType::defEchoString, std::bind(&PacketHandler::HandledefEchoString, this, std::placeholders::_1, std::placeholders::_2));
+	RegisterHandler(PacketType::JH, std::bind(&PacketHandler::HandleJH, this, std::placeholders::_1, std::placeholders::_2));
+	RegisterHandler(PacketType::YJ, std::bind(&PacketHandler::HandleYJ, this, std::placeholders::_1, std::placeholders::_2));
+	RegisterHandler(PacketType::ES, std::bind(&PacketHandler::HandleES, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
@@ -18,54 +18,67 @@ void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
 		m_Handlers.emplace(packetType, handler);
 }
 
-void PacketHandler::HandlePacket(const Packet* packet)
+void PacketHandler::HandlePacket(shared_ptr<AsioSession>& session, const Packet* packet)
 {
 	auto iter = m_Handlers.find(packet->header.type);
 	if (iter != m_Handlers.end())
 	{
-		iter->second(*packet);
+		iter->second(session, *packet);
 	}
 	else
 	{
 		LOGE << "Unknown Packet Type : " << static_cast<int16>(packet->header.type);
-		HandleInvalid(*packet);
+		HandleInvalid(session, *packet);
 	}
 }
 
-void PacketHandler::HandledefEchoString(const Packet& packet)
+void PacketHandler::HandledefEchoString(shared_ptr<AsioSession>& session, const Packet& packet)
 {
 	if (packet.header.type != PacketType::defEchoString)
 		return;
 
-	LOGD << packet.payload;
+	if (session != nullptr)
+		return;
+
+	shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
+
+	LOGD << "SessionUID : "<<gameSession->GetSessionUID()<<"-> Payload : " << packet.payload;
 }
 
-void PacketHandler::HandleJH(const Packet& packet)
+void PacketHandler::HandleJH(shared_ptr<AsioSession>& session, const Packet& packet)
 {
 	if (packet.header.type != PacketType::JH)
 		return;
 
-	LOGD << packet.payload;
+
+	shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
+
+	LOGD << "SessionUID : " << gameSession->GetSessionUID() << "-> Payload : " << packet.payload;
 	// 추가 처리 로직
 }
 
-void PacketHandler::HandleYJ(const Packet& packet)
+void PacketHandler::HandleYJ(shared_ptr<AsioSession>& session, const Packet& packet)
 {
 	if (packet.header.type != PacketType::YJ)
 		return;
 
-	LOGD << packet.payload;
+
+	shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
+
+	LOGD << "SessionUID : " << gameSession->GetSessionUID() << "-> Payload : " << packet.payload;
 }
 
-void PacketHandler::HandleES(const Packet& packet)
+void PacketHandler::HandleES(shared_ptr<AsioSession>& session, const Packet& packet)
 {
 	if (packet.header.type != PacketType::ES)
 		return;
 
-	LOGD << packet.payload;
+	shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
+
+	LOGD << "SessionUID : " << gameSession->GetSessionUID() << "-> Payload : " << packet.payload;
 }
 
-void PacketHandler::HandleInvalid(const Packet& packet)
+void PacketHandler::HandleInvalid(shared_ptr<AsioSession>& session, const Packet& packet)
 {
 	LOGE << "Unknown Packet Type : " << static_cast<int16>(packet.header.type);
 }

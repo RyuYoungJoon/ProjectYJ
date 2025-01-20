@@ -59,6 +59,8 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
         }
             
         int32 dataSize = m_PacketBuffer.DataSize();
+
+        // 이걸 작업 큐에?
         int32 processLen = OnRecvPacket(m_PacketBuffer.ReadPos(), dataSize);
         if (processLen < 0 || dataSize < processLen || m_PacketBuffer.OnRead(processLen) == false)
         {

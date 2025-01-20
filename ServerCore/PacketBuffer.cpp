@@ -27,7 +27,7 @@ bool PacketBuffer::OnRead(int32 size)
     return true;
 }
 
-void PacketBuffer::DiscardReadData()
+void PacketBuffer::Clear()
 {
     int32 dataSize = DataSize();
     if (dataSize == 0)
