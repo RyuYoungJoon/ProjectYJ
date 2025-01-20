@@ -67,7 +67,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
             return;
         }
         
-        m_PacketBuffer.DiscardReadData();
+        m_PacketBuffer.Clear();
 
         // 다음 비동기 읽기 시작
         DoRead();

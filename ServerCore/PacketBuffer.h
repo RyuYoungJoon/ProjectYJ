@@ -8,18 +8,12 @@ public:
 
     bool OnWrite(int32 size);
     bool OnRead(int32 size);
-    void DiscardReadData();
+    void Clear();
 
     BYTE* ReadPos() { return &m_Buffer[m_ReadPos]; }
     BYTE* WritePos() { return &m_Buffer[m_WritePos]; }
     int32 DataSize() const { return m_WritePos - m_ReadPos; }
     int32 FreeSize() const { return m_Capacity - m_WritePos; }
-
-    void Clear()
-    {
-        m_ReadPos = 0;
-        m_WritePos = 0;
-    }
 
 private:
     vector<BYTE> m_Buffer;
