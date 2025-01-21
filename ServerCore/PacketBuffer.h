@@ -1,5 +1,6 @@
 #pragma once
 
+// [r][][][w][][][][][][][][][]
 class PacketBuffer
 {
 public:
