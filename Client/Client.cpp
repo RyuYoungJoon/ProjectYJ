@@ -4,6 +4,7 @@
 
 const int THREAD_COUNT = 10;      // 총 스레드 수
 const int SOCKETS_PER_THREAD = 100; // 스레드당 소켓 개수
+//const std::string SERVER_HOST = "192.168.21.96";
 const std::string SERVER_HOST = "127.0.0.1";
 const short SERVER_PORT = 7777;
 
@@ -43,7 +44,7 @@ public:
         std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
         std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
         packet.header.type = PacketType::YJ;
-        packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + message.size());
+        packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + message.size() + sizeof(PacketTail));
         std::memcpy(packet.payload, message.c_str(), message.size());
         packet.tail.value = 255;
 

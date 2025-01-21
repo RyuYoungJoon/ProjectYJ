@@ -99,7 +99,7 @@ void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
     {
         LOGE << "Session Close";
 
-        //CloseSession();
+        CloseSession();
     }
 }
 
