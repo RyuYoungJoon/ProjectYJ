@@ -22,9 +22,9 @@ public:
 
     virtual void CloseService();
 
-    std::shared_ptr<class AsioSession> CreateSession(boost::asio::io_context& iocontext, tcp::socket socket);
-    void AddSession(std::shared_ptr<class AsioSession> session);
-    void ReleaseSession(std::shared_ptr<class AsioSession> session);
+    AsioSessionPtr CreateSession(boost::asio::io_context& iocontext, tcp::socket socket);
+    void AddSession(AsioSessionPtr session);
+    void ReleaseSession(AsioSessionPtr session);
 
 public:
     ServiceType GetServiceType() { return m_type; }
@@ -33,9 +33,9 @@ protected:
     ServiceType m_type;
     boost::asio::io_context& iocontext;
     std::set<std::shared_ptr<class AsioSession>> m_Sessions;
-    atomic<int32> m_SessionCount = 0;
+    int32 m_SessionCount = 0;
     int32 m_MaxSessionCount = 0;
-
+    std::mutex m_Mutex;
     short m_Port;
 
     SessionMaker m_SessionMaker;

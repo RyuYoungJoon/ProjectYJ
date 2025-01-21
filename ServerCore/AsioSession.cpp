@@ -59,7 +59,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
         int32 dataSize = m_PacketBuffer.DataSize();
 
         // 이걸 작업 큐에?
-        int32 processLen = OnRecvPacket(m_PacketBuffer.ReadPos(), dataSize);
+        int32 processLen = ProcessPacket(m_PacketBuffer.ReadPos(), dataSize);
         if (processLen < 0 || dataSize < processLen || m_PacketBuffer.OnRead(processLen) == false)
         {
             LOGE << "OnRead OverFlow";
@@ -103,7 +103,7 @@ void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
     }
 }
 
-int32 AsioSession::OnRecvPacket(BYTE* buffer, int32 len)
+int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
 {
     int32 processLen = 0;
 
@@ -127,9 +127,9 @@ int32 AsioSession::OnRecvPacket(BYTE* buffer, int32 len)
 
 void AsioSession::CloseSession()
 {
-    m_Socket.close();
     if (m_Service)
     {
         m_Service->ReleaseSession(shared_from_this());
     }
+    m_Socket.close();
 }

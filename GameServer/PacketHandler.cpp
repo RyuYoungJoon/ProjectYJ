@@ -18,7 +18,7 @@ void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
 		m_Handlers.emplace(packetType, handler);
 }
 
-void PacketHandler::HandlePacket(shared_ptr<AsioSession>& session, const Packet* packet)
+void PacketHandler::HandlePacket(AsioSessionPtr& session, const Packet* packet)
 {
 	auto iter = m_Handlers.find(packet->header.type);
 	if (iter != m_Handlers.end())
@@ -31,12 +31,12 @@ void PacketHandler::HandlePacket(shared_ptr<AsioSession>& session, const Packet*
 	}
 }
 
-void PacketHandler::HandledefEchoString(shared_ptr<AsioSession>& session, const Packet& packet)
+void PacketHandler::HandledefEchoString(AsioSessionPtr& session, const Packet& packet)
 {
 	if (packet.header.type != PacketType::defEchoString)
 		return;
 
-	shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
+	GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
 	if (gameSession == nullptr)
 	{
 		LOGE << "Session Nullptr!";
@@ -46,12 +46,12 @@ void PacketHandler::HandledefEchoString(shared_ptr<AsioSession>& session, const 
 	LOGD << "SessionUID : "<<gameSession->GetSessionUID()<<"-> Payload : " << packet.payload;
 }
 
-void PacketHandler::HandleJH(shared_ptr<AsioSession>& session, const Packet& packet)
+void PacketHandler::HandleJH(AsioSessionPtr& session, const Packet& packet)
 {
 	if (packet.header.type != PacketType::JH)
 		return;
 
-	shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
+	GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
 	if (gameSession == nullptr)
 	{
 		LOGE << "Session Nullptr!";
@@ -62,12 +62,12 @@ void PacketHandler::HandleJH(shared_ptr<AsioSession>& session, const Packet& pac
 	// 추가 처리 로직
 }
 
-void PacketHandler::HandleYJ(shared_ptr<AsioSession>& session, const Packet& packet)
+void PacketHandler::HandleYJ(AsioSessionPtr& session, const Packet& packet)
 {
 	if (packet.header.type != PacketType::YJ)
 		return;
 
-	shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
+	GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
 	if (gameSession == nullptr)
 	{
 		LOGE << "Session Nullptr!";
@@ -77,12 +77,12 @@ void PacketHandler::HandleYJ(shared_ptr<AsioSession>& session, const Packet& pac
 	LOGD << "SessionUID : " << gameSession->GetSessionUID() << "-> Payload : " << packet.payload;
 }
 
-void PacketHandler::HandleES(shared_ptr<AsioSession>& session, const Packet& packet)
+void PacketHandler::HandleES(AsioSessionPtr& session, const Packet& packet)
 {
 	if (packet.header.type != PacketType::ES)
 		return;
 
-	shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
+	GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
 	if (gameSession == nullptr)
 	{
 		LOGE << "Session Nullptr!";
@@ -92,7 +92,7 @@ void PacketHandler::HandleES(shared_ptr<AsioSession>& session, const Packet& pac
 	LOGD << "SessionUID : " << gameSession->GetSessionUID() << "-> Payload : " << packet.payload << endl;
 }
 
-void PacketHandler::HandleInvalid(shared_ptr<AsioSession>& session, const Packet& packet)
+void PacketHandler::HandleInvalid(AsioSessionPtr& session, const Packet& packet)
 {
 	LOGE << "Unknown Packet Type : " << static_cast<int16>(packet.header.type);
 }

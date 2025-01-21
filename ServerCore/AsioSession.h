@@ -20,13 +20,15 @@ public:
     void SetService(std::shared_ptr<AsioService> service);
     tcp::socket& GetSocket() { return m_Socket; }
 
-    std::shared_ptr<AsioSession> GetSession()
+    AsioSessionPtr GetSession()
     {
         return static_pointer_cast<AsioSession>(shared_from_this());
     }
 
     int32 GetSessionUID() { return m_SessionUID; }
     void SetSessionUID(int32 sessionUID) { m_SessionUID = sessionUID; }
+
+    void CloseSession();
 
 protected:
     virtual void OnSend(int32 len) { }
@@ -39,19 +41,14 @@ private:
     void HandleRead(boost::system::error_code ec, std::size_t length);
     void HandleWrite(boost::system::error_code ec, std::size_t length);
 
-    int32 OnRecvPacket(BYTE* buffer, int32 len);
-    void CloseSession();
+    int32 ProcessPacket(BYTE* buffer, int32 len);
+    
 
 private:
     std::mutex m_Mutex;
     boost::asio::io_context& m_IoContext;
     tcp::socket m_Socket;
-    std::array<char, 1024> m_ReadBuffer;
-    std::array<BYTE, 4096> m_RecvBuffer;
     std::shared_ptr<AsioService> m_Service;
     std::atomic<int32> m_SessionUID;
-
-protected:
-    //std::queue<Packet> m_SendQueue;
     PacketBuffer m_PacketBuffer;
 };

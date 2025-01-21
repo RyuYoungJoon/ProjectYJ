@@ -14,27 +14,45 @@ AsioService::~AsioService()
 
 void AsioService::CloseService()
 {
+    std::lock_guard<std::mutex> lock(m_Mutex);
+
+    // 모든 세션 종료
+    for (auto& session : m_Sessions)
+    {
+        if (session)
+        {
+            session->CloseSession();
+        }
+    }
+
+    // 세션 컨테이너 비우기
+    m_Sessions.clear();
+    m_SessionCount = 0;
+    LOGI << "Session Clear";
 }
 
-std::shared_ptr<class AsioSession> AsioService::CreateSession(boost::asio::io_context& iocontext, tcp::socket socket)
+AsioSessionPtr AsioService::CreateSession(boost::asio::io_context& iocontext, tcp::socket socket)
 {
-	std::shared_ptr<class AsioSession> session = m_SessionMaker(iocontext, std::move(socket));
+	AsioSessionPtr session = m_SessionMaker(iocontext, std::move(socket));
 	session->SetService(shared_from_this());
 
 	return session;
 }
 
-void AsioService::AddSession(std::shared_ptr<class AsioSession> session)
+void AsioService::AddSession(AsioSessionPtr session)
 {
-	// TODO : Lock을 걸어줘야하나?;
-    m_SessionCount.fetch_add(1);
+    std::lock_guard<std::mutex> lock(m_Mutex);
+
 	m_Sessions.insert(session);
+    m_SessionCount++;
 }
 
-void AsioService::ReleaseSession(std::shared_ptr<class AsioSession> session)
+void AsioService::ReleaseSession(AsioSessionPtr session)
 {
+    std::lock_guard<std::mutex> lock(m_Mutex);
+
 	m_Sessions.erase(session);
-    m_SessionCount.fetch_sub(1);
+    m_SessionCount--;
 }
 
 AsioServerService::AsioServerService(boost::asio::io_context& iocontext, short port, SessionMaker SessionMaker, int32 maxSessionCount)
@@ -62,7 +80,10 @@ bool AsioServerService::Start()
 void AsioServerService::CloseService()
 {
 	// TODO
-	int a = 0;
+    if (m_Acceptor)
+    {
+        m_Acceptor->Stop();
+    }
 
 	AsioService::CloseService();
 }
