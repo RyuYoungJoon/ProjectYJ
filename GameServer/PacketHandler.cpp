@@ -27,7 +27,6 @@ void PacketHandler::HandlePacket(shared_ptr<AsioSession>& session, const Packet*
 	}
 	else
 	{
-		LOGE << "Unknown Packet Type : " << static_cast<int16>(packet->header.type);
 		HandleInvalid(session, *packet);
 	}
 }
@@ -37,10 +36,12 @@ void PacketHandler::HandledefEchoString(shared_ptr<AsioSession>& session, const 
 	if (packet.header.type != PacketType::defEchoString)
 		return;
 
-	if (session != nullptr)
-		return;
-
 	shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
+	if (gameSession == nullptr)
+	{
+		LOGE << "Session Nullptr!";
+		return;
+	}
 
 	LOGD << "SessionUID : "<<gameSession->GetSessionUID()<<"-> Payload : " << packet.payload;
 }
@@ -50,8 +51,12 @@ void PacketHandler::HandleJH(shared_ptr<AsioSession>& session, const Packet& pac
 	if (packet.header.type != PacketType::JH)
 		return;
 
-
 	shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
+	if (gameSession == nullptr)
+	{
+		LOGE << "Session Nullptr!";
+		return;
+	}
 
 	LOGD << "SessionUID : " << gameSession->GetSessionUID() << "-> Payload : " << packet.payload;
 	// 추가 처리 로직
@@ -62,8 +67,12 @@ void PacketHandler::HandleYJ(shared_ptr<AsioSession>& session, const Packet& pac
 	if (packet.header.type != PacketType::YJ)
 		return;
 
-
 	shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
+	if (gameSession == nullptr)
+	{
+		LOGE << "Session Nullptr!";
+		return;
+	}
 
 	LOGD << "SessionUID : " << gameSession->GetSessionUID() << "-> Payload : " << packet.payload;
 }
@@ -74,8 +83,13 @@ void PacketHandler::HandleES(shared_ptr<AsioSession>& session, const Packet& pac
 		return;
 
 	shared_ptr<GameSession> gameSession = static_pointer_cast<GameSession>(session);
+	if (gameSession == nullptr)
+	{
+		LOGE << "Session Nullptr!";
+		return;
+	}
 
-	LOGD << "SessionUID : " << gameSession->GetSessionUID() << "-> Payload : " << packet.payload;
+	LOGD << "SessionUID : " << gameSession->GetSessionUID() << "-> Payload : " << packet.payload << endl;
 }
 
 void PacketHandler::HandleInvalid(shared_ptr<AsioSession>& session, const Packet& packet)

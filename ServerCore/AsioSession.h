@@ -26,6 +26,7 @@ public:
     }
 
     int32 GetSessionUID() { return m_SessionUID; }
+    void SetSessionUID(int32 sessionUID) { m_SessionUID = sessionUID; }
 
 protected:
     virtual void OnSend(int32 len) { }

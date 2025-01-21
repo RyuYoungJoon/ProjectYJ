@@ -24,10 +24,10 @@ void AsioAcceptor::HandleAccept(std::shared_ptr<tcp::socket> newSocket, boost::s
         auto session = m_Service->CreateSession(m_IoContext, std::move(*newSocket));
 
         session->Start();
+        session->SetSessionUID(m_User.fetch_add(1));
 
         m_Service->AddSession(session);
-
-        LOGI << "New Client Connected" << endl;
+        LOGI << "New Client Connected [" << session->GetSessionUID() << "]";
 
         // 또 받으러 가기
         DoAccept();

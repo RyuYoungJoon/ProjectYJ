@@ -12,8 +12,6 @@ AsioSession::AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
 
 void AsioSession::Start()
 {
-    m_SessionUID.fetch_add(1);
-
     DoRead();
 }
 
