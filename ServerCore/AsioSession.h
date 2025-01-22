@@ -16,8 +16,12 @@ public:
 
     void Start();
     void Send(const Packet& message);
+    bool Connect();
+    void DisConnect();
 
     void SetService(std::shared_ptr<AsioService> service);
+    shared_ptr<AsioService> GetService() { return m_Service.lock(); }
+
     tcp::socket& GetSocket() { return m_Socket; }
 
     AsioSessionPtr GetSession()
@@ -40,7 +44,6 @@ private:
     void DoRead();
     void HandleRead(boost::system::error_code ec, std::size_t length);
     void HandleWrite(boost::system::error_code ec, std::size_t length);
-
     int32 ProcessPacket(BYTE* buffer, int32 len);
     
 
@@ -48,7 +51,7 @@ private:
     std::mutex m_Mutex;
     boost::asio::io_context& m_IoContext;
     tcp::socket m_Socket;
-    std::shared_ptr<AsioService> m_Service;
+    weak_ptr<AsioService> m_Service;
     std::atomic<int32> m_SessionUID;
     PacketBuffer m_PacketBuffer;
 };

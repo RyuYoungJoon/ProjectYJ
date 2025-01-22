@@ -4,7 +4,7 @@
 #include "AsioService.h"
 
 AsioService::AsioService(ServiceType type, boost::asio::io_context& iocontext, short port, SessionMaker SessionMaker, int32 maxSessionCount)
-	:m_type(type), iocontext(iocontext), m_Port(port), m_SessionMaker(SessionMaker)
+	:m_type(type), iocontext(iocontext), m_Port(port), m_SessionMaker(SessionMaker), m_MaxSessionCount(maxSessionCount)
 {
 }
 
@@ -102,7 +102,14 @@ bool AsioClientService::Start()
     if (!CanStart())
         return false;
 
-    DoConnect();
+    const int32 maxSessionCount = GetMaxSessionCount();
+    for (int i = 0; i < maxSessionCount; ++i)
+    {
+        AsioSessionPtr session = CreateSession(iocontext, tcp::socket(iocontext));
+        if (session->Connect() == false)
+            return false;
+    }
+
     return true;
 }
 

@@ -26,6 +26,8 @@ public:
     void AddSession(AsioSessionPtr session);
     void ReleaseSession(AsioSessionPtr session);
 
+    int32 GetMaxSessionCount() { return m_MaxSessionCount; }
+
 public:
     ServiceType GetServiceType() { return m_type; }
 

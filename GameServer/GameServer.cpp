@@ -42,8 +42,7 @@ int main()
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
 	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_DEBUG);
-	_CrtSetBreakAlloc(4339);
-
+	//_CrtSetBreakAlloc(4339);
 
 	char filePath[MAX_PATH] = { 0 };
 	string iniPath = "\\ServerConfig.ini";
@@ -51,8 +50,6 @@ int main()
 	::PathRemoveFileSpecA(filePath);
 
 	string ConfigPath = filePath + iniPath;
-
-	LOGD << "iniPath : " << ConfigPath;
 
 	if (!std::filesystem::exists(ConfigPath))
 	{
@@ -84,9 +81,8 @@ int main()
 	{
 		boost::asio::io_context IoContext;
 		
-		short port = reader.GetInteger("server", "port", 9999);
-		// Temporary Test Port
-		//short port = 7777;
+		int16 port = static_cast<int16>(reader.GetInteger("server", "port", 9999));
+
 		serverService = std::make_shared<AsioServerService>(
 			IoContext, 
 			port, 

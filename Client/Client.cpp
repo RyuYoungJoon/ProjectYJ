@@ -13,6 +13,7 @@ const int SOCKETS_PER_THREAD = 100; // 스레드당 소켓 개수
 //const std::string SERVER_HOST = "192.168.21.96";
 const std::string SERVER_HOST = "127.0.0.1";
 const short SERVER_PORT = 7777;
+ClientServicePtr clientService;
 
 using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_context::executor_type>;
 
@@ -101,23 +102,19 @@ int main()
 
     // Config폴더 설정
     string ConfigPath = filePath + iniPath;
-
-    LOGD << "iniPath : " << ConfigPath;
-
     if (!std::filesystem::exists(ConfigPath))
     {
         LOGE << "File Not found" << ConfigPath;
     }
 
+    // Config 파일 읽기
     INIReader reader(ConfigPath);
     if (reader.ParseError() < 0)
     {
         LOGE << "Can't load config";
     }
-
-    // Config값 읽어오기
     string serverIP = reader.Get("client", "address", "127.0.0.1");
-    int16 serverPort = static_cast<int16>(reader.GetInteger("client", "port", 27931));
+    int16 serverPort = static_cast<int16>(reader.GetInteger("client", "port", 7777));
 
     // 로그 폴더 설정
     string logPath = filePath;
@@ -132,6 +129,7 @@ int main()
     char strInfoPathTemp[MAX_PATH] = { 0 };
     sprintf_s(strInfoPathTemp, sizeof(strInfoPathTemp), "%sclient.log", logPath.c_str());
 
+    // plog 선언
     static plog::RollingFileAppender<plog::TxtFormatter> fileAppender(strInfoPathTemp);
     static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
     plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
@@ -141,27 +139,49 @@ int main()
         boost::asio::io_context ioContext;
         work_guard_type work_guard(ioContext.get_executor());
 
-        // 스레드 풀 생성
+        //// 스레드 생성
         std::vector<std::thread> threads;
         tcp::resolver resolver(ioContext);
         tcp::resolver::results_type endPoint = resolver.resolve(serverIP, std::to_string(serverPort));
 
-        for (int i = 0; i < THREAD_COUNT; ++i)
+        //LOGI << "ServerIP : " << serverIP << ", Port : " << serverPort;
+
+        //for (int i = 0; i < THREAD_COUNT; ++i)
+        //{
+        //    threads.emplace_back([&ioContext, endPoint]() {
+        //        WorkerThread(ioContext, endPoint ,SOCKETS_PER_THREAD);
+        //        });
+        //}
+
+        //ioContext.run();
+
+        //// 모든 스레드 종료 대기
+        //for (auto& thread : threads)
+        //{
+        //    if (thread.joinable())
+        //        thread.join();
+        //}
+        // 
+        //AsioClientService(boost::asio::io_context & iocontext, const std::string & host, short port, 
+        // SessionMaker SessionMaker, int32 maxSessionCount = 1);
+
+        clientService = std::make_shared<AsioClientService>(
+            ioContext,
+            serverIP,
+            serverPort,
+            [](boost::asio::io_context& ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
+                return std::make_shared<ServerSession>(ioContext, std::move(socket));
+            });
+
+        if (clientService->Start())
         {
-            threads.emplace_back([&ioContext, endPoint]() {
-                WorkerThread(ioContext, endPoint ,SOCKETS_PER_THREAD);
-                });
+            LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << serverPort;
         }
-
-        ioContext.run();
-
-        // 모든 스레드 종료 대기
-        for (auto& thread : threads)
+        else
         {
-            if (thread.joinable())
-                thread.join();
+            LOGE << "Failed to Start the Server";
+            return -1;
         }
-
 
         return 0;
     }
