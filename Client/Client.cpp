@@ -1,6 +1,12 @@
 ﻿#include "pch.h"
 #include "AsioService.h"
 #include "AsioSession.h"
+#include <filesystem>
+
+#include <..\include\INIReader\ini.h>
+#include <..\include\INIReader\ini.c>
+#include <..\include\INIReader\INIReader.h>
+#include <..\include\INIReader\INIReader.cpp>
 
 const int THREAD_COUNT = 10;      // 총 스레드 수
 const int SOCKETS_PER_THREAD = 100; // 스레드당 소켓 개수
@@ -52,7 +58,7 @@ public:
     }
 };
 
-void WorkerThread(boost::asio::io_context& ioContext, int socketCount)
+void WorkerThread(boost::asio::io_context& ioContext, tcp::resolver::results_type endpoint ,int socketCount)
 {
     std::vector<std::shared_ptr<ServerSession>> sessions;
 
@@ -63,11 +69,8 @@ void WorkerThread(boost::asio::io_context& ioContext, int socketCount)
             auto session = std::make_shared<ServerSession>(ioContext, tcp::socket(ioContext));
             sessions.push_back(session);
 
-            tcp::resolver resolver(ioContext);
-            auto endpoints = resolver.resolve(SERVER_HOST, std::to_string(SERVER_PORT));
-
             auto self = session; // 세션의 수명을 보장하기 위해 self 참조 유지
-            boost::asio::async_connect(session->GetSocket(), endpoints,
+            boost::asio::async_connect(session->GetSocket(), endpoint,
                 [session, message](boost::system::error_code ec, tcp::endpoint)
                 {
                     if (!ec)
@@ -90,8 +93,46 @@ void WorkerThread(boost::asio::io_context& ioContext, int socketCount)
 
 int main()
 {
-    static plog::RollingFileAppender<plog::TxtFormatter> fileAppender("ClientLog.txt");
+    // 파일 경로 뽑기
+    char filePath[MAX_PATH] = { 0 };
+    string iniPath = "\\ClientConfig.ini";
+    ::GetModuleFileNameA(nullptr, filePath, MAX_PATH);
+    ::PathRemoveFileSpecA(filePath);
 
+    // Config폴더 설정
+    string ConfigPath = filePath + iniPath;
+
+    LOGD << "iniPath : " << ConfigPath;
+
+    if (!std::filesystem::exists(ConfigPath))
+    {
+        LOGE << "File Not found" << ConfigPath;
+    }
+
+    INIReader reader(ConfigPath);
+    if (reader.ParseError() < 0)
+    {
+        LOGE << "Can't load config";
+    }
+
+    // Config값 읽어오기
+    string serverIP = reader.Get("client", "address", "127.0.0.1");
+    int16 serverPort = static_cast<int16>(reader.GetInteger("client", "port", 27931));
+
+    // 로그 폴더 설정
+    string logPath = filePath;
+    logPath.append("\\log\\");
+
+    // 해당 경로에 폴더가 없으면 생성해라.
+    if (::GetFileAttributesA(logPath.c_str()) == -1)
+    {
+        ::CreateDirectoryA(logPath.c_str(), nullptr);
+    }
+
+    char strInfoPathTemp[MAX_PATH] = { 0 };
+    sprintf_s(strInfoPathTemp, sizeof(strInfoPathTemp), "%sclient.log", logPath.c_str());
+
+    static plog::RollingFileAppender<plog::TxtFormatter> fileAppender(strInfoPathTemp);
     static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
     plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
 
@@ -102,11 +143,13 @@ int main()
 
         // 스레드 풀 생성
         std::vector<std::thread> threads;
+        tcp::resolver resolver(ioContext);
+        tcp::resolver::results_type endPoint = resolver.resolve(serverIP, std::to_string(serverPort));
 
         for (int i = 0; i < THREAD_COUNT; ++i)
         {
-            threads.emplace_back([&ioContext]() {
-                WorkerThread(ioContext, SOCKETS_PER_THREAD);
+            threads.emplace_back([&ioContext, endPoint]() {
+                WorkerThread(ioContext, endPoint ,SOCKETS_PER_THREAD);
                 });
         }
 

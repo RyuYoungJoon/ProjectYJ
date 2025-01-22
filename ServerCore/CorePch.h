@@ -21,6 +21,8 @@
 #include <..\include\plog\Appenders\RollingFileAppender.h>
 #include <..\include\plog\Formatters\CsvFormatter.h>
 
+#include "Shlwapi.h"
+
 #include <iostream>
 #include <boost/asio.hpp>
 #include <boost/pool/singleton_pool.hpp>

@@ -25,7 +25,7 @@ void GameSession::OnDisconnected()
 int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 {
 	Packet* packet = reinterpret_cast<Packet*>(buffer);
-	shared_ptr<AsioSession> gameSession = GetSession();
+	AsioSessionPtr gameSession = GetSession();
 
 
 	m_PacketHandler.HandlePacket(gameSession, packet);

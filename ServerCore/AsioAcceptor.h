@@ -13,6 +13,7 @@ public:
     virtual ~AsioAcceptor() = default;
 
     void Start();
+    void Stop();
 private:
     void DoAccept();
     void HandleAccept(std::shared_ptr<tcp::socket> newSocket, boost::system::error_code ec);

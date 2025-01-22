@@ -9,5 +9,6 @@
 #pragma comment(lib, "Release\\ServerCore.lib")
 #endif // _DEBUG
 
+#pragma comment(lib, "Shlwapi.lib")
 
 #include "CorePch.h"

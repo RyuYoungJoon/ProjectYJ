@@ -8,6 +8,20 @@ void AsioAcceptor::Start()
     DoAccept();
 }
 
+void AsioAcceptor::Stop()
+{
+    if (m_Acceptor.is_open())
+    {
+        boost::system::error_code ec;
+        m_Acceptor.close(ec);
+
+        if (!ec)
+        {
+            LOGI << "Accept STOP!";
+        }
+    }
+}
+
 void AsioAcceptor::DoAccept()
 {
     // 货肺款 家南 积己
