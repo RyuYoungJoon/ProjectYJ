@@ -6,7 +6,7 @@
 
 
 AsioSession::AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
-	: m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(65536)
+	: m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(65536), m_Resolver(iocontext)
 {
 }
 
@@ -32,43 +32,31 @@ void AsioSession::Send(const Packet& message)
 		std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
-bool AsioSession::Connect()
+bool AsioSession::Connect(const string& host, const string& port)
 {
-	/*boost::asio::async_connect(m_Socket, results,
-		[this, self](boost::system::error_code ec, tcp::endpoint endpoint)
-		{
-			if (!ec)
-			{
-				LOGI << "Successfully connected to " << endpoint;
+	bool isConnect = false;
+	tcp::resolver::query targetQuery(host, port);
+	auto targetEndpoint = m_Resolver.resolve(targetQuery);
 
-				auto session = CreateSession(iocontext, std::move(m_Socket));
-				session->Start();
-
-				AddSession(session);
-			}
-			else
-			{
-				LOGE << "Connection Failed : " << ec.message();
-			}
-		});*/
 	auto self = shared_from_this();
-	tcp::endpoint endpoint;
-
-	boost::asio::async_connect(m_Socket, endpoint,
-		[this, self](boost::system::error_code ec, tcp::endpoint endpoint)
+	boost::asio::async_connect(m_Socket, targetEndpoint,
+		[this, self, &isConnect](boost::system::error_code ec, tcp::endpoint endpoint)
 		{
 			if (!ec)
 			{
 				LOGI << "Successfully connected to " << endpoint;
-
+				OnConnected();
 				Start();
+
+				isConnect = true;
 			}
 			else
 			{
 				LOGE << "Connection Failed : " << ec.message();
 			}
 		});
-		
+
+	return isConnect;
 }
 
 void AsioSession::DisConnect()

@@ -20,175 +20,124 @@ using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_context
 class ServerSession : public AsioSession
 {
 public:
-    ServerSession(boost::asio::io_context& iocontext, tcp::socket socket)
-        : AsioSession(iocontext, std::move(socket))
-    {
-    }
+	ServerSession(boost::asio::io_context& iocontext, tcp::socket socket)
+		: AsioSession(iocontext, std::move(socket))
+	{
+	}
 
-    void OnSend(int32 len)
-    {
-        cout << "OnSend 호출" << endl;
-    }
+	void OnSend(int32 len)
+	{
+		cout << "OnSend 호출" << endl;
+	}
 
-    int32 OnRecv(BYTE* buffer, int32 len)
-    {
-        return len;
-    }
+	int32 OnRecv(BYTE* buffer, int32 len)
+	{
+		return len;
+	}
 
-    void OnConnected()
-    {
-        LOGI << "Connected Server!";
-    }
+	void OnConnected()
+	{
+		SendPacket("hihihi");
+		LOGI << "Connected Server!";
+	}
 
-    void OnDisconnected()
-    {
-        LOGI << "Disconnected Server!";
-    }
+	void OnDisconnected()
+	{
+		LOGI << "Disconnected Server!";
+	}
 
-    void SendPacket(const std::string& message)
-    {
-        Packet packet;
-        std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
-        std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
-        packet.header.type = PacketType::YJ;
-        packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + message.size() + sizeof(PacketTail));
-        std::memcpy(packet.payload, message.c_str(), message.size());
-        packet.tail.value = 255;
+	void SendPacket(const std::string& message)
+	{
+		Packet packet;
+		std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
+		std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
+		packet.header.type = PacketType::YJ;
+		packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + message.size() + sizeof(PacketTail));
+		std::memcpy(packet.payload, message.c_str(), message.size());
+		packet.tail.value = 255;
 
-        Send(packet);
-    }
+		Send(packet);
+	}
 };
-
-void WorkerThread(boost::asio::io_context& ioContext, tcp::resolver::results_type endpoint ,int socketCount)
-{
-    std::vector<std::shared_ptr<ServerSession>> sessions;
-
-    std::string message(u8"Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server. Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.Hello Server.",128);
-        for (int i = 0; i < socketCount; ++i)
-        {
-            // 세션 생성 및 소켓 관리
-            auto session = std::make_shared<ServerSession>(ioContext, tcp::socket(ioContext));
-            sessions.push_back(session);
-
-            auto self = session; // 세션의 수명을 보장하기 위해 self 참조 유지
-            boost::asio::async_connect(session->GetSocket(), endpoint,
-                [session, message](boost::system::error_code ec, tcp::endpoint)
-                {
-                    if (!ec)
-                    {
-                        session->Start();
-                        LOGI << "Connection to Server!";
-
-                        // 패킷 송신
-                        session->SendPacket(message);
-                    }
-                    else
-                    {
-                        LOGE << "Connection Failed! Message : " << ec.message();
-                    }
-                });
-        }
-
-    ioContext.run();
-}
 
 int main()
 {
-    // 파일 경로 뽑기
-    char filePath[MAX_PATH] = { 0 };
-    string iniPath = "\\ClientConfig.ini";
-    ::GetModuleFileNameA(nullptr, filePath, MAX_PATH);
-    ::PathRemoveFileSpecA(filePath);
+	// 파일 경로 뽑기
+	char filePath[MAX_PATH] = { 0 };
+	string iniPath = "\\ClientConfig.ini";
+	::GetModuleFileNameA(nullptr, filePath, MAX_PATH);
+	::PathRemoveFileSpecA(filePath);
 
-    // Config폴더 설정
-    string ConfigPath = filePath + iniPath;
-    if (!std::filesystem::exists(ConfigPath))
-    {
-        LOGE << "File Not found" << ConfigPath;
-    }
+	// Config폴더 설정
+	string ConfigPath = filePath + iniPath;
+	if (!std::filesystem::exists(ConfigPath))
+	{
+		LOGE << "File Not found" << ConfigPath;
+	}
 
-    // Config 파일 읽기
-    INIReader reader(ConfigPath);
-    if (reader.ParseError() < 0)
-    {
-        LOGE << "Can't load config";
-    }
-    string serverIP = reader.Get("client", "address", "127.0.0.1");
-    int16 serverPort = static_cast<int16>(reader.GetInteger("client", "port", 7777));
+	// Config 파일 읽기
+	INIReader reader(ConfigPath);
+	if (reader.ParseError() < 0)
+	{
+		LOGE << "Can't load config";
+	}
 
-    // 로그 폴더 설정
-    string logPath = filePath;
-    logPath.append("\\log\\");
+	string serverPort = reader.Get("server", "port", "7777");
+	string serverIP = reader.Get("server", "address", "127.0.0.1");
 
-    // 해당 경로에 폴더가 없으면 생성해라.
-    if (::GetFileAttributesA(logPath.c_str()) == -1)
-    {
-        ::CreateDirectoryA(logPath.c_str(), nullptr);
-    }
+	// 로그 폴더 설정
+	string logPath = filePath;
+	logPath.append("\\log\\");
 
-    char strInfoPathTemp[MAX_PATH] = { 0 };
-    sprintf_s(strInfoPathTemp, sizeof(strInfoPathTemp), "%sclient.log", logPath.c_str());
+	// 해당 경로에 폴더가 없으면 생성해라.
+	if (::GetFileAttributesA(logPath.c_str()) == -1)
+	{
+		::CreateDirectoryA(logPath.c_str(), nullptr);
+	}
 
-    // plog 선언
-    static plog::RollingFileAppender<plog::TxtFormatter> fileAppender(strInfoPathTemp);
-    static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
-    plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
+	char strInfoPathTemp[MAX_PATH] = { 0 };
+	sprintf_s(strInfoPathTemp, sizeof(strInfoPathTemp), "%sclient.log", logPath.c_str());
 
-    try
-    {
-        boost::asio::io_context ioContext;
-        work_guard_type work_guard(ioContext.get_executor());
+	// plog 선언
+	static plog::RollingFileAppender<plog::TxtFormatter> fileAppender(strInfoPathTemp);
+	static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
+	plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
 
-        //// 스레드 생성
-        std::vector<std::thread> threads;
-        tcp::resolver resolver(ioContext);
-        tcp::resolver::results_type endPoint = resolver.resolve(serverIP, std::to_string(serverPort));
+	try
+	{
+		boost::asio::io_context ioContext;
+		work_guard_type work_guard(ioContext.get_executor());
 
-        //LOGI << "ServerIP : " << serverIP << ", Port : " << serverPort;
+		//// 스레드 생성
+		std::vector<std::thread> threads;
 
-        //for (int i = 0; i < THREAD_COUNT; ++i)
-        //{
-        //    threads.emplace_back([&ioContext, endPoint]() {
-        //        WorkerThread(ioContext, endPoint ,SOCKETS_PER_THREAD);
-        //        });
-        //}
+		clientService = std::make_shared<AsioClientService>(
+			ioContext,
+			serverIP,
+			serverPort,
+			[](boost::asio::io_context& ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
+				return std::make_shared<ServerSession>(ioContext, std::move(socket));
+			},
+			1000);
 
-        //ioContext.run();
+		if (clientService->Start())
+		{
+			LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << serverPort;
+		}
+		else
+		{
+			LOGE << "Failed to Start the Server";
+			return -1;
+		}
 
-        //// 모든 스레드 종료 대기
-        //for (auto& thread : threads)
-        //{
-        //    if (thread.joinable())
-        //        thread.join();
-        //}
-        // 
-        //AsioClientService(boost::asio::io_context & iocontext, const std::string & host, short port, 
-        // SessionMaker SessionMaker, int32 maxSessionCount = 1);
+		ioContext.run();
 
-        clientService = std::make_shared<AsioClientService>(
-            ioContext,
-            serverIP,
-            serverPort,
-            [](boost::asio::io_context& ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
-                return std::make_shared<ServerSession>(ioContext, std::move(socket));
-            });
+		return 0;
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "Exception: " << e.what() << std::endl;
+	}
 
-        if (clientService->Start())
-        {
-            LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << serverPort;
-        }
-        else
-        {
-            LOGE << "Failed to Start the Server";
-            return -1;
-        }
-
-        return 0;
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "Exception: " << e.what() << std::endl;
-    }
-
-    return 0;
+	return 0;
 }

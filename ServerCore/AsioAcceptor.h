@@ -5,8 +5,8 @@ class AsioService;
 class AsioAcceptor : public std::enable_shared_from_this<AsioAcceptor>
 {
 public:
-    AsioAcceptor(boost::asio::io_context& iocontext, short port, std::shared_ptr<AsioService> service)
-        : m_IoContext(iocontext), m_Acceptor(iocontext, tcp::endpoint(tcp::v4(), port)), m_Service(service)
+    AsioAcceptor(boost::asio::io_context& iocontext, string& port, std::shared_ptr<AsioService> service)
+        : m_IoContext(iocontext), m_Acceptor(iocontext, tcp::endpoint(tcp::v4(), stoi(port))), m_Service(service)
     {
     }
 

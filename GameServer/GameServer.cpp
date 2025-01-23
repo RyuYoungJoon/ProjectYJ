@@ -81,18 +81,20 @@ int main()
 	{
 		boost::asio::io_context IoContext;
 		
-		int16 port = static_cast<int16>(reader.GetInteger("server", "port", 9999));
+		string serverPort = reader.Get("server", "port", "7777");
+		string serverIP = reader.Get("server", "address", "127.0.0.1");
 
 		serverService = std::make_shared<AsioServerService>(
 			IoContext, 
-			port, 
+			serverIP,
+			serverPort,
 			[](boost::asio::io_context& ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
 				return std::make_shared<GameSession>(ioContext, std::move(socket));
 			});
 
 		if (serverService->Start())
 		{
-			LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << port;
+			LOGI << "[SERVER INFO] Server is running and waiting for connections on IP : " << serverIP << ", Port : " << serverPort;
 		}
 		else
 		{

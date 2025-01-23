@@ -16,7 +16,7 @@ public:
 
     void Start();
     void Send(const Packet& message);
-    bool Connect();
+    bool Connect(const string& host, const string& port);
     void DisConnect();
 
     void SetService(std::shared_ptr<AsioService> service);
@@ -54,4 +54,5 @@ private:
     weak_ptr<AsioService> m_Service;
     std::atomic<int32> m_SessionUID;
     PacketBuffer m_PacketBuffer;
+    tcp::resolver m_Resolver;
 };

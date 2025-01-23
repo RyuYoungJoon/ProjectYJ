@@ -7,14 +7,16 @@ enum class ServiceType : uint8
     Client
 };
 
-using SessionMaker = std::function<std::shared_ptr<class AsioSession>(boost::asio::io_context&, tcp::socket)>;
+class AsioSession;
+
+using SessionMaker = std::function<AsioSessionPtr(boost::asio::io_context&, tcp::socket)>;
 
 class AsioAcceptor;
 
 class AsioService : public std::enable_shared_from_this<AsioService>
 {
 public:
-    AsioService(ServiceType type, boost::asio::io_context& iocontext, short port ,SessionMaker SessionMaker, int32 maxSessionCount = 1);
+    AsioService(ServiceType type, boost::asio::io_context& iocontext, string& host, string& port ,SessionMaker SessionMaker, int32 maxSessionCount = 1);
     virtual ~AsioService();
 
     virtual bool Start() abstract;
@@ -28,6 +30,7 @@ public:
 
     int32 GetMaxSessionCount() { return m_MaxSessionCount; }
 
+    tcp::endpoint GetServiceEndpoint() { return m_ServiceEndpoint; }
 public:
     ServiceType GetServiceType() { return m_type; }
 
@@ -38,8 +41,11 @@ protected:
     int32 m_SessionCount = 0;
     int32 m_MaxSessionCount = 0;
     std::mutex m_Mutex;
-    short m_Port;
 
+    std::string m_Host;
+    std::string m_Port;
+
+    tcp::endpoint m_ServiceEndpoint;
     SessionMaker m_SessionMaker;
 };
 
@@ -47,7 +53,7 @@ protected:
 class AsioServerService : public AsioService
 {
 public:
-    AsioServerService(boost::asio::io_context& iocontext, short port, SessionMaker SessionMaker, int32 maxSessionCount = 1);
+    AsioServerService(boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount = 1);
     virtual ~AsioServerService();
 
 public:
@@ -61,23 +67,15 @@ private:
 };
 
 
-class AsioSession;
-
 class AsioClientService : public AsioService
 {
 public:
-    AsioClientService(boost::asio::io_context& iocontext, const std::string& host, short port, SessionMaker SessionMaker, int32 maxSessionCount = 1);
+    AsioClientService(boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount = 1);
 
     virtual ~AsioClientService() = default;
 
     virtual bool Start() override;
-
-private:
-    void DoConnect();
-
 private:
     tcp::resolver m_Resolver;
     tcp::socket m_Socket;
-    std::string m_Host;
-    short m_Port;
 };

@@ -3,8 +3,8 @@
 #include "AsioAcceptor.h"
 #include "AsioService.h"
 
-AsioService::AsioService(ServiceType type, boost::asio::io_context& iocontext, short port, SessionMaker SessionMaker, int32 maxSessionCount)
-	:m_type(type), iocontext(iocontext), m_Port(port), m_SessionMaker(SessionMaker), m_MaxSessionCount(maxSessionCount)
+AsioService::AsioService(ServiceType type, boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
+	:m_type(type), iocontext(iocontext), m_Host(host), m_Port(port), m_SessionMaker(SessionMaker), m_MaxSessionCount(maxSessionCount)
 {
 }
 
@@ -14,21 +14,21 @@ AsioService::~AsioService()
 
 void AsioService::CloseService()
 {
-    std::lock_guard<std::mutex> lock(m_Mutex);
+	std::lock_guard<std::mutex> lock(m_Mutex);
 
-    // 모든 세션 종료
-    for (auto& session : m_Sessions)
-    {
-        if (session)
-        {
-            session->CloseSession();
-        }
-    }
+	// 모든 세션 종료
+	for (auto& session : m_Sessions)
+	{
+		if (session)
+		{
+			session->CloseSession();
+		}
+	}
 
-    // 세션 컨테이너 비우기
-    m_Sessions.clear();
-    m_SessionCount = 0;
-    LOGI << "Session Clear";
+	// 세션 컨테이너 비우기
+	m_Sessions.clear();
+	m_SessionCount = 0;
+	LOGI << "Session Clear";
 }
 
 AsioSessionPtr AsioService::CreateSession(boost::asio::io_context& iocontext, tcp::socket socket)
@@ -41,22 +41,22 @@ AsioSessionPtr AsioService::CreateSession(boost::asio::io_context& iocontext, tc
 
 void AsioService::AddSession(AsioSessionPtr session)
 {
-    std::lock_guard<std::mutex> lock(m_Mutex);
+	std::lock_guard<std::mutex> lock(m_Mutex);
 
 	m_Sessions.insert(session);
-    m_SessionCount++;
+	m_SessionCount++;
 }
 
 void AsioService::ReleaseSession(AsioSessionPtr session)
 {
-    std::lock_guard<std::mutex> lock(m_Mutex);
+	std::lock_guard<std::mutex> lock(m_Mutex);
 
 	m_Sessions.erase(session);
-    m_SessionCount--;
+	m_SessionCount--;
 }
 
-AsioServerService::AsioServerService(boost::asio::io_context& iocontext, short port, SessionMaker SessionMaker, int32 maxSessionCount)
-	:AsioService(ServiceType::Server, iocontext, port, SessionMaker, maxSessionCount), 
+AsioServerService::AsioServerService(boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
+	:AsioService(ServiceType::Server, iocontext, host, port, SessionMaker, maxSessionCount),
 	m_IoContext(iocontext)
 {
 }
@@ -67,10 +67,10 @@ AsioServerService::~AsioServerService()
 
 bool AsioServerService::Start()
 {
-    if (!CanStart())
-        return false;
+	if (!CanStart())
+		return false;
 
-    m_Acceptor = std::make_shared<AsioAcceptor>(m_IoContext, m_Port, shared_from_this());
+	m_Acceptor = std::make_shared<AsioAcceptor>(m_IoContext, m_Port, shared_from_this());
 
 	m_Acceptor->Start();
 
@@ -80,69 +80,32 @@ bool AsioServerService::Start()
 void AsioServerService::CloseService()
 {
 	// TODO
-    if (m_Acceptor)
-    {
-        m_Acceptor->Stop();
-    }
+	if (m_Acceptor)
+	{
+		m_Acceptor->Stop();
+	}
 
 	AsioService::CloseService();
 }
 
-AsioClientService::AsioClientService(boost::asio::io_context& iocontext, const std::string& host, short port, SessionMaker SessionMaker, int32 maxSessionCount)
-	: AsioService(ServiceType::Client, iocontext, port, SessionMaker, maxSessionCount),
-	m_Resolver(iocontext),
-	m_Host(host),
-	m_Port(port),
+AsioClientService::AsioClientService(boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
+	: AsioService(ServiceType::Client, iocontext, host, port, SessionMaker, maxSessionCount),
 	m_Socket(iocontext)
 {
 }
 
 bool AsioClientService::Start()
 {
-    if (!CanStart())
-        return false;
+	if (!CanStart())
+		return false;
 
-    const int32 maxSessionCount = GetMaxSessionCount();
-    for (int i = 0; i < maxSessionCount; ++i)
-    {
-        AsioSessionPtr session = CreateSession(iocontext, tcp::socket(iocontext));
-        if (session->Connect() == false)
-            return false;
-    }
+	const int32 maxSessionCount = GetMaxSessionCount();
+	for (int i = 0; i < maxSessionCount; ++i)
+	{
+		AsioSessionPtr session = CreateSession(iocontext, tcp::socket(iocontext));
+		if (session->Connect(m_Host, m_Port) == false)
+			return false;
+	}
 
-    return true;
-}
-
-void AsioClientService::DoConnect()
-{
-    auto self(shared_from_this());
-
-    m_Resolver.async_resolve(m_Host, std::to_string(m_Port),
-        [this, self](const boost::system::error_code& ec, tcp::resolver::results_type results)
-        {
-            if (!ec)
-            {
-                boost::asio::async_connect(m_Socket, results,
-                    [this, self](boost::system::error_code ec, tcp::endpoint endpoint)
-                    {
-                        if (!ec)
-                        {
-                            LOGI << "Successfully connected to " << endpoint;
-                           
-                            auto session = CreateSession(iocontext, std::move(m_Socket));
-                            session->Start();
-
-                            AddSession(session);
-                        }
-                        else
-                        {
-                            LOGE << "Connection Failed : " << ec.message();
-                        }
-                    });
-            }
-            else
-            {
-                LOGE << "Resolve Failed : " << ec.message();
-            }
-        });
+	return true;
 }
