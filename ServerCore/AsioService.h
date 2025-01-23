@@ -76,6 +76,5 @@ public:
 
     virtual bool Start() override;
 private:
-    tcp::resolver m_Resolver;
     tcp::socket m_Socket;
 };

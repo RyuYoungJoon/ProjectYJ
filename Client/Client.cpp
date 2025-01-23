@@ -82,8 +82,10 @@ int main()
 		LOGE << "Can't load config";
 	}
 
-	string serverPort = reader.Get("server", "port", "7777");
-	string serverIP = reader.Get("server", "address", "127.0.0.1");
+	string serverPort = reader.Get("client", "Port", "7777");
+	string serverIP = reader.Get("client", "Address", "127.0.0.1");
+	int16 threadCnt = reader.GetInteger("client", "ThreadCnt", 1);
+	int16 maxSessionCnt = reader.GetInteger("client", "MaxSessionCount", 1);
 
 	// 로그 폴더 설정
 	string logPath = filePath;
@@ -118,16 +120,21 @@ int main()
 			[](boost::asio::io_context& ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
 				return std::make_shared<ServerSession>(ioContext, std::move(socket));
 			},
-			1000);
+			maxSessionCnt);
 
-		if (clientService->Start())
+		for (int i = 0; i < threadCnt; ++i)
 		{
-			LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << serverPort;
-		}
-		else
-		{
-			LOGE << "Failed to Start the Server";
-			return -1;
+			threads.emplace_back([&serverIP, &serverPort]() {
+				if (clientService->Start())
+				{
+					LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << serverPort;
+				}
+				else
+				{
+					LOGE << "Failed to Start the Server";
+					return -1;
+				}
+			});
 		}
 
 		ioContext.run();
