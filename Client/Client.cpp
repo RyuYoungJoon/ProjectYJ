@@ -8,11 +8,6 @@
 #include <..\include\INIReader\INIReader.h>
 #include <..\include\INIReader\INIReader.cpp>
 
-const int THREAD_COUNT = 10;      // 총 스레드 수
-const int SOCKETS_PER_THREAD = 100; // 스레드당 소켓 개수
-//const std::string SERVER_HOST = "192.168.21.96";
-const std::string SERVER_HOST = "127.0.0.1";
-const short SERVER_PORT = 7777;
 ClientServicePtr clientService;
 
 using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_context::executor_type>;
@@ -37,8 +32,9 @@ public:
 
 	void OnConnected()
 	{
+		sendCnt.fetch_add(1);
 		SendPacket("hihihi");
-		LOGI << "Connected Server!";
+		LOGI << "Connected Server! [" << sendCnt << "]";
 	}
 
 	void OnDisconnected()
@@ -58,6 +54,8 @@ public:
 
 		Send(packet);
 	}
+private:
+	atomic<int32> sendCnt = 0;
 };
 
 int main()

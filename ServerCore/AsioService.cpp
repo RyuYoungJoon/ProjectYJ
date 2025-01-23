@@ -88,7 +88,7 @@ void AsioServerService::CloseService()
 	AsioService::CloseService();
 }
 
-AsioClientService::AsioClientService(boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount = 1)
+AsioClientService::AsioClientService(boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
 	: AsioService(ServiceType::Client, iocontext, host, port, SessionMaker, maxSessionCount),
 	m_Socket(iocontext)
 {

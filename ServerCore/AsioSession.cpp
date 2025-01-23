@@ -30,33 +30,33 @@ void AsioSession::Send(const Packet& message)
 	auto self = shared_from_this();
 	boost::asio::async_write(m_Socket, boost::asio::buffer(buffer, bufferSize),
 		std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+	
+	MemoryPoolManager::GetMemoryPool(bufferSize).Deallocate(buffer);
 }
 
 bool AsioSession::Connect(const string& host, const string& port)
 {
-	bool isConnect = false;
 	tcp::resolver::query targetQuery(host, port);
 	auto targetEndpoint = m_Resolver.resolve(targetQuery);
 
 	auto self = shared_from_this();
 	boost::asio::async_connect(m_Socket, targetEndpoint,
-		[this, self, &isConnect](boost::system::error_code ec, tcp::endpoint endpoint)
+		[this, self](boost::system::error_code ec, tcp::endpoint endpoint)
 		{
 			if (!ec)
 			{
 				LOGI << "Successfully connected to " << endpoint;
-				OnConnected();
 				Start();
 
-				isConnect = true;
+				OnConnected();
 			}
 			else
 			{
-				LOGE << "Connection Failed : " << ec.message();
+				LOGE << "Connection Failed : " <<ec.value()<< ", " << ec.message();
 			}
 		});
 
-	return isConnect;
+	return true;
 }
 
 void AsioSession::DisConnect()
