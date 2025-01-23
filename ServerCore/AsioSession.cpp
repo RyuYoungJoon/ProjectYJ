@@ -61,7 +61,8 @@ bool AsioSession::Connect(const string& host, const string& port)
 
 void AsioSession::DisConnect()
 {
-
+	CloseSession();
+	OnDisconnected();
 }
 
 void AsioSession::SetService(std::shared_ptr<AsioService> service)

@@ -8,6 +8,8 @@
 #include <..\include\INIReader\INIReader.h>
 #include <..\include\INIReader\INIReader.cpp>
 
+string serverPort;
+string serverIP;
 ClientServicePtr clientService;
 
 using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_context::executor_type>;
@@ -35,11 +37,15 @@ public:
 		sendCnt.fetch_add(1);
 		SendPacket("hihihi");
 		LOGI << "Connected Server! [" << sendCnt << "]";
+
+		//DisConnect();
 	}
 
 	void OnDisconnected()
 	{
 		LOGI << "Disconnected Server!";
+
+		Connect(serverIP, serverPort);
 	}
 
 	void SendPacket(const std::string& message)
@@ -80,8 +86,8 @@ int main()
 		LOGE << "Can't load config";
 	}
 
-	string serverPort = reader.Get("client", "Port", "7777");
-	string serverIP = reader.Get("client", "Address", "127.0.0.1");
+	serverPort = reader.Get("client", "Port", "7777");
+	serverIP = reader.Get("client", "Address", "127.0.0.1");
 	int16 threadCnt = reader.GetInteger("client", "ThreadCnt", 1);
 	int16 maxSessionCnt = reader.GetInteger("client", "MaxSessionCount", 1);
 
@@ -122,7 +128,7 @@ int main()
 
 		for (int i = 0; i < threadCnt; ++i)
 		{
-			threads.emplace_back([&serverIP, &serverPort]() {
+			threads.emplace_back([]() {
 				if (clientService->Start())
 				{
 					LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << serverPort;
