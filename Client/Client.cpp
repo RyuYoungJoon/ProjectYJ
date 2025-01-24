@@ -38,7 +38,9 @@ public:
 		SendPacket("hihihi");
 		LOGI << "Connected Server! [" << sendCnt << "]";
 
-		//DisConnect();
+		this_thread::sleep_for(10ms);
+
+		DisConnect();
 	}
 
 	void OnDisconnected()

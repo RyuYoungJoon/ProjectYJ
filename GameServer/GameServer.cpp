@@ -83,7 +83,7 @@ int main()
 		
 		string serverPort = reader.Get("server", "port", "7777");
 		string serverIP = reader.Get("server", "address", "127.0.0.1");
-		int16 threadCnr = reader.GetInteger("server", "ThreadCnt", 4);
+		int16 threadCnt = reader.GetInteger("server", "ThreadCnt", 4);
 
 		serverService = std::make_shared<AsioServerService>(
 			IoContext, 
@@ -108,7 +108,8 @@ int main()
 			TaskQueue::GetInstance().ProcessTask();
 			});
 		std::vector<std::thread> m_asioThread;
-		for (int i = 0; i < 4; ++i)
+
+		for (int i = 0; i < threadCnt; ++i)
 		{
 			m_asioThread.emplace_back([&IoContext]() {
 				IoContext.run();
