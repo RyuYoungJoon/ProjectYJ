@@ -17,7 +17,7 @@ public:
     void Start();
     void Send(const Packet& message);
     bool Connect(const string& host, const string& port);
-    void DisConnect();
+    void Disconnect();
 
     void SetService(std::shared_ptr<AsioService> service);
     shared_ptr<AsioService> GetService() { return m_Service.lock(); }

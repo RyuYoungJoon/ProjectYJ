@@ -59,7 +59,7 @@ bool AsioSession::Connect(const string& host, const string& port)
 	return true;
 }
 
-void AsioSession::DisConnect()
+void AsioSession::Disconnect()
 {
 	CloseSession();
 	OnDisconnected();

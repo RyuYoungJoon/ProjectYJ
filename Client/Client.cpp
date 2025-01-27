@@ -40,7 +40,7 @@ public:
 
 		this_thread::sleep_for(10ms);
 
-		DisConnect();
+		Disconnect();
 	}
 
 	void OnDisconnected()
