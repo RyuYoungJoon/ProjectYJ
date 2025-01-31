@@ -13,6 +13,7 @@
 #include <chrono>
 #include <format>
 #include <filesystem>
+#include <random>
 
 #include <..\include\plog\Log.h>
 #include <..\include\plog\Appenders\ColorConsoleAppender.h>

@@ -48,6 +48,9 @@
     <ClInclude Include="TaskQueue.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="SocketUtil.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -81,6 +84,9 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="TaskQueue.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketUtil.cpp">
       <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>

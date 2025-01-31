@@ -83,7 +83,7 @@ int main()
 		
 		string serverPort = reader.Get("server", "port", "7777");
 		string serverIP = reader.Get("server", "address", "127.0.0.1");
-		int16 threadCnt = reader.GetInteger("server", "ThreadCnt", 4);
+		long threadCnt = reader.GetInteger("server", "ThreadCnt", 4);
 
 		serverService = std::make_shared<AsioServerService>(
 			IoContext, 

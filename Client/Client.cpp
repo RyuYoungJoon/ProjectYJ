@@ -8,6 +8,11 @@
 #include <..\include\INIReader\INIReader.h>
 #include <..\include\INIReader\INIReader.cpp>
 
+std::random_device rd;
+std::mt19937 gen(rd());
+std::uniform_int_distribution<int> dist(10, 100);
+std::uniform_int_distribution<int> sendDist(30, 80);
+
 string serverPort;
 string serverIP;
 ClientServicePtr clientService;
@@ -34,11 +39,12 @@ public:
 
 	void OnConnected()
 	{
-		sendCnt.fetch_add(1);
-		SendPacket("hihihi");
-		LOGI << "Connected Server! [" << sendCnt << "]";
+		std::this_thread::sleep_for(std::chrono::milliseconds(dist(gen)));
 
-		this_thread::sleep_for(10ms);
+		for (int i = 0; i < sendDist(gen); ++i)
+			SendPacket("hihihi");
+
+		LOGI << "Connected Server! [" << sendCnt << "]";
 
 		Disconnect();
 	}
@@ -90,8 +96,8 @@ int main()
 
 	serverPort = reader.Get("client", "Port", "7777");
 	serverIP = reader.Get("client", "Address", "127.0.0.1");
-	int16 threadCnt = reader.GetInteger("client", "ThreadCnt", 1);
-	int16 maxSessionCnt = reader.GetInteger("client", "MaxSessionCount", 1);
+	int16 threadCnt = reader.GetInteger("client", "ThreadCnt", 10);
+	int16 maxSessionCnt = reader.GetInteger("client", "MaxSessionCount", 100);
 
 	// 로그 폴더 설정
 	string logPath = filePath;
