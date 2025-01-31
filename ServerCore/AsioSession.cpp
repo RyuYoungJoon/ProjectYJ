@@ -158,9 +158,10 @@ int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
 
 void AsioSession::CloseSession()
 {
+	m_Socket.close();
+
 	if (auto service = m_Service.lock())
 	{
 		service->ReleaseSession(shared_from_this());
 	}
-	m_Socket.close();
 }

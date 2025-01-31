@@ -41,7 +41,7 @@ public:
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(dist(gen)));
 
-		for (int i = 0; i < sendDist(gen); ++i)
+		for (int i = 0; i < dist(gen); ++i)
 			SendPacket("hihihi");
 
 		LOGI << "Connected Server! [" << sendCnt << "]";
