@@ -8,6 +8,7 @@
 #include <..\include\INIReader\INIReader.h>
 #include <..\include\INIReader\INIReader.cpp>
 
+std::default_random_engine dre;
 std::random_device rd;
 std::mt19937 gen(rd());
 std::uniform_int_distribution<int> dist(10, 100);
@@ -37,16 +38,17 @@ public:
 		return len;
 	}
 
-	void OnConnected()
+	int OnConnected()
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(dist(gen)));
+		int random = dist(gen);
 
-		for (int i = 0; i < dist(gen); ++i)
+		for (int i = 0; i < random; ++i)
 			SendPacket("hihihi");
 
-		LOGI << "Connected Server! [" << sendCnt << "]";
-
+		LOGI << "SendCnt [" << sendCnt << "], tryCnt [" << random << "]";
 		Disconnect();
+		return random;
 	}
 
 	void OnDisconnected()
@@ -62,14 +64,13 @@ public:
 		std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
 		std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
 		packet.header.type = PacketType::YJ;
-		packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + message.size() + sizeof(PacketTail));
+		packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + sizeof(packet.payload) + sizeof(PacketTail));
 		std::memcpy(packet.payload, message.c_str(), message.size());
 		packet.tail.value = 255;
 
 		Send(packet);
 	}
 private:
-	atomic<int32> sendCnt = 0;
 };
 
 int main()
@@ -96,8 +97,8 @@ int main()
 
 	serverPort = reader.Get("client", "Port", "7777");
 	serverIP = reader.Get("client", "Address", "127.0.0.1");
-	int16 threadCnt = reader.GetInteger("client", "ThreadCnt", 10);
-	int16 maxSessionCnt = reader.GetInteger("client", "MaxSessionCount", 100);
+	int32 threadCnt = reader.GetInteger("client", "ThreadCnt", 10);
+	int32 maxSessionCnt = reader.GetInteger("client", "MaxSessionCount", 100);
 
 	// 로그 폴더 설정
 	string logPath = filePath;

@@ -45,10 +45,10 @@ int main()
 	//_CrtSetBreakAlloc(4339);
 
 	char filePath[MAX_PATH] = { 0 };
-	string iniPath = "\\ServerConfig.ini";
 	::GetModuleFileNameA(nullptr, filePath, MAX_PATH);
 	::PathRemoveFileSpecA(filePath);
 
+	string iniPath = "\\ServerConfig.ini";
 	string ConfigPath = filePath + iniPath;
 
 	if (!std::filesystem::exists(ConfigPath))

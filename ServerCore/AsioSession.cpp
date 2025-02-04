@@ -4,6 +4,8 @@
 #include "MemoryPoolManager.h"
 #include "TaskQueue.h"
 
+extern int totalCnt;
+extern int totalTryCnt;
 
 AsioSession::AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
 	: m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(65536), m_Resolver(iocontext)
@@ -48,7 +50,11 @@ bool AsioSession::Connect(const string& host, const string& port)
 				LOGI << "Successfully connected to " << endpoint;
 				Start();
 
-				OnConnected();
+				int random = OnConnected();
+				totalTryCnt += random;
+
+				LOGI << "TotalCnt[" << totalCnt << "] totalTryCnt[" << totalTryCnt << "]";
+
 			}
 			else
 			{
@@ -132,6 +138,11 @@ void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
 
 		CloseSession();
 	}
+	else
+	{
+		sendCnt.fetch_add(1);
+		totalCnt++;
+	}
 }
 
 int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
@@ -158,7 +169,18 @@ int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
 
 void AsioSession::CloseSession()
 {
-	m_Socket.close();
+	std::lock_guard<std::mutex> lock(m_Mutex);
+
+	if (!m_Socket.is_open())
+		return;
+
+	boost::asio::post(m_IoContext, [self = shared_from_this()]() {
+		if (self->m_Socket.is_open())
+		{
+			self->m_Socket.close();
+			LOGI << "SAFE";
+		}
+		});
 
 	if (auto service = m_Service.lock())
 	{

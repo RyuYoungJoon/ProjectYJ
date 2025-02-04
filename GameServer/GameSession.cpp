@@ -33,6 +33,7 @@ int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 	return int32();
 }
 
-void GameSession::OnConnected()
+int GameSession::OnConnected()
 {
+	return 0;
 }

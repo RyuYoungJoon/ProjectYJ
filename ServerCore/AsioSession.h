@@ -37,8 +37,10 @@ public:
 protected:
     virtual void OnSend(int32 len) { }
     virtual int32 OnRecv(BYTE* buffer, int32 len) { return len; }
-    virtual void OnConnected() { }
+    virtual int OnConnected() { return 0; }
     virtual void OnDisconnected() { }
+
+    atomic<int32> sendCnt = 0;
 
 private:
     void DoRead();
