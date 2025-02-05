@@ -38,7 +38,6 @@ public:
 
 	int OnConnected()
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(dist(dre)));
 		int random = dist(dre);
 
 		for (int i = 0; i < random; ++i)
@@ -53,6 +52,7 @@ public:
 	{
 		LOGI << "Disconnected Server!";
 
+		std::this_thread::sleep_for(100ms);
 		Connect(serverIP, serverPort);
 	}
 
