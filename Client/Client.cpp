@@ -8,11 +8,9 @@
 #include <..\include\INIReader\INIReader.h>
 #include <..\include\INIReader\INIReader.cpp>
 
-std::default_random_engine dre;
 std::random_device rd;
-std::mt19937 gen(rd());
+std::default_random_engine dre(rd());
 std::uniform_int_distribution<int> dist(10, 100);
-std::uniform_int_distribution<int> sendDist(30, 80);
 
 string serverPort;
 string serverIP;
@@ -40,14 +38,14 @@ public:
 
 	int OnConnected()
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(dist(gen)));
-		int random = dist(gen);
+		std::this_thread::sleep_for(std::chrono::milliseconds(dist(dre)));
+		int random = dist(dre);
 
 		for (int i = 0; i < random; ++i)
 			SendPacket("hihihi");
 
 		LOGI << "SendCnt [" << sendCnt << "], tryCnt [" << random << "]";
-		Disconnect();
+		
 		return random;
 	}
 

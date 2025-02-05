@@ -142,6 +142,7 @@ void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
 	{
 		sendCnt.fetch_add(1);
 		totalCnt++;
+		Disconnect();
 	}
 }
 
