@@ -41,9 +41,17 @@ public:
 		int random = dist(dre);
 
 		for (int i = 0; i < random; ++i)
+		{
 			SendPacket("hihihi");
+			// 시도 횟수
+			sendCnt.fetch_add(1);
+		}
 
-		LOGI << "SendCnt [" << sendCnt << "], tryCnt [" << random << "]";
+		// TODO : 아예 카운트 찍는 기능을 만들자.
+		// sendCnt == random
+		// 내가 시도한 횟수 SendCnt
+		// 내가 시도한 전체 횟수 TotalTryCnt
+		LOGI << "SendCnt [" << sendCnt << "]";
 		
 		return random;
 	}
@@ -52,8 +60,10 @@ public:
 	{
 		LOGI << "Disconnected Server!";
 
-		std::this_thread::sleep_for(100ms);
+		//std::this_thread::sleep_for(100ms);
 		Connect(serverIP, serverPort);
+		
+		LOGI << "TryConnected Server!";
 	}
 
 	void SendPacket(const std::string& message)

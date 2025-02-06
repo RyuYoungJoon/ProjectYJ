@@ -38,6 +38,7 @@ void InputThread(boost::asio::io_context& ioContext)
 
 int main()
 {
+	// TODO : 로그 설정하기, Config 설정하기 함수로 나누기.
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
@@ -103,12 +104,13 @@ int main()
 			return -1;
 		}
 		
+		// TODO : 실제로 쓰는것만 놔두기 OR TaskQueue 추가 개발하기
 		std::thread ioThread(InputThread, std::ref(IoContext));
 		std::thread WorkerThread([]() {
 			TaskQueue::GetInstance().ProcessTask();
 			});
-		std::vector<std::thread> m_asioThread;
 
+		std::vector<std::thread> m_asioThread;
 		for (int i = 0; i < threadCnt; ++i)
 		{
 			m_asioThread.emplace_back([&IoContext]() {

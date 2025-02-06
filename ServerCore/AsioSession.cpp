@@ -33,7 +33,7 @@ void AsioSession::Send(const Packet& message)
 	boost::asio::async_write(m_Socket, boost::asio::buffer(buffer, bufferSize),
 		std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 	
-	MemoryPoolManager::GetMemoryPool(bufferSize).Deallocate(buffer);
+	//MemoryPoolManager::GetMemoryPool(bufferSize).Deallocate(buffer);
 }
 
 bool AsioSession::Connect(const string& host, const string& port)
@@ -41,6 +41,7 @@ bool AsioSession::Connect(const string& host, const string& port)
 	tcp::resolver::query targetQuery(host, port);
 	auto targetEndpoint = m_Resolver.resolve(targetQuery);
 
+	// TODO Cnt 위치 옮기기
 	auto self = shared_from_this();
 	boost::asio::async_connect(m_Socket, targetEndpoint,
 		[this, self](boost::system::error_code ec, tcp::endpoint endpoint)
@@ -140,7 +141,7 @@ void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
 	}
 	else
 	{
-		sendCnt.fetch_add(1);
+		// 실제로 보낸 횟수
 		totalCnt++;
 		Disconnect();
 	}
@@ -183,8 +184,8 @@ void AsioSession::CloseSession()
 		}
 		});
 
-	if (auto service = m_Service.lock())
+	/*if (auto service = m_Service.lock())
 	{
 		service->ReleaseSession(shared_from_this());
-	}
+	}*/
 }

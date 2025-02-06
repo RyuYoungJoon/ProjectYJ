@@ -13,6 +13,8 @@ void AsioAcceptor::Start()
     // Acceptor 열기
     m_Acceptor.open(tcp::v4());
     
+    // TODO 소켓 옵션 설정하는 클래스 만들기
+    // 소켓 옵션에 대해 공부해서 진짜 해야하는 옵션만 설정
     // 소켓 옵션 설정
     boost::asio::socket_base::reuse_address reuseAddrOpt(true);
     boost::asio::socket_base::linger lingerOpt(true, 0);
@@ -63,6 +65,7 @@ void AsioAcceptor::HandleAccept(std::shared_ptr<tcp::socket> newSocket, boost::s
         // 세션 만들고 세션 스타트
         auto session = m_Service->CreateSession(m_IoContext, std::move(*newSocket));
 
+        // 세션 마다 내가 보내는 카운트를 저장하는 변수를 만들자.
         session->Start();
         session->SetSessionUID(m_User.fetch_add(1));
 
