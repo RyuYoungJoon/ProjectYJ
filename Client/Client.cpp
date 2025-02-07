@@ -48,10 +48,8 @@ public:
 			tryCnt.fetch_add(1);
 		}
 
-		// TODO : 아예 카운트 찍는 기능을 만들자.
-		// sendCnt == random
-		// 내가 시도한 횟수 SendCnt
-		// 내가 시도한 전체 횟수 TotalTryCnt
+		// tryCnt : 시도한 횟수
+		// totalTryCnt : 전체 시도한 횟수
 		totalTryCnt.fetch_add(tryCnt);
 
 		LOGI << "TryCnt [" << tryCnt << "], TotalCnt [" << totalTryCnt << "]";

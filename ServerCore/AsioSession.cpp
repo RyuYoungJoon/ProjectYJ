@@ -140,8 +140,10 @@ void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
 	}   
 	else
 	{
-		// 실제로 보낸 횟수
-		RealTryCnt++;
+		// RealSendCnt : 실제 보낸 횟수
+		// TotalSendCnt : 전체 실제 보낸 횟수
+		realSendCnt.fetch_add(1);
+		totalSendCnt.fetch_add(realSendCnt);
 		Disconnect();
 	}
 }
@@ -183,8 +185,8 @@ void AsioSession::CloseSession()
 		}
 		});
 
-	/*if (auto service = m_Service.lock())
+	if (auto service = m_Service.lock())
 	{
 		service->ReleaseSession(shared_from_this());
-	}*/
+	}
 }
