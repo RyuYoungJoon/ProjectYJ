@@ -15,6 +15,7 @@ std::uniform_int_distribution<int> dist(10, 100);
 string serverPort;
 string serverIP;
 ClientServicePtr clientService;
+int totalTryCnt = 0;
 
 using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_context::executor_type>;
 
@@ -44,14 +45,16 @@ public:
 		{
 			SendPacket("hihihi");
 			// 시도 횟수
-			sendCnt.fetch_add(1);
+			tryCnt.fetch_add(1);
 		}
 
 		// TODO : 아예 카운트 찍는 기능을 만들자.
 		// sendCnt == random
 		// 내가 시도한 횟수 SendCnt
 		// 내가 시도한 전체 횟수 TotalTryCnt
-		LOGI << "SendCnt [" << sendCnt << "]";
+		totalTryCnt.fetch_add(tryCnt);
+
+		LOGI << "TryCnt [" << tryCnt << "], TotalCnt [" << totalTryCnt << "]";
 		
 		return random;
 	}
@@ -60,7 +63,7 @@ public:
 	{
 		LOGI << "Disconnected Server!";
 
-		//std::this_thread::sleep_for(100ms);
+		std::this_thread::sleep_for(1s);
 		Connect(serverIP, serverPort);
 		
 		LOGI << "TryConnected Server!";

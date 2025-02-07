@@ -5,7 +5,7 @@
 #include "TaskQueue.h"
 
 extern int totalCnt;
-extern int totalTryCnt;
+extern int RealTryCnt;
 
 AsioSession::AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
 	: m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(65536), m_Resolver(iocontext)
@@ -30,9 +30,8 @@ void AsioSession::Send(const Packet& message)
 
 	// TODO : 메모리 DeAllocate 구조잡기
 	auto self = shared_from_this();
-	boost::asio::async_write(m_Socket, boost::asio::buffer(buffer, bufferSize),
+	m_Socket.async_write_some(boost::asio::mutable_buffer(buffer, bufferSize),
 		std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
-	
 	//MemoryPoolManager::GetMemoryPool(bufferSize).Deallocate(buffer);
 }
 
@@ -55,7 +54,7 @@ bool AsioSession::Connect(const string& host, const string& port)
 				totalTryCnt += random;
 
 				LOGI << "TotalCnt[" << totalCnt << "] totalTryCnt[" << totalTryCnt << "]";
-
+				
 			}
 			else
 			{
@@ -138,11 +137,11 @@ void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
 		LOGE << "Session Close";
 
 		CloseSession();
-	}
+	}   
 	else
 	{
 		// 실제로 보낸 횟수
-		totalCnt++;
+		RealTryCnt++;
 		Disconnect();
 	}
 }

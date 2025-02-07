@@ -4,7 +4,7 @@
 #include "AsioService.h"
 
 int totalCnt = 0;
-int totalTryCnt = 0;
+int RealTryCnt = 0;
 
 AsioService::AsioService(ServiceType type, boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
 	:m_type(type), iocontext(iocontext), m_Host(host), m_Port(port), m_SessionMaker(SessionMaker), m_MaxSessionCount(maxSessionCount)

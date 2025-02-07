@@ -40,7 +40,8 @@ protected:
     virtual int OnConnected() { return 0; }
     virtual void OnDisconnected() { }
 
-    atomic<int32> sendCnt = 0;
+    atomic<int32> tryCnt = 0;
+    atomic<int32> totalTryCnt = 0;
 
 private:
     void DoRead();
