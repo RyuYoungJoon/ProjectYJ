@@ -5,9 +5,6 @@
 #include "TaskQueue.h"
 #include "ServerAnalyzer.h"
 
-extern int totalCnt;
-extern int RealTryCnt;
-
 AsioSession::AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
 	: m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(65536), m_Resolver(iocontext)
 {
@@ -52,7 +49,7 @@ bool AsioSession::Connect(const string& host, const string& port)
 				LOGI << "Successfully connected to " << endpoint;
 				Start();
 
-				int random = OnConnected();
+				OnConnected();
 				//totalTryCnt += random;
 				//
 				//LOGI << "TotalCnt[" << totalCnt << "] totalTryCnt[" << totalTryCnt << "]";

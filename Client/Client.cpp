@@ -16,7 +16,6 @@ std::uniform_int_distribution<int> dist(10, 100);
 string serverPort;
 string serverIP;
 ClientServicePtr clientService;
-int totalTryCnt = 0;
 
 using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_context::executor_type>;
 
@@ -38,11 +37,9 @@ public:
 		return len;
 	}
 
-	int OnConnected()
+	void OnConnected()
 	{
-		int random = dist(dre);
-
-		for (int i = 0; i < random; ++i)
+		for (int i = 0; i < dist(dre); ++i)
 		{
 			SendPacket("hihihi");
 		}
@@ -50,7 +47,6 @@ public:
 		LOGD << "SendCount : " << ServerAnalyzer::GetInstance().GetSendCount() << ", TotalSendCount : " << ServerAnalyzer::GetInstance().GetTotalSendCount();
 
 		Disconnect();
-		return random;
 	}
 
 	void OnDisconnected()

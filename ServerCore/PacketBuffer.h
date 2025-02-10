@@ -7,7 +7,7 @@ public:
     PacketBuffer(int32 bufferSize);
     ~PacketBuffer() = default;
 
-    bool OnWrite(size_t size);
+    bool OnWrite(int32 size);
     bool OnRead(int32 size);
     void Clear();
 

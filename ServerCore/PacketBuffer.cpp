@@ -9,7 +9,7 @@ PacketBuffer::PacketBuffer(int32 bufferSize)
     m_Buffer.resize(m_Capacity);
 }
 
-bool PacketBuffer::OnWrite(size_t size)
+bool PacketBuffer::OnWrite(int32 size)
 {
     if (size > FreeSize())
         return false;
