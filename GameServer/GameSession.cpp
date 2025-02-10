@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GameSession.h"
 #include "PacketHandler.h"
+#include "ServerAnalyzer.h"
 
 GameSession::GameSession(boost::asio::io_context& iocontext, tcp::socket socket)
 	: AsioSession(iocontext, std::move(socket))
@@ -27,6 +28,7 @@ int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 	Packet* packet = reinterpret_cast<Packet*>(buffer);
 	AsioSessionPtr gameSession = GetSession();
 
+	ServerAnalyzer::GetInstance().IncrementRecvCnt();
 
 	m_PacketHandler.HandlePacket(gameSession, packet);
 

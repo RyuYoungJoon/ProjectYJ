@@ -3,6 +3,7 @@
 #include "AsioService.h"
 #include "MemoryPoolManager.h"
 #include "TaskQueue.h"
+#include "ServerAnalyzer.h"
 
 extern int totalCnt;
 extern int RealTryCnt;
@@ -19,6 +20,7 @@ void AsioSession::Start()
 
 void AsioSession::Send(const Packet& message)
 {
+	ServerAnalyzer::GetInstance().IncrementSendCnt();
 	// 메모리풀 매니저에서 메모리를 가져오자.
 	size_t bufferSize = message.header.size;
 
@@ -51,9 +53,9 @@ bool AsioSession::Connect(const string& host, const string& port)
 				Start();
 
 				int random = OnConnected();
-				totalTryCnt += random;
-
-				LOGI << "TotalCnt[" << totalCnt << "] totalTryCnt[" << totalTryCnt << "]";
+				//totalTryCnt += random;
+				//
+				//LOGI << "TotalCnt[" << totalCnt << "] totalTryCnt[" << totalTryCnt << "]";
 				
 			}
 			else
@@ -78,6 +80,9 @@ void AsioSession::SetService(std::shared_ptr<AsioService> service)
 
 void AsioSession::DoRead()
 {
+	LOGD << "RecvCount : " << ServerAnalyzer::GetInstance().GetRecvCount() << ", TotalRecvCount : " << ServerAnalyzer::GetInstance().GetTotalRecvCount();
+
+	ServerAnalyzer::GetInstance().ResetRecvCount();
 	m_Socket.async_read_some(boost::asio::buffer(m_PacketBuffer.WritePos(), m_PacketBuffer.FreeSize()),
 		std::bind(&AsioSession::HandleRead, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
@@ -140,11 +145,10 @@ void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
 	}   
 	else
 	{
-		// RealSendCnt : 실제 보낸 횟수
-		// TotalSendCnt : 전체 실제 보낸 횟수
-		realSendCnt.fetch_add(1);
-		totalSendCnt.fetch_add(realSendCnt);
-		Disconnect();
+		// 다 보내면 Disconnect 해야함.
+		// 지금은 하나 보내면 다른 send 하기 전에 Disconnect 해버림.
+		// 전부 보냈다라는 플래그가 필요함!!
+		//Disconnect();
 	}
 }
 

@@ -48,8 +48,11 @@
     <ClInclude Include="TaskQueue.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="ServerAnalyzer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
     <ClInclude Include="SocketUtil.h">
-      <Filter>Network</Filter>
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -86,8 +89,11 @@
     <ClCompile Include="TaskQueue.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="ServerAnalyzer.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
     <ClCompile Include="SocketUtil.cpp">
-      <Filter>Network</Filter>
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

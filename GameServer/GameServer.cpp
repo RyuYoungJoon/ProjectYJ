@@ -4,6 +4,7 @@
 #include "AsioSession.h"
 #include "GameSession.h"
 #include "TaskQueue.h"
+#include "ServerAnalyzer.h"
 
 #include <..\include\INIReader\ini.h>
 #include <..\include\INIReader\ini.c>
@@ -29,6 +30,9 @@ void InputThread(boost::asio::io_context& ioContext)
 
 			serverService->CloseService();
 			ioContext.stop();
+			break;
+		case 1:
+			LOGD << "TotalPacketRecvCount : " << ServerAnalyzer::GetInstance().GetTotalRecvCount();
 			break;
 		default:
 			break;

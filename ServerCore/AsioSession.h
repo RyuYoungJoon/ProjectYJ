@@ -41,7 +41,9 @@ protected:
     virtual void OnDisconnected() { }
 
     atomic<int32> tryCnt = 0;
-    atomic<int32> totalTryCnt = 0;
+    //atomic<int32> totalTryCnt = 0;
+    atomic<int32> realRecvCnt = 0;
+    atomic<int32> totalRecvCnt = 0;
 
 private:
     void DoRead();

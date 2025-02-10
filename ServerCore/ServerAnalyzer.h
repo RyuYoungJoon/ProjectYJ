@@ -39,6 +39,8 @@ public:
 
 	int32 GetSendCount() const { return m_SendCount; }
 	int32 GetRecvCount() const { return m_RecvCount; }
+	int32 GetTotalSendCount() const { return m_TotalSendCount; }
+	int32 GetTotalRecvCount() const { return m_TotalRecvCount; }
 
 private:
 	// pair <TotalCnt, Cnt>

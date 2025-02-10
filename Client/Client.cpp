@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "AsioService.h"
 #include "AsioSession.h"
+#include "ServerAnalyzer.h"
 #include <filesystem>
 
 #include <..\include\INIReader\ini.h>
@@ -44,21 +45,17 @@ public:
 		for (int i = 0; i < random; ++i)
 		{
 			SendPacket("hihihi");
-			// 시도 횟수
-			tryCnt.fetch_add(1);
 		}
 
-		// tryCnt : 시도한 횟수
-		// totalTryCnt : 전체 시도한 횟수
-		totalTryCnt.fetch_add(tryCnt);
+		LOGD << "SendCount : " << ServerAnalyzer::GetInstance().GetSendCount() << ", TotalSendCount : " << ServerAnalyzer::GetInstance().GetTotalSendCount();
 
-		LOGI << "TryCnt [" << tryCnt << "], TotalCnt [" << totalTryCnt << "]";
-		
+		Disconnect();
 		return random;
 	}
 
 	void OnDisconnected()
 	{
+		ServerAnalyzer::GetInstance().ResetSendCount();
 		LOGI << "Disconnected Server!";
 
 		std::this_thread::sleep_for(1s);
