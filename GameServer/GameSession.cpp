@@ -35,7 +35,6 @@ int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 	return int32();
 }
 
-int GameSession::OnConnected()
+void GameSession::OnConnected()
 {
-	return 0;
 }

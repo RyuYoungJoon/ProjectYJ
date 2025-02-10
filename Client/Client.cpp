@@ -17,6 +17,7 @@ string serverPort;
 string serverIP;
 ClientServicePtr clientService;
 
+std::vector<std::thread> threads;
 using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_context::executor_type>;
 
 class ServerSession : public AsioSession
@@ -54,7 +55,7 @@ public:
 		ServerAnalyzer::GetInstance().ResetSendCount();
 		LOGI << "Disconnected Server!";
 
-		std::this_thread::sleep_for(1s);
+		std::this_thread::sleep_for(500ms);
 		Connect(serverIP, serverPort);
 		
 		LOGI << "TryConnected Server!";
@@ -72,6 +73,7 @@ public:
 
 		Send(packet);
 	}
+
 private:
 };
 
@@ -126,7 +128,6 @@ int main()
 		work_guard_type work_guard(ioContext.get_executor());
 
 		//// 스레드 생성
-		std::vector<std::thread> threads;
 
 		clientService = std::make_shared<AsioClientService>(
 			ioContext,
@@ -150,6 +151,12 @@ int main()
 					return -1;
 				}
 			});
+		} 
+
+		for (auto& t : threads) {
+			if (t.joinable()) {  // join 가능한지 확인 후 호출 (이미 join()된 스레드에 다시 join()하면 오류 발생)
+				t.join();
+			}
 		}
 
 		ioContext.run();

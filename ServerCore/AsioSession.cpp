@@ -136,7 +136,7 @@ void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
 {
 	if (ec)
 	{
-		LOGE << "Session Close";
+		LOGE << "Session Close : " << ec.value() << ", Message : " << ec.message();
 
 		CloseSession();
 	}   
@@ -176,15 +176,35 @@ void AsioSession::CloseSession()
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
 	if (!m_Socket.is_open())
+	{
+		LOGW << "SOCKET이 이미 닫혀있음.";
 		return;
+	}
 
-	boost::asio::post(m_IoContext, [self = shared_from_this()]() {
-		if (self->m_Socket.is_open())
-		{
-			self->m_Socket.close();
-			LOGI << "SAFE";
+	//boost::asio::post(m_IoContext, [self = shared_from_this()]() {
+	//	if (self->m_Socket.is_open())
+	//	{
+	//		self->m_Socket.close();
+	//		LOGI << "SAFE";
+	//	}
+	//	});
+
+
+
+	boost::system::error_code ec;
+
+	if (m_Socket.is_open())
+	{
+		m_Socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+		if (ec) {
+			LOGE << "ShutDownm 에러 : " << ec.value() << ", " << ec.message();
 		}
-		});
+	}
+
+	m_Socket.close(ec);
+	if (ec) {
+		LOGE << "CLOSE 에러 : " << ec.value()<< ", " << ec.message();
+	}
 
 	if (auto service = m_Service.lock())
 	{
