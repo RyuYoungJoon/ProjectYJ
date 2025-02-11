@@ -140,7 +140,7 @@ int main()
 
 		for (int i = 0; i < threadCnt; ++i)
 		{
-			threads.emplace_back([]() {
+			threads.emplace_back([&ioContext]() {
 				if (clientService->Start())
 				{
 					LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << serverPort;
@@ -150,16 +150,16 @@ int main()
 					LOGE << "Failed to Start the Server";
 					return -1;
 				}
+
+				ioContext.run();
 			});
-		} 
+		}
 
 		for (auto& t : threads) {
 			if (t.joinable()) {  // join 가능한지 확인 후 호출 (이미 join()된 스레드에 다시 join()하면 오류 발생)
 				t.join();
 			}
 		}
-
-		ioContext.run();
 
 		return 0;
 	}

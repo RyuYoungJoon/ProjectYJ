@@ -107,7 +107,14 @@ bool AsioClientService::Start()
 	{
 		AsioSessionPtr session = CreateSession(iocontext, tcp::socket(iocontext));
 		if (session->Connect(m_Host, m_Port) == false)
+		{
+			LOGE << "Connect Fail!";
 			return false;
+		}
+		else
+		{
+			LOGD << "Session : " << i << ", Socket Handle : " << session->GetSocket().native_handle();
+		}
 	}
 
 	return true;
