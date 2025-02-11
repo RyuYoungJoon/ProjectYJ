@@ -52,11 +52,14 @@ public:
 
 	void OnDisconnected()
 	{
-		ServerAnalyzer::GetInstance().ResetSendCount();
 		LOGI << "Disconnected Server!";
 
 		std::this_thread::sleep_for(500ms);
-		Connect(serverIP, serverPort);
+		if (ServerAnalyzer::GetInstance().GetTotalSendCount() < 100000)
+		{
+			ServerAnalyzer::GetInstance().ResetSendCount();
+			Connect(serverIP, serverPort);
+		}
 		
 		LOGI << "TryConnected Server!";
 	}
