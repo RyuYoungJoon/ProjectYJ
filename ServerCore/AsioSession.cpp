@@ -47,6 +47,7 @@ bool AsioSession::Connect(const string& host, const string& port)
 			if (!ec)
 			{
 				LOGI << "Successfully connected to " << endpoint;
+				WaitForSocketClose();
 				Start();
 
 				OnConnected();
@@ -67,7 +68,6 @@ bool AsioSession::Connect(const string& host, const string& port)
 void AsioSession::Disconnect()
 {
 	CloseSession();
-	OnDisconnected();
 }
 
 void AsioSession::SetService(std::shared_ptr<AsioService> service)
@@ -206,8 +206,20 @@ void AsioSession::CloseSession()
 		LOGE << "CLOSE ¿¡·¯ : " << ec.value()<< ", " << ec.message();
 	}
 
-	if (auto service = m_Service.lock())
+	/*if (auto service = m_Service.lock())
 	{
 		service->ReleaseSession(shared_from_this());
-	}
+	}*/
+}
+
+void AsioSession::WaitForSocketClose()
+{
+	m_Socket.async_wait(boost::asio::socket_base::wait_read,
+		[this](boost::system::error_code ec) {
+			if (ec)
+			{
+				LOGD << "Socket closed or error detected : " << ec.value()<< ", " << ec.message();
+				OnDisconnected();
+			}
+		});
 }

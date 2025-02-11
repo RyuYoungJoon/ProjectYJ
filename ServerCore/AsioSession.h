@@ -33,7 +33,8 @@ public:
     void SetSessionUID(int32 sessionUID) { m_SessionUID = sessionUID; }
 
     void CloseSession();
-
+    void WaitForSocketClose();
+    
 protected:
     virtual void OnSend(int32 len) { }
     virtual int32 OnRecv(BYTE* buffer, int32 len) { return len; }

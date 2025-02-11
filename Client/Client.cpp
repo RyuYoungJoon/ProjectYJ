@@ -40,9 +40,9 @@ public:
 
 	void OnConnected()
 	{
-		for (int i = 0; i < dist(dre); ++i)
+		for (int i = 0; i < 100; ++i)
 		{
-			SendPacket("hihihi");
+			SendPacket("hihisdvsdvsdvdsvhi");
 		}
 
 		LOGD << "SendCount : " << ServerAnalyzer::GetInstance().GetSendCount() << ", TotalSendCount : " << ServerAnalyzer::GetInstance().GetTotalSendCount();
