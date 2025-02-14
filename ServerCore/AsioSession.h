@@ -46,6 +46,7 @@ protected:
     atomic<int32> realRecvCnt = 0;
     atomic<int32> totalRecvCnt = 0;
 
+    boost::asio::io_context& m_IoContext;
 private:
     void DoRead();
     void HandleRead(boost::system::error_code ec, std::size_t length);
@@ -55,7 +56,6 @@ private:
 
 private:
     std::mutex m_Mutex;
-    boost::asio::io_context& m_IoContext;
     tcp::socket m_Socket;
     weak_ptr<AsioService> m_Service;
     std::atomic<int32> m_SessionUID;

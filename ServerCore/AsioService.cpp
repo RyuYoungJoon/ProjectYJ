@@ -39,14 +39,14 @@ AsioSessionPtr AsioService::CreateSession(boost::asio::io_context& iocontext, tc
 	AsioSessionPtr session = m_SessionMaker(iocontext, std::move(socket));
 	session->SetService(shared_from_this());
 
-	boost::asio::socket_base::reuse_address reuseAddrOpt(true);
+	/*boost::asio::socket_base::reuse_address reuseAddrOpt(true);
 	boost::asio::socket_base::linger lingerOpt(true, 0);
 	boost::asio::ip::tcp::no_delay noDelayOpt(true);
 
 	session->GetSocket().set_option(reuseAddrOpt);
 	session->GetSocket().set_option(lingerOpt);
 	session->GetSocket().set_option(noDelayOpt);
-	session->GetSocket().set_option(boost::asio::socket_base::send_buffer_size(0));
+	session->GetSocket().set_option(boost::asio::socket_base::send_buffer_size(0));*/
 
 
 	return session;

@@ -9,9 +9,6 @@
 #include <..\include\INIReader\INIReader.h>
 #include <..\include\INIReader\INIReader.cpp>
 
-std::random_device rd;
-std::default_random_engine dre(rd());
-std::uniform_int_distribution<int> dist(10, 100);
 
 string serverPort;
 string serverIP;
@@ -26,11 +23,22 @@ public:
 	ServerSession(boost::asio::io_context& iocontext, tcp::socket socket)
 		: AsioSession(iocontext, std::move(socket))
 	{
+		std::random_device rd;
+		std::default_random_engine dre(rd());
+		std::uniform_int_distribution<int> dist(10, 100);
+		targetRandomCnt = dist(dre);
 	}
 
 	void OnSend(int32 len)
 	{
-		cout << "OnSend 호출" << endl;
+		packetCount++;
+
+		if (packetCount >= targetRandomCnt)
+		{
+			boost::asio::post(m_IoContext, [this]() {
+				Disconnect();
+				});
+		}
 	}
 
 	int32 OnRecv(BYTE* buffer, int32 len)
@@ -46,15 +54,14 @@ public:
 		}
 
 		LOGD << "SendCount : " << ServerAnalyzer::GetInstance().GetSendCount() << ", TotalSendCount : " << ServerAnalyzer::GetInstance().GetTotalSendCount();
-
-		Disconnect();
 	}
 
 	void OnDisconnected()
 	{
 		LOGI << "Disconnected Server!";
 
-		std::this_thread::sleep_for(500ms);
+		std::this_thread::sleep_for(3s);
+
 		if (ServerAnalyzer::GetInstance().GetTotalSendCount() < 100000)
 		{
 			ServerAnalyzer::GetInstance().ResetSendCount();
@@ -78,6 +85,8 @@ public:
 	}
 
 private:
+	int32 targetRandomCnt = 0;
+	int32 packetCount = 0;
 };
 
 int main()

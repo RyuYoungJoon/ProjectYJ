@@ -36,6 +36,19 @@ void AsioSession::Send(const Packet& message)
 
 bool AsioSession::Connect(const string& host, const string& port)
 {
+	//WaitForSocketClose();
+	if (m_Socket.is_open())
+	{
+		boost::system::error_code ec;
+		m_Socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+		m_Socket.close(ec);
+	}
+
+	// 새로운 소켓 생성
+	m_Socket = tcp::socket(m_IoContext);
+
+	std::this_thread::sleep_for(std::chrono::seconds(3));
+
 	tcp::resolver::query targetQuery(host, port);
 	auto targetEndpoint = m_Resolver.resolve(targetQuery);
 
@@ -47,7 +60,6 @@ bool AsioSession::Connect(const string& host, const string& port)
 			if (!ec)
 			{
 				LOGI << "Successfully connected to " << endpoint;
-				WaitForSocketClose();
 				Start();
 
 				OnConnected();
@@ -67,7 +79,18 @@ bool AsioSession::Connect(const string& host, const string& port)
 
 void AsioSession::Disconnect()
 {
+	boost::system::error_code ec;
+
+	m_Socket.cancel(ec);
+	if (ec)
+	{
+		LOGE << "Cancle error : " << ec.value() << ", " << ec.message();
+	}
 	CloseSession();
+
+	m_Socket = tcp::socket(m_IoContext);
+
+	OnDisconnected();
 }
 
 void AsioSession::SetService(std::shared_ptr<AsioService> service)
@@ -146,6 +169,7 @@ void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
 		// 지금은 하나 보내면 다른 send 하기 전에 Disconnect 해버림.
 		// 전부 보냈다라는 플래그가 필요함!!
 		//Disconnect();
+		OnSend(length);
 	}
 }
 
@@ -181,17 +205,11 @@ void AsioSession::CloseSession()
 		return;
 	}
 
-	//boost::asio::post(m_IoContext, [self = shared_from_this()]() {
-	//	if (self->m_Socket.is_open())
-	//	{
-	//		self->m_Socket.close();
-	//		LOGI << "SAFE";
-	//	}
-	//	});
-
-
-
 	boost::system::error_code ec;
+	m_Socket.cancel(ec);
+	if (ec) {
+		LOGE << "Cancel error: " << ec.value() << ", " << ec.message();
+	}
 
 	if (m_Socket.is_open())
 	{
@@ -199,21 +217,22 @@ void AsioSession::CloseSession()
 		if (ec) {
 			LOGE << "ShutDownm 에러 : " << ec.value() << ", " << ec.message();
 		}
+
+		m_Socket.close(ec);
+		if (ec) {
+			LOGE << "CLOSE 에러 : " << ec.value() << ", " << ec.message();
+		}
 	}
 
-	m_Socket.close(ec);
-	if (ec) {
-		LOGE << "CLOSE 에러 : " << ec.value()<< ", " << ec.message();
-	}
-
-	/*if (auto service = m_Service.lock())
+	if (auto service = m_Service.lock())
 	{
 		service->ReleaseSession(shared_from_this());
-	}*/
+	}
 }
 
 void AsioSession::WaitForSocketClose()
 {
+
 	m_Socket.async_wait(boost::asio::socket_base::wait_read,
 		[this](boost::system::error_code ec) {
 			if (ec)
