@@ -22,14 +22,14 @@ void AsioAcceptor::Start()
     boost::asio::socket_base::receive_buffer_size recvBufferSizeOpt(65536);
     boost::asio::socket_base::send_buffer_size sendBufferSizeOpt(65536);
     boost::asio::socket_base::keep_alive keepAliveOpt(true);
-
+    
     m_Acceptor.set_option(reuseAddrOpt);
     m_Acceptor.set_option(lingerOpt);
     m_Acceptor.set_option(noDelayOpt);
     m_Acceptor.set_option(recvBufferSizeOpt);
     m_Acceptor.set_option(sendBufferSizeOpt);
     m_Acceptor.set_option(keepAliveOpt);
-
+    
     m_Acceptor.bind(tcp::endpoint(tcp::v4(), 7777));
     m_Acceptor.listen(65536);
 

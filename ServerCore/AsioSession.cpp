@@ -37,17 +37,17 @@ void AsioSession::Send(const Packet& message)
 bool AsioSession::Connect(const string& host, const string& port)
 {
 	//WaitForSocketClose();
-	if (m_Socket.is_open())
+	/*if (m_Socket.is_open())
 	{
 		boost::system::error_code ec;
 		m_Socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		m_Socket.close(ec);
-	}
+	}*/
 
 	// 货肺款 家南 积己
-	m_Socket = tcp::socket(m_IoContext);
+	//m_Socket = tcp::socket(m_IoContext);
 
-	std::this_thread::sleep_for(std::chrono::seconds(3));
+	//std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	tcp::resolver::query targetQuery(host, port);
 	auto targetEndpoint = m_Resolver.resolve(targetQuery);
@@ -81,14 +81,15 @@ void AsioSession::Disconnect()
 {
 	boost::system::error_code ec;
 
-	m_Socket.cancel(ec);
-	if (ec)
-	{
-		LOGE << "Cancle error : " << ec.value() << ", " << ec.message();
-	}
-	CloseSession();
+	LOGI << "SessionUID : " << GetSessionUID() << ", Disconnecting";
 
-	m_Socket = tcp::socket(m_IoContext);
+	//m_Socket.cancel(ec);
+	//if (ec)
+	//{
+	//	LOGE << "Cancle error : " << ec.value() << ", " << ec.message();
+	//}
+
+	CloseSession();
 
 	OnDisconnected();
 }
@@ -137,12 +138,12 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
 	else if (ec == boost::asio::error::eof)
 	{
 		LOGE << "Connection closed by peer" << endl;
-		CloseSession();
+		//CloseSession();
 	}
 	else if (ec == boost::asio::error::operation_aborted)
 	{
-		LOGE << "Operation aborted.";
-		CloseSession();
+		//LOGE << "Operation aborted.";
+		//CloseSession();
 	}
 	else
 	{
@@ -215,7 +216,7 @@ void AsioSession::CloseSession()
 	{
 		m_Socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		if (ec) {
-			LOGE << "ShutDownm 俊矾 : " << ec.value() << ", " << ec.message();
+			LOGE << "ShutDownm 俊矾 : " << ec.value() << ", " << ec.message() << ", " << ec.category().name();
 		}
 
 		m_Socket.close(ec);

@@ -35,6 +35,7 @@ public:
 
 		if (packetCount >= targetRandomCnt)
 		{
+			//std::this_thread::sleep_for(1s);
 			boost::asio::post(m_IoContext, [this]() {
 				Disconnect();
 				});
@@ -54,17 +55,21 @@ public:
 		}
 
 		LOGD << "SendCount : " << ServerAnalyzer::GetInstance().GetSendCount() << ", TotalSendCount : " << ServerAnalyzer::GetInstance().GetTotalSendCount();
+
+		//std::this_thread::sleep_for(3s);
+
+		//Disconnect();
 	}
 
 	void OnDisconnected()
 	{
+		std::this_thread::sleep_for(1s);
 		LOGI << "Disconnected Server!";
-
-		std::this_thread::sleep_for(3s);
 
 		if (ServerAnalyzer::GetInstance().GetTotalSendCount() < 100000)
 		{
 			ServerAnalyzer::GetInstance().ResetSendCount();
+			packetCount = 0;
 			Connect(serverIP, serverPort);
 		}
 		
