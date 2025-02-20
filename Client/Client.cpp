@@ -63,7 +63,7 @@ public:
 		
 		GetService()->AddSession(shared_from_this());
 
-		GetService()->Process();
+		ClientManager::GetInstance().Init(shared_from_this());
 
 		//Disconnect();
 	}
@@ -179,7 +179,6 @@ int main()
 			});
 		}
 		
-		ClientManager::GetInstance().Init();
 		
 		for (auto& t : ConnectThreads) {
 			if (t.joinable()) {  // join 가능한지 확인 후 호출 (이미 join()된 스레드에 다시 join()하면 오류 발생)
