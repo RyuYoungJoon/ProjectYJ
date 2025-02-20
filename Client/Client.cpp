@@ -2,6 +2,7 @@
 #include "AsioService.h"
 #include "AsioSession.h"
 #include "ServerAnalyzer.h"
+#include "ClientManager.h"
 #include <filesystem>
 
 #include <..\include\INIReader\ini.h>
@@ -14,7 +15,8 @@ string serverPort;
 string serverIP;
 ClientServicePtr clientService;
 
-std::vector<std::thread> threads;
+std::vector<std::thread> ConnectThreads;
+std::vector<std::thread> ClientThreads;
 using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_context::executor_type>;
 
 class ServerSession : public AsioSession
@@ -58,9 +60,7 @@ public:
 		//LOGD << "SendCount : " << ServerAnalyzer::GetInstance().GetSendCount() << ", TotalSendCount : " << ServerAnalyzer::GetInstance().GetTotalSendCount();
 
 		//std::this_thread::sleep_for(3s);
-
 		
-
 		GetService()->AddSession(shared_from_this());
 
 		GetService()->Process();
@@ -164,7 +164,7 @@ int main()
 
 		for (int i = 0; i < threadCnt; ++i)
 		{
-			threads.emplace_back([&ioContext]() {
+			ConnectThreads.emplace_back([&ioContext]() {
 				if (clientService->Start())
 				{
 					LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << serverPort;
@@ -179,22 +179,9 @@ int main()
 			});
 		}
 		
-		//clientService->Process();
-		/*string message("sdsdfsdffqw", 128);
-		Packet packet;
-		std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
-		std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
-		packet.header.type = PacketType::YJ;
-		packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + sizeof(packet.payload) + sizeof(PacketTail));
-		std::memcpy(packet.payload, message.c_str(), message.size());
-		packet.tail.value = 255;
-
-		while (true) {
-			clientService->BroadCast(packet);
-			std::this_thread::sleep_for(1s);
-		}*/
-
-		for (auto& t : threads) {
+		ClientManager::GetInstance().Init();
+		
+		for (auto& t : ConnectThreads) {
 			if (t.joinable()) {  // join 가능한지 확인 후 호출 (이미 join()된 스레드에 다시 join()하면 오류 발생)
 				t.join();
 			}
