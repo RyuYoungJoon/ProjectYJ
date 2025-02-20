@@ -68,6 +68,36 @@ void AsioService::ReleaseSession(AsioSessionPtr session)
 	m_SessionCount--;
 }
 
+void AsioService::BroadCast(const Packet& packet)
+{
+	for (auto session : m_Sessions)
+	{
+		session->Send(packet);
+	}
+}
+
+void AsioService::Process()
+{
+	string message("sdsdfsdffqw", 128);
+	Packet packet;
+	std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
+	std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
+	packet.header.type = PacketType::YJ;
+	packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + sizeof(packet.payload) + sizeof(PacketTail));
+	std::memcpy(packet.payload, message.c_str(), message.size());
+	packet.tail.value = 255;
+
+	while (m_IsRunning)
+	{
+		LOGI << "Process On!";
+
+		BroadCast(packet);
+
+		std::this_thread::sleep_for(1s);
+	}
+
+}
+
 AsioServerService::AsioServerService(boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
 	:AsioService(ServiceType::Server, iocontext, host, port, SessionMaker, maxSessionCount),
 	m_IoContext(iocontext)
@@ -123,6 +153,7 @@ bool AsioClientService::Start()
 		}
 		else
 		{
+			m_IsRunning = true;
 			LOGD << "Session : " << i << ", Socket Handle : " << session->GetSocket().native_handle();
 		}
 	}

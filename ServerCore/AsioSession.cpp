@@ -10,7 +10,7 @@ AsioSession::AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
 {
 }
 
-void AsioSession::Start()
+void AsioSession::ProcessRecv()
 {
 	DoRead();
 }
@@ -60,13 +60,8 @@ bool AsioSession::Connect(const string& host, const string& port)
 			if (!ec)
 			{
 				LOGI << "Successfully connected to " << endpoint;
-				Start();
-
+				ProcessRecv();
 				OnConnected();
-				//totalTryCnt += random;
-				//
-				//LOGI << "TotalCnt[" << totalCnt << "] totalTryCnt[" << totalTryCnt << "]";
-				
 			}
 			else
 			{
@@ -108,7 +103,7 @@ void AsioSession::DoRead()
 		std::bind(&AsioSession::HandleRead, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
-void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
+void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 {
 	if (!ec)
 	{
@@ -156,7 +151,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, std::size_t length)
 	}
 }
 
-void AsioSession::HandleWrite(boost::system::error_code ec, std::size_t length)
+void AsioSession::HandleWrite(boost::system::error_code ec, int32 length)
 {
 	if (ec)
 	{

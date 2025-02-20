@@ -66,7 +66,7 @@ void AsioAcceptor::HandleAccept(std::shared_ptr<tcp::socket> newSocket, boost::s
         auto session = m_Service->CreateSession(m_IoContext, std::move(*newSocket));
 
         // 세션 마다 내가 보내는 카운트를 저장하는 변수를 만들자.
-        session->Start();
+        session->ProcessRecv();
         session->SetSessionUID(m_SessionUID.fetch_add(1));
 
         m_Service->AddSession(session);

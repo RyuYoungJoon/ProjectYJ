@@ -107,11 +107,12 @@ int main()
 			LOGE << "Failed to Start the Server";
 			return -1;
 		}
-		
+
 		// TODO : 실제로 쓰는것만 놔두기 OR TaskQueue 추가 개발하기
 		std::thread ioThread(InputThread, std::ref(IoContext));
-		std::thread WorkerThread([]() {
+		std::thread WorkerThread([=]() {
 			TaskQueue::GetInstance().ProcessTask();
+			//serverService->Process();
 			});
 
 		std::vector<std::thread> m_asioThread;

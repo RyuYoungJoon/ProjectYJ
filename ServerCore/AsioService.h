@@ -27,12 +27,15 @@ public:
     AsioSessionPtr CreateSession(boost::asio::io_context& iocontext, tcp::socket socket);
     void AddSession(AsioSessionPtr session);
     void ReleaseSession(AsioSessionPtr session);
+    void BroadCast(const Packet& packet);
 
     int32 GetMaxSessionCount() { return m_MaxSessionCount; }
+    
 
     tcp::endpoint GetServiceEndpoint() { return m_ServiceEndpoint; }
 public:
     ServiceType GetServiceType() { return m_type; }
+    void Process();
 
 protected:
     ServiceType m_type;
@@ -45,6 +48,7 @@ protected:
     std::string m_Host;
     std::string m_Port;
 
+    bool m_IsRunning = false;
     tcp::endpoint m_ServiceEndpoint;
     SessionMaker m_SessionMaker;
 };

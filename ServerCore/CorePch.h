@@ -28,6 +28,7 @@
 #include <boost/asio.hpp>
 #include <boost/pool/singleton_pool.hpp>
 #include <boost/pool/pool_alloc.hpp>
+#include "..\GameServer\Protocol.h"
 
 using namespace std;
 

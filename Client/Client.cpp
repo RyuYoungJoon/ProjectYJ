@@ -49,14 +49,21 @@ public:
 
 	void OnConnected()
 	{
-		for (int i = 0; i < 100; ++i)
-		{
-			SendPacket("hihisdvsdvsdvdsvhi");
-		}
-
-		LOGD << "SendCount : " << ServerAnalyzer::GetInstance().GetSendCount() << ", TotalSendCount : " << ServerAnalyzer::GetInstance().GetTotalSendCount();
+		// OnConnected에서는 connect 성공 로그만 찍자.
+		//for (int i = 0; i < 100; ++i)
+		//{
+		//	SendPacket("hihisdvsdvsdvdsvhi");
+		//}
+		//
+		//LOGD << "SendCount : " << ServerAnalyzer::GetInstance().GetSendCount() << ", TotalSendCount : " << ServerAnalyzer::GetInstance().GetTotalSendCount();
 
 		//std::this_thread::sleep_for(3s);
+
+		
+
+		GetService()->AddSession(shared_from_this());
+
+		GetService()->Process();
 
 		//Disconnect();
 	}
@@ -171,6 +178,21 @@ int main()
 				ioContext.run();
 			});
 		}
+		
+		//clientService->Process();
+		/*string message("sdsdfsdffqw", 128);
+		Packet packet;
+		std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
+		std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
+		packet.header.type = PacketType::YJ;
+		packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + sizeof(packet.payload) + sizeof(PacketTail));
+		std::memcpy(packet.payload, message.c_str(), message.size());
+		packet.tail.value = 255;
+
+		while (true) {
+			clientService->BroadCast(packet);
+			std::this_thread::sleep_for(1s);
+		}*/
 
 		for (auto& t : threads) {
 			if (t.joinable()) {  // join 가능한지 확인 후 호출 (이미 join()된 스레드에 다시 join()하면 오류 발생)
