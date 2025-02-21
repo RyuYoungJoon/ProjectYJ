@@ -229,7 +229,6 @@ void AsioSession::CloseSession()
 
 void AsioSession::WaitForSocketClose()
 {
-
 	m_Socket.async_wait(boost::asio::socket_base::wait_read,
 		[this](boost::system::error_code ec) {
 			if (ec)

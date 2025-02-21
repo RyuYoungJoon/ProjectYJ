@@ -35,7 +35,6 @@ public:
     tcp::endpoint GetServiceEndpoint() { return m_ServiceEndpoint; }
 public:
     ServiceType GetServiceType() { return m_type; }
-    void Process();
 
 protected:
     ServiceType m_type;
@@ -48,7 +47,6 @@ protected:
     std::string m_Host;
     std::string m_Port;
 
-    bool m_IsRunning = false;
     tcp::endpoint m_ServiceEndpoint;
     SessionMaker m_SessionMaker;
 };

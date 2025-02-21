@@ -35,6 +35,9 @@ public:
     void CloseSession();
     void WaitForSocketClose();
     
+    void SetIsRunning(bool isRunning) { m_IsRunning = isRunning; }
+    bool GetIsRunning() { return m_IsRunning; }
+
 protected:
     virtual void OnSend(int32 len) { }
     virtual int32 OnRecv(BYTE* buffer, int32 len) { return len; }
@@ -61,4 +64,5 @@ private:
     std::atomic<int32> m_SessionUID;
     PacketBuffer m_PacketBuffer;
     tcp::resolver m_Resolver;
+    bool m_IsRunning = false;
 };
