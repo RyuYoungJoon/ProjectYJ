@@ -1,5 +1,4 @@
 #pragma once
-#include "AsioSession.h"
 
 enum class RunningState : int
 {
@@ -29,5 +28,8 @@ public:
 private:
 	RunningState m_RunningState = RunningState::None;
 	AsioSessionPtr m_Session;
+
+	int32 targetRandomCnt = 0;
+	int32 packetCount = 0;
 };
 
