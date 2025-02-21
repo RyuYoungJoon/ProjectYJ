@@ -131,6 +131,7 @@ bool AsioClientService::Start()
 		}
 		else
 		{
+			session->m_IoContext.run();
 			LOGD << "Session : " << i << ", Socket Handle : " << session->GetSocket().native_handle();
 		}
 	}

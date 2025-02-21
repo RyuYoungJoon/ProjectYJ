@@ -37,7 +37,7 @@ void ClientSession::OnConnected()
 void ClientSession::OnDisconnected()
 {
 	LOGI << "Disconnected Server!";
-
+	
 	if (ServerAnalyzer::GetInstance().GetTotalSendCount() < 100000)
 	{
 		ServerAnalyzer::GetInstance().ResetSendCount();
@@ -45,8 +45,22 @@ void ClientSession::OnDisconnected()
 		//Connect(serverIP, serverPort);
 	}
 
-	std::this_thread::sleep_for(1s);
-	LOGI << "TryConnected Server!";
+	AsioSessionPtr clientSession = GetSession();
+	boost::system::error_code ec;
+
+	LOGI << "Disconnect Socket Handle Value : " << clientSession->GetSocket().lowest_layer().native_handle();
+	clientSession->GetSocket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+	if (ec)
+	{
+		LOGE << "ShutDown 에러 : " << ec.value() << ", " << ec.message() << ", " << ec.category().name();
+	}
+
+	clientSession->GetSocket().close(ec);
+	if (ec)
+	{
+		LOGE << "Close 에러 : " << ec.value() << ", " << ec.message() << ", " << ec.category().name();
+	}
+
 }
 
 void ClientSession::SendPacket(const std::string& message)

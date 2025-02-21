@@ -5,6 +5,7 @@ enum class RunningState : int
 	None,
 	Connect,
 	Disconnect,
+	Reconnect,
 	Send,
 	Recv
 };

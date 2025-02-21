@@ -37,6 +37,7 @@ public:
     
     void SetIsRunning(bool isRunning) { m_IsRunning = isRunning; }
     bool GetIsRunning() { return m_IsRunning; }
+    boost::asio::io_context& m_IoContext;
 
 protected:
     virtual void OnSend(int32 len) { }
@@ -49,7 +50,6 @@ protected:
     atomic<int32> realRecvCnt = 0;
     atomic<int32> totalRecvCnt = 0;
 
-    boost::asio::io_context& m_IoContext;
 private:
     void DoRead();
     void HandleRead(boost::system::error_code ec, int32 length);

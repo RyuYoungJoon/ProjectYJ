@@ -44,13 +44,24 @@ bool AsioSession::Connect(const string& host, const string& port)
 		m_Socket.close(ec);
 	}*/
 
+	if (m_Socket.is_open())
+	{
+		LOGW << "Socket이 이미 열려있슴.";
+	}
+
 	// 새로운 소켓 생성
-	//m_Socket = tcp::socket(m_IoContext);
-
+	m_Socket = tcp::socket(m_IoContext);
+	boost::asio::io_context IoContext2;
+	tcp::socket socket2 = tcp::socket(IoContext2);
+	LOGI <<"Socket Handle value : " << m_Socket.native_handle();
 	//std::this_thread::sleep_for(std::chrono::seconds(1));
-
+	tcp::resolver resolver(IoContext2);
 	tcp::resolver::query targetQuery(host, port);
 	auto targetEndpoint = m_Resolver.resolve(targetQuery);
+	auto targetEndPoint2 = resolver.resolve(targetQuery);
+	
+	
+	LOGI << "Before m_Socket Handle : " << m_Socket.lowest_layer().native_handle();
 
 	// TODO Cnt 위치 옮기기
 	auto self = shared_from_this();
@@ -69,6 +80,8 @@ bool AsioSession::Connect(const string& host, const string& port)
 			}
 		});
 
+	LOGI << "After m_Socket Handle : " << m_Socket.lowest_layer().native_handle();
+
 	return true;
 }
 
@@ -84,7 +97,7 @@ void AsioSession::Disconnect()
 	//	LOGE << "Cancle error : " << ec.value() << ", " << ec.message();
 	//}
 
-	CloseSession();
+	//CloseSession();
 
 	OnDisconnected();
 }
@@ -134,12 +147,12 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 	else if (ec == boost::asio::error::eof)
 	{
 		LOGE << "Connection closed by peer" << endl;
-		//CloseSession();
+		CloseSession();
 	}
 	else if (ec == boost::asio::error::operation_aborted)
 	{
-		//LOGE << "Operation aborted.";
-		//CloseSession();
+		LOGE << "Operation aborted.";
+		CloseSession();
 	}
 	else
 	{
@@ -212,7 +225,7 @@ void AsioSession::CloseSession()
 	{
 		m_Socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		if (ec) {
-			LOGE << "ShutDownm 에러 : " << ec.value() << ", " << ec.message() << ", " << ec.category().name();
+			LOGE << "ShutDown 에러 : " << ec.value() << ", " << ec.message() << ", " << ec.category().name();
 		}
 
 		m_Socket.close(ec);

@@ -28,6 +28,7 @@ void ClientManager::Process()
 	switch (m_RunningState)
 	{
 	case RunningState::Connect:
+	case RunningState::Send:
 	{
 		for (int i = 0; i < targetRandomCnt; ++i)
 		{
@@ -52,10 +53,10 @@ void ClientManager::Process()
 
 		m_Session->Disconnect();
 
-		m_RunningState = RunningState::Send;
+		m_RunningState = RunningState::Reconnect;
 	}
 		break;
-	case RunningState::Send:
+	case RunningState::Reconnect :
 	{
 		m_Session->Connect("127.0.0.1", "7777");
 

@@ -70,7 +70,7 @@ void AsioAcceptor::HandleAccept(std::shared_ptr<tcp::socket> newSocket, boost::s
         session->SetSessionUID(m_SessionUID.fetch_add(1));
 
         m_Service->AddSession(session);
-        LOGI << "New Client Connected [" << session->GetSessionUID() << "]";
+        LOGI << "New Client Connected [" << session->GetSessionUID() <<", Socket Handle : "<< newSocket->lowest_layer().native_handle() << "]";
 
         // 또 받으러 가기
         DoAccept();
