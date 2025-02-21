@@ -15,5 +15,6 @@ using uint64 = unsigned __int64;
 
 using GameSessionPtr = std::shared_ptr<class GameSession>;
 using AsioSessionPtr = std::shared_ptr<class AsioSession>;
+using ClientSessionPtr = std::shared_ptr<class ClientSession>;
 using ServerServicePtr = std::shared_ptr<class AsioServerService>;
 using ClientServicePtr = std::shared_ptr<class AsioClientService>;

@@ -96,9 +96,8 @@ void AsioSession::SetService(std::shared_ptr<AsioService> service)
 
 void AsioSession::DoRead()
 {
-	LOGD << "RecvCount : " << ServerAnalyzer::GetInstance().GetRecvCount() << ", TotalRecvCount : " << ServerAnalyzer::GetInstance().GetTotalRecvCount();
-
 	ServerAnalyzer::GetInstance().ResetRecvCount();
+
 	m_Socket.async_read_some(boost::asio::buffer(m_PacketBuffer.WritePos(), m_PacketBuffer.FreeSize()),
 		std::bind(&AsioSession::HandleRead, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
@@ -124,6 +123,8 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 			CloseSession();
 			return;
 		}
+		LOGD << "RecvCount : " << ServerAnalyzer::GetInstance().GetRecvCount() 
+			<< ", TotalRecvCount : " << ServerAnalyzer::GetInstance().GetTotalRecvCount();
 
 		m_PacketBuffer.Clear();
 
