@@ -27,6 +27,7 @@ void ClientSession::OnConnected()
 {
 	GetService()->AddSession(shared_from_this());
 	AsioSessionPtr clientSession = GetSession();
+	clientSession->SetIsRunning(true);
 
 	ClientManager::GetInstance().Init(clientSession);
 

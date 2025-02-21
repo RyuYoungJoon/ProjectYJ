@@ -14,7 +14,13 @@ void ClientManager::Init(AsioSessionPtr session)
 {
 	m_Session = session;
 	m_RunningState = RunningState::Connect;
-	Process();
+
+	while (m_Session->GetIsRunning())
+	{
+		Process();
+
+		std::this_thread::sleep_for(1s);
+	}
 }
 
 void ClientManager::Process()
@@ -37,7 +43,6 @@ void ClientManager::Process()
 			m_Session->Send(packet);
 		}
 
-		std::this_thread::sleep_for(1s);
 		m_RunningState = RunningState::Disconnect;
 	}
 		break;
@@ -46,9 +51,16 @@ void ClientManager::Process()
 		LOGI << "RunningState Disconnect [SessionUID : " << m_Session->GetSessionUID() << "]";
 
 		m_Session->Disconnect();
+
+		m_RunningState = RunningState::Send;
 	}
 		break;
 	case RunningState::Send:
+	{
+		m_Session->Connect("127.0.0.1", "7777");
+
+		m_RunningState = RunningState::Connect;
+	}
 		break;
 	case RunningState::Recv:
 		break;

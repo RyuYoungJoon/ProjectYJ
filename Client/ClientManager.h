@@ -21,7 +21,7 @@ public:
 	}
 
 	void Init(AsioSessionPtr session);
-	void Start();
+	void Process();
 	void MakeSendBuffer();
 
 
