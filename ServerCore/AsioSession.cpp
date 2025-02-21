@@ -31,6 +31,8 @@ void AsioSession::Send(const Packet& message)
 	auto self = shared_from_this();
 	m_Socket.async_write_some(boost::asio::mutable_buffer(buffer, bufferSize),
 		std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+
+	LOGD << "Send Socket Handle : " << m_Socket.lowest_layer().native_handle();
 	//MemoryPoolManager::GetMemoryPool(bufferSize).Deallocate(buffer);
 }
 
@@ -113,6 +115,8 @@ void AsioSession::DoRead()
 
 	m_Socket.async_read_some(boost::asio::buffer(m_PacketBuffer.WritePos(), m_PacketBuffer.FreeSize()),
 		std::bind(&AsioSession::HandleRead, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+
+	LOGD << "Recv Socket Handle : " << m_Socket.lowest_layer().native_handle();
 }
 
 void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
