@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "AsioService.h"
-#include "AsioSession.h"
+#include "ClientSession.h"
 #include "ServerAnalyzer.h"
 #include "ClientManager.h"
 #include <filesystem>
@@ -18,88 +18,6 @@ ClientServicePtr clientService;
 std::vector<std::thread> ConnectThreads;
 std::vector<std::thread> ClientThreads;
 using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_context::executor_type>;
-
-class ServerSession : public AsioSession
-{
-public:
-	ServerSession(boost::asio::io_context& iocontext, tcp::socket socket)
-		: AsioSession(iocontext, std::move(socket))
-	{
-		std::random_device rd;
-		std::default_random_engine dre(rd());
-		std::uniform_int_distribution<int> dist(10, 100);
-		targetRandomCnt = dist(dre);
-	}
-
-	void OnSend(int32 len)
-	{
-		packetCount++;
-
-		if (packetCount >= targetRandomCnt)
-		{
-			//std::this_thread::sleep_for(1s);
-			boost::asio::post(m_IoContext, [this]() {
-				Disconnect();
-				});
-		}
-	}
-
-	int32 OnRecv(BYTE* buffer, int32 len)
-	{
-		return len;
-	}
-
-	void OnConnected()
-	{
-		// OnConnected에서는 connect 성공 로그만 찍자.
-		//for (int i = 0; i < 100; ++i)
-		//{
-		//	SendPacket("hihisdvsdvsdvdsvhi");
-		//}
-		//
-		//LOGD << "SendCount : " << ServerAnalyzer::GetInstance().GetSendCount() << ", TotalSendCount : " << ServerAnalyzer::GetInstance().GetTotalSendCount();
-
-		//std::this_thread::sleep_for(3s);
-		
-		GetService()->AddSession(shared_from_this());
-
-		ClientManager::GetInstance().Init(shared_from_this());
-
-		//Disconnect();
-	}
-
-	void OnDisconnected()
-	{
-		std::this_thread::sleep_for(1s);
-		LOGI << "Disconnected Server!";
-
-		if (ServerAnalyzer::GetInstance().GetTotalSendCount() < 100000)
-		{
-			ServerAnalyzer::GetInstance().ResetSendCount();
-			packetCount = 0;
-			Connect(serverIP, serverPort);
-		}
-		
-		LOGI << "TryConnected Server!";
-	}
-
-	void SendPacket(const std::string& message)
-	{
-		Packet packet;
-		std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
-		std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
-		packet.header.type = PacketType::YJ;
-		packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + sizeof(packet.payload) + sizeof(PacketTail));
-		std::memcpy(packet.payload, message.c_str(), message.size());
-		packet.tail.value = 255;
-
-		Send(packet);
-	}
-
-private:
-	int32 targetRandomCnt = 0;
-	int32 packetCount = 0;
-};
 
 int main()
 {
@@ -158,7 +76,7 @@ int main()
 			serverIP,
 			serverPort,
 			[](boost::asio::io_context& ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
-				return std::make_shared<ServerSession>(ioContext, std::move(socket));
+				return std::make_shared<ClientSession>(ioContext, std::move(socket));
 			},
 			maxSessionCnt);
 
