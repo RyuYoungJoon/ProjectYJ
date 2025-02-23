@@ -9,10 +9,16 @@ public:
 	{
 	}
 
+	~ClientSession()
+	{
+		LOGI << "Destroy ClientSession";
+	}
+
 	void OnSend(int32 len);
 	int32 OnRecv(BYTE* buffer, int32 len);
 	void OnConnected();
 	void OnDisconnected();
 	void SendPacket(const std::string& message);
 };
+
 

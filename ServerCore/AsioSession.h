@@ -12,6 +12,7 @@ public:
     
     virtual ~AsioSession()
     {
+        LOGD << "Destroy AsioSession";
     }
 
     void ProcessRecv();

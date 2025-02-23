@@ -31,14 +31,15 @@ public:
 
     int32 GetMaxSessionCount() { return m_MaxSessionCount; }
     
+    size_t GetSessionSize() { return m_Sessions.size(); }
 
+    boost::asio::io_context& iocontext;
     tcp::endpoint GetServiceEndpoint() { return m_ServiceEndpoint; }
 public:
     ServiceType GetServiceType() { return m_type; }
 
 protected:
     ServiceType m_type;
-    boost::asio::io_context& iocontext;
     std::set<std::shared_ptr<class AsioSession>> m_Sessions;
     int32 m_SessionCount = 0;
     int32 m_MaxSessionCount = 0;

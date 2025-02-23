@@ -29,7 +29,7 @@ void ClientSession::OnConnected()
 	AsioSessionPtr clientSession = GetSession();
 	clientSession->SetIsRunning(true);
 
-	ClientManager::GetInstance().Init(clientSession);
+	//ClientManager::GetInstance().Init(clientSession);
 
 	//Disconnect();
 }
@@ -45,7 +45,7 @@ void ClientSession::OnDisconnected()
 		//Connect(serverIP, serverPort);
 	}
 
-	AsioSessionPtr clientSession = GetSession();
+	/*AsioSessionPtr clientSession = GetSession();
 	boost::system::error_code ec;
 
 	LOGI << "Disconnect Socket Handle Value : " << clientSession->GetSocket().lowest_layer().native_handle();
@@ -59,7 +59,7 @@ void ClientSession::OnDisconnected()
 	if (ec)
 	{
 		LOGE << "Close ¿¡·¯ : " << ec.value() << ", " << ec.message() << ", " << ec.category().name();
-	}
+	}*/
 
 }
 

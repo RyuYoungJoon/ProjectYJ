@@ -129,12 +129,14 @@ bool AsioClientService::Start()
 			LOGE << "Connect Fail!";
 			return false;
 		}
+
 		else
 		{
-			session->m_IoContext.run();
+			//session->m_IoContext.run();
 			LOGD << "Session : " << i << ", Socket Handle : " << session->GetSocket().native_handle();
 		}
 	}
 
+	iocontext.run();
 	return true;
 }

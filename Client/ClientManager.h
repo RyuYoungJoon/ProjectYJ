@@ -1,4 +1,5 @@
 #pragma once
+#include "AsioService.h"
 
 enum class RunningState : int
 {
@@ -21,7 +22,7 @@ public:
 		return instance;
 	}
 
-	void Init(AsioSessionPtr session);
+	void Init(ClientServicePtr service);
 	void Process();
 	void MakeSendBuffer();
 
@@ -29,6 +30,7 @@ public:
 private:
 	RunningState m_RunningState = RunningState::None;
 	AsioSessionPtr m_Session;
+	shared_ptr<AsioService> m_Service;
 
 	int32 targetRandomCnt = 0;
 	int32 packetCount = 0;

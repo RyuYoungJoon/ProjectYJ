@@ -52,16 +52,9 @@ bool AsioSession::Connect(const string& host, const string& port)
 	}
 
 	// 货肺款 家南 积己
-	m_Socket = tcp::socket(m_IoContext);
-	boost::asio::io_context IoContext2;
-	tcp::socket socket2 = tcp::socket(IoContext2);
 	LOGI <<"Socket Handle value : " << m_Socket.native_handle();
-	//std::this_thread::sleep_for(std::chrono::seconds(1));
-	tcp::resolver resolver(IoContext2);
 	tcp::resolver::query targetQuery(host, port);
 	auto targetEndpoint = m_Resolver.resolve(targetQuery);
-	auto targetEndPoint2 = resolver.resolve(targetQuery);
-	
 	
 	LOGI << "Before m_Socket Handle : " << m_Socket.lowest_layer().native_handle();
 
@@ -99,9 +92,9 @@ void AsioSession::Disconnect()
 	//	LOGE << "Cancle error : " << ec.value() << ", " << ec.message();
 	//}
 
-	//CloseSession();
-
 	OnDisconnected();
+	CloseSession();
+
 }
 
 void AsioSession::SetService(std::shared_ptr<AsioService> service)
@@ -150,7 +143,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 	}
 	else if (ec == boost::asio::error::eof)
 	{
-		LOGE << "Connection closed by peer" << endl;
+		LOGE << "Connection closed by peer";
 		CloseSession();
 	}
 	else if (ec == boost::asio::error::operation_aborted)

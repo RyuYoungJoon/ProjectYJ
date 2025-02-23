@@ -86,6 +86,7 @@ int main()
 				if (clientService->Start())
 				{
 					LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << serverPort;
+		
 				}
 				else
 				{
@@ -93,16 +94,44 @@ int main()
 					return -1;
 				}
 
-				ioContext.run();
+				//ioContext.run();
+
 			});
 		}
 		
+		ClientManager::GetInstance().Init(clientService);
+
+		while (true)
+		{
+			ClientManager::GetInstance().Process();
+
+			std::this_thread::sleep_for(1s);
+		}
+
+		//std::vector<std::thread> m_asioThread;
+		//for (int i = 0; i < threadCnt; ++i)
+		//{
+		//	m_asioThread.emplace_back([&ioContext]() {
+		//		ioContext.run();
+		//		});
+		//}
+
+		while (true)
+		{
+			LOGI << "Session Size : " << clientService->GetSessionSize();
+			std::this_thread::sleep_for(1s);
+		}
 		
 		for (auto& t : ConnectThreads) {
 			if (t.joinable()) {  // join 가능한지 확인 후 호출 (이미 join()된 스레드에 다시 join()하면 오류 발생)
 				t.join();
 			}
 		}
+
+		//for (auto& t : m_asioThread) {
+		//	if (t.joinable())
+		//		t.join();
+		//}
 
 		return 0;
 	}

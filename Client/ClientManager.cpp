@@ -2,6 +2,8 @@
 #include "ClientSession.h"
 #include "ClientManager.h"
 
+extern ClientServicePtr clientService;
+
 ClientManager::ClientManager()
 {
 	std::random_device rd;
@@ -10,17 +12,12 @@ ClientManager::ClientManager()
 	targetRandomCnt = dist(dre);
 }
 
-void ClientManager::Init(AsioSessionPtr session)
+void ClientManager::Init(ClientServicePtr service)
 {
-	m_Session = session;
+	//m_Session = session;
+	m_Service = service;
 	m_RunningState = RunningState::Connect;
 
-	while (m_Session->GetIsRunning())
-	{
-		Process();
-
-		std::this_thread::sleep_for(1s);
-	}
 }
 
 void ClientManager::Process()
@@ -30,8 +27,8 @@ void ClientManager::Process()
 	case RunningState::Connect:
 	case RunningState::Send:
 	{
-		for (int i = 0; i < targetRandomCnt; ++i)
-		{
+		//for (int i = 0; i < targetRandomCnt; ++i)
+		//{
 			string message("sdfdsfewfewf", 128);
 			Packet packet;
 			std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
@@ -41,24 +38,29 @@ void ClientManager::Process()
 			std::memcpy(packet.payload, message.c_str(), message.size());
 			packet.tail.value = 255;
 
-			m_Session->Send(packet);
-		}
+			m_Service->BroadCast(packet);
+		//}
 
 		m_RunningState = RunningState::Disconnect;
 	}
 		break;
 	case RunningState::Disconnect:
 	{
-		LOGI << "RunningState Disconnect [SessionUID : " << m_Session->GetSessionUID() << "]";
+		//LOGI << "RunningState Disconnect [SessionUID : " << m_Session->GetSessionUID() << "]";
 
-		m_Session->Disconnect();
-
+		//m_Session->Disconnect();
+		//m_Session.reset();
+		m_Service->CloseService();
 		m_RunningState = RunningState::Reconnect;
 	}
 		break;
-	case RunningState::Reconnect :
+	case RunningState::Reconnect:
 	{
-		m_Session->Connect("127.0.0.1", "7777");
+		/*AsioSessionPtr newSession = m_Service->CreateSession(m_Service->iocontext, tcp::socket(m_Service->iocontext));
+		m_Session = newSession;
+		m_Session->Connect("127.0.0.1", "7777");*/
+
+		m_Service->Start();
 
 		m_RunningState = RunningState::Connect;
 	}
