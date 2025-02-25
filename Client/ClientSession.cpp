@@ -6,16 +6,6 @@
 
 void ClientSession::OnSend(int32 len)
 {
-	//packetCount++;
-	//
-	//if (packetCount >= targetRandomCnt)
-	//{
-	//	//std::this_thread::sleep_for(1s);
-	//	boost::asio::post(m_IoContext, [this]() {
-	//		Disconnect();
-	//		});
-	//}
-	LOGI << "OnSend 호출!";
 }
 
 int32 ClientSession::OnRecv(BYTE* buffer, int32 len)
@@ -29,9 +19,7 @@ void ClientSession::OnConnected()
 	AsioSessionPtr clientSession = GetSession();
 	clientSession->SetIsRunning(true);
 
-	//ClientManager::GetInstance().Init(clientSession);
-
-	//Disconnect();
+	ClientManager::GetInstance().Init(clientSession);
 }
 
 void ClientSession::OnDisconnected()
@@ -41,26 +29,9 @@ void ClientSession::OnDisconnected()
 	if (ServerAnalyzer::GetInstance().GetTotalSendCount() < 100000)
 	{
 		ServerAnalyzer::GetInstance().ResetSendCount();
-		//packetCount = 0;
-		//Connect(serverIP, serverPort);
 	}
 
-	/*AsioSessionPtr clientSession = GetSession();
-	boost::system::error_code ec;
-
-	LOGI << "Disconnect Socket Handle Value : " << clientSession->GetSocket().lowest_layer().native_handle();
-	clientSession->GetSocket().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-	if (ec)
-	{
-		LOGE << "ShutDown 에러 : " << ec.value() << ", " << ec.message() << ", " << ec.category().name();
-	}
-
-	clientSession->GetSocket().close(ec);
-	if (ec)
-	{
-		LOGE << "Close 에러 : " << ec.value() << ", " << ec.message() << ", " << ec.category().name();
-	}*/
-
+	m_IsRunning = false;
 }
 
 void ClientSession::SendPacket(const std::string& message)

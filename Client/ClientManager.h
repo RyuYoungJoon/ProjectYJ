@@ -22,16 +22,20 @@ public:
 		return instance;
 	}
 
-	void Init(ClientServicePtr service);
+	void Init(AsioSessionPtr service);
 	void Process();
 	void MakeSendBuffer();
-
+	void ProcessStart();
 
 private:
 	RunningState m_RunningState = RunningState::None;
 	AsioSessionPtr m_Session;
 	shared_ptr<AsioService> m_Service;
+	std::set<AsioSessionPtr> m_Sessions;
 
+	shared_ptr<boost::asio::steady_timer> m_Timer;
+
+	bool run = false;
 	int32 targetRandomCnt = 0;
 	int32 packetCount = 0;
 };

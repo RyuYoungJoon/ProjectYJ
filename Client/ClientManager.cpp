@@ -1,10 +1,11 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "ClientSession.h"
 #include "ClientManager.h"
 
 extern ClientServicePtr clientService;
 
 ClientManager::ClientManager()
+	: m_Timer(std::make_shared<boost::asio::steady_timer>(clientService->iocontext))
 {
 	std::random_device rd;
 	std::default_random_engine dre(rd());
@@ -12,12 +13,15 @@ ClientManager::ClientManager()
 	targetRandomCnt = dist(dre);
 }
 
-void ClientManager::Init(ClientServicePtr service)
+void ClientManager::Init(AsioSessionPtr session)
 {
-	//m_Session = session;
-	m_Service = service;
+	m_Sessions.insert(session);
+	m_Session = session;
+	m_Service = clientService;
+	//session.reset();
 	m_RunningState = RunningState::Connect;
-
+	
+	ProcessStart();
 }
 
 void ClientManager::Process()
@@ -27,8 +31,8 @@ void ClientManager::Process()
 	case RunningState::Connect:
 	case RunningState::Send:
 	{
-		//for (int i = 0; i < targetRandomCnt; ++i)
-		//{
+		for (int i = 0; i < targetRandomCnt; ++i)
+		{
 			string message("sdfdsfewfewf", 128);
 			Packet packet;
 			std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
@@ -38,37 +42,64 @@ void ClientManager::Process()
 			std::memcpy(packet.payload, message.c_str(), message.size());
 			packet.tail.value = 255;
 
-			m_Service->BroadCast(packet);
-		//}
+			m_Session->Send(packet);
+			//clientService->BroadCast(packet);
+		}
 
 		m_RunningState = RunningState::Disconnect;
 	}
-		break;
+	break;
 	case RunningState::Disconnect:
 	{
-		//LOGI << "RunningState Disconnect [SessionUID : " << m_Session->GetSessionUID() << "]";
+		// timer cancle
+		if (m_Timer)
+		{
+			boost::system::error_code ec;
+			m_Timer->cancel(ec);
+			if (ec)
+			{
+				LOGE << "m_Timer 에러 : " << ec.value() << ", " << ec.message();
+			}
+		}
 
-		//m_Session->Disconnect();
-		//m_Session.reset();
-		m_Service->CloseService();
+		// 클라이언트 Disconnect
+		m_Session->Disconnect();
+		m_Session.reset();
+
 		m_RunningState = RunningState::Reconnect;
-	}
-		break;
-	case RunningState::Reconnect:
-	{
-		/*AsioSessionPtr newSession = m_Service->CreateSession(m_Service->iocontext, tcp::socket(m_Service->iocontext));
-		m_Session = newSession;
-		m_Session->Connect("127.0.0.1", "7777");*/
 
-		m_Service->Start();
+		// Session 재 생성 후 connect.
+		m_Session = m_Service->CreateSession(m_Service->iocontext, tcp::socket(m_Service->iocontext));
+		m_Session->Connect("127.0.0.1", "7777");
 
 		m_RunningState = RunningState::Connect;
 	}
-		break;
+	break;
+	case RunningState::Reconnect:
+	{
+		m_Session = m_Service->CreateSession(m_Service->iocontext, tcp::socket(m_Service->iocontext));
+		m_Session->Connect("127.0.0.1", "7777");
+
+		m_RunningState = RunningState::Connect;
+	}
+	break;
 	case RunningState::Recv:
 		break;
 	default:
 		break;
 	}
+}
 
+void ClientManager::ProcessStart()
+{
+	if (m_Session == nullptr || m_Service == nullptr) 
+		return;
+
+	m_Timer->expires_after(std::chrono::milliseconds(500ms));
+	m_Timer->async_wait([this](const boost::system::error_code& ec) {
+		if (!ec && m_Session->GetIsRunning()) {
+			Process();
+			ProcessStart(); // 다시 실행하여 주기적으로 Process 실행
+		}
+		});
 }

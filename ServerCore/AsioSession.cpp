@@ -8,6 +8,7 @@
 AsioSession::AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
 	: m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(65536), m_Resolver(iocontext)
 {
+	m_pcSocket = nullptr;
 }
 
 void AsioSession::ProcessRecv()
@@ -28,36 +29,28 @@ void AsioSession::Send(const Packet& message)
 	std::memcpy(buffer + sizeof(PacketHeader), message.payload, message.header.size - sizeof(PacketHeader));
 
 	// TODO : 메모리 DeAllocate 구조잡기
-	auto self = shared_from_this();
+	//auto self = shared_from_this();
 	m_Socket.async_write_some(boost::asio::mutable_buffer(buffer, bufferSize),
 		std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 
-	LOGD << "Send Socket Handle : " << m_Socket.lowest_layer().native_handle();
+	//LOGD << "Send Socket Handle : " << m_Socket.lowest_layer().native_handle();
 	//MemoryPoolManager::GetMemoryPool(bufferSize).Deallocate(buffer);
 }
 
 bool AsioSession::Connect(const string& host, const string& port)
 {
-	//WaitForSocketClose();
-	/*if (m_Socket.is_open())
-	{
-		boost::system::error_code ec;
-		m_Socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-		m_Socket.close(ec);
-	}*/
-
-	if (m_Socket.is_open())
+	/*if (m_Socket->is_open())
 	{
 		LOGW << "Socket이 이미 열려있슴.";
-	}
+	}*/
 
+	m_Socket = tcp::socket(m_IoContext);
 	// 새로운 소켓 생성
 	LOGI <<"Socket Handle value : " << m_Socket.native_handle();
 	tcp::resolver::query targetQuery(host, port);
 	auto targetEndpoint = m_Resolver.resolve(targetQuery);
 	
 	LOGI << "Before m_Socket Handle : " << m_Socket.lowest_layer().native_handle();
-
 	// TODO Cnt 위치 옮기기
 	auto self = shared_from_this();
 	boost::asio::async_connect(m_Socket, targetEndpoint,
@@ -148,8 +141,8 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 	}
 	else if (ec == boost::asio::error::operation_aborted)
 	{
-		LOGE << "Operation aborted.";
-		CloseSession();
+		//LOGE << "Operation aborted.";
+		//CloseSession();
 	}
 	else
 	{
@@ -204,13 +197,8 @@ int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
 
 void AsioSession::CloseSession()
 {
+	LOGD << "CloseSession Called!";
 	std::lock_guard<std::mutex> lock(m_Mutex);
-
-	if (!m_Socket.is_open())
-	{
-		LOGW << "SOCKET이 이미 닫혀있음.";
-		return;
-	}
 
 	boost::system::error_code ec;
 	m_Socket.cancel(ec);
@@ -221,13 +209,14 @@ void AsioSession::CloseSession()
 	if (m_Socket.is_open())
 	{
 		m_Socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-		if (ec) {
-			LOGE << "ShutDown 에러 : " << ec.value() << ", " << ec.message() << ", " << ec.category().name();
+		if (ec)
+		{
+			LOGE << "ShutDown Error : " << ec.value() << ", " << ec.message();
 		}
-
 		m_Socket.close(ec);
-		if (ec) {
-			LOGE << "CLOSE 에러 : " << ec.value() << ", " << ec.message();
+		if (ec)
+		{
+			LOGE << "Close Error : " << ec.value() << ", " << ec.message();
 		}
 	}
 
@@ -235,6 +224,7 @@ void AsioSession::CloseSession()
 	{
 		service->ReleaseSession(shared_from_this());
 	}
+	//delete m_Socket;
 }
 
 void AsioSession::WaitForSocketClose()
