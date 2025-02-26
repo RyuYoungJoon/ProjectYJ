@@ -50,6 +50,8 @@ protected:
 
     tcp::endpoint m_ServiceEndpoint;
     SessionMaker m_SessionMaker;
+    bool m_checkRunning = false;
+
 };
 
 

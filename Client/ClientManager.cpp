@@ -2,7 +2,7 @@
 #include "ClientSession.h"
 #include "ClientManager.h"
 
-//extern ClientServicePtr clientService;
+extern ClientServicePtr clientService;
 
 ClientManager::ClientManager()
 	//: m_Timer(std::make_shared<boost::asio::steady_timer>(clientService->iocontext))
@@ -22,80 +22,77 @@ void ClientManager::Init(int32 sessionUid, AsioSessionPtr session)
 	else
 		LOGE << "Already be Session";
 	
-	//m_Service = clientService;
-	//session.reset();
+	m_Service = clientService;
+
 	m_RunningState = RunningState::Connect;
 	int32 sessionSize = m_Sessions.size();
 	LOGD << "Session Size : " << sessionSize;
-	//ProcessStart();
+	if (sessionSize == 100)
+	{
+		run = true;
+		m_cv.notify_all();
+	}
 }
 
 void ClientManager::Process()
 {
-	switch (m_RunningState)
+	std::unique_lock<std::mutex> lock(m_Mutex);
+	m_cv.wait(lock, [this]() { return run; });
+	lock.unlock();
+
+	while (run)
 	{
-	case RunningState::Connect:
-	case RunningState::Send:
-	{
-		for (int i = 0; i < targetRandomCnt; ++i)
+		switch (m_RunningState)
 		{
-			string message("sdfdsfewfewf", 128);
-			Packet packet;
-			std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
-			std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
-			packet.header.type = PacketType::YJ;
-			packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + sizeof(packet.payload) + sizeof(PacketTail));
-			std::memcpy(packet.payload, message.c_str(), message.size());
-			packet.tail.value = 255;
+		case RunningState::Connect:
+		case RunningState::Send:
+		{
+			std::lock_guard<std::mutex> lock(m_Mutex);
 
-			//m_Session->Send(packet);
-			//clientService->BroadCast(packet);
+			for (int i = 0; i < targetRandomCnt; ++i)
+			{
+				string message("asdvwevljnsdvldsvnklewvlkn", 128);
+				Packet packet;
+				std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
+				std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
+				packet.header.type = PacketType::YJ;
+				packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + sizeof(packet.payload) + sizeof(PacketTail));
+				std::memcpy(packet.payload, message.c_str(), message.size());
+				packet.tail.value = 255;
+
+				clientService->BroadCast(packet);
+			}
+
+			m_RunningState = RunningState::Disconnect;
+		}
+		break;
+		case RunningState::Disconnect:
+		{
+			std::lock_guard<std::mutex> lock(m_Mutex);
+			// 클라이언트 Disconnect
+			StopClient();
+			
+			m_RunningState = RunningState::Reconnect;
+		}
+		break;
+		case RunningState::Reconnect:
+		{
+			//run = false;
+			std::lock_guard<std::mutex> lock(m_Mutex);
+
+			m_Service->Start();
+
+			m_RunningState = RunningState::Connect;
+		}
+		break;
+		case RunningState::Recv:
+			break;
+		default:
+			break;
 		}
 
-		m_RunningState = RunningState::Disconnect;
+		std::this_thread::sleep_for(1s);
 	}
-	break;
-	case RunningState::Disconnect:
-	{
-		// 클라이언트 Disconnect
-		StopClient();
-
-		m_RunningState = RunningState::Reconnect;
-
-		// Session 재 생성 후 connect.
-		m_Session = m_Service->CreateSession(m_Service->iocontext, tcp::socket(m_Service->iocontext));
-		m_Session->Connect("127.0.0.1", "7777");
-
-		m_RunningState = RunningState::Connect;
-	}
-	break;
-	case RunningState::Reconnect:
-	{
-		m_Session = m_Service->CreateSession(m_Service->iocontext, tcp::socket(m_Service->iocontext));
-		m_Session->Connect("127.0.0.1", "7777");
-
-		m_RunningState = RunningState::Connect;
-	}
-	break;
-	case RunningState::Recv:
-		break;
-	default:
-		break;
-	}
-}
-
-void ClientManager::ProcessStart()
-{
-	if (m_Session == nullptr || m_Service == nullptr) 
-		return;
-
-	m_Timer->expires_after(std::chrono::milliseconds(500ms));
-	m_Timer->async_wait([this](const boost::system::error_code& ec) {
-		if (!ec && m_Session->GetIsRunning()) {
-			Process();
-			ProcessStart(); // 다시 실행하여 주기적으로 Process 실행
-		}
-		});
 }
 
 void ClientManager::StopClient()
@@ -116,6 +113,5 @@ void ClientManager::StopClient()
 		session.second->Disconnect();
 		session.second.reset();
 	}
-
 	m_Sessions.clear();
 }

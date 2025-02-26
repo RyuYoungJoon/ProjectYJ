@@ -13,6 +13,7 @@
 
 string serverPort;
 string serverIP;
+ClientServicePtr clientService;
 
 std::vector<std::thread> ConnectThreads;
 std::vector<std::thread> ClientThreads;
@@ -67,7 +68,7 @@ int main()
 	{
 		boost::asio::io_context ioContext;
 		work_guard_type work_guard(ioContext.get_executor());
-		ClientServicePtr clientService = std::make_shared<AsioClientService>(
+		clientService = std::make_shared<AsioClientService>(
 			ioContext,
 			serverIP,
 			serverPort,
@@ -78,19 +79,36 @@ int main()
 		//// 스레드 생성
 		for (int i = 0; i < threadCnt; ++i)
 		{
-			ConnectThreads.emplace_back([&ioContext, &clientService]() {
-				if (clientService->Start())
-				{
-					LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << serverPort;
+			ConnectThreads.emplace_back([&ioContext]() {
+				try {
+					if (clientService->Start())
+					{
+						LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << serverPort;
+					}
+					else
+					{
+						LOGE << "Failed to Start the Server";
+						return -1;
+					}
+
+					ClientManager::GetInstance().Process();
 				}
-				else
-				{
-					LOGE << "Failed to Start the Server";
-					return -1;
+				catch (const std::exception& e) {
+					LOGE << "Thread exception: " << e.what();
+				}
+				catch (...) {
+					LOGE << "Unknown error occurred in thread!";
 				}
 				
-				ioContext.run();
 			});
+		}
+
+		std::vector<std::thread> asioThread;
+		for (int i = 0; i < threadCnt; ++i) 
+		{
+			asioThread.emplace_back([&ioContext]() {
+				ioContext.run();
+				});
 		}
 
 		for (auto& t : ConnectThreads) {
@@ -99,7 +117,15 @@ int main()
 			}
 		}
 
-		//ioContext.stop();
+		for (auto& t : asioThread)
+		{
+			if (t.joinable())
+			{
+				t.join();
+			}
+		}
+
+		ioContext.stop();
 
 		return 0;
 	}

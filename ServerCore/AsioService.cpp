@@ -120,7 +120,6 @@ bool AsioClientService::Start()
 		}
 		else
 		{
-			//session->SetSessionUID(i);
 			LOGD << "Session : " << i << ", Socket Handle : " << session->GetSocket().native_handle();
 		}
 	}

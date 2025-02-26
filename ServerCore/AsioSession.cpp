@@ -127,6 +127,11 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 		LOGE << "Connection closed by peer";
 		CloseSession();
 	}
+	else if (ec == boost::asio::error::operation_aborted)
+	{
+		LOGI << "Operation Aboreted!";
+		return;
+	}
 	else
 	{
 		if (ec.value() == boost::asio::error::connection_reset)
@@ -134,7 +139,8 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 		else
 			LOGE << "Read error : " << ec.message() << " (code : " << ec.value() << ")";
 
-		CloseSession();
+		return;
+		//CloseSession();
 	}
 }
 
