@@ -53,6 +53,7 @@ bool AsioSession::Connect(const string& host, const string& port)
 				LOGI << "Successfully connected to " << endpoint;
 				ProcessRecv();
 				OnConnected();
+				
 			}
 			else
 			{

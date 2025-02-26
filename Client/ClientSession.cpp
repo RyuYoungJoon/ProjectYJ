@@ -17,10 +17,11 @@ void ClientSession::OnConnected()
 {
 	GetService()->AddSession(shared_from_this());
 	AsioSessionPtr clientSession = GetSession();
+	int32 sessionUID = GetSessionUID();
 	clientSession->SetIsRunning(true);
 	
-	tryCnt.fetch_add(1);
-	LOGI << "FINISH TEST! Total Sessioun : " << tryCnt << ", ThreadID : " << GetCurrentThreadId();
+	ClientManager::GetInstance().Init(sessionUID, clientSession);
+	LOGI << "FINISH TEST! Total SessiounUID : " << sessionUID << ", ThreadID : " << GetCurrentThreadId();
 }
 
 void ClientSession::OnDisconnected()

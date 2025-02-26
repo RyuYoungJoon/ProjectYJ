@@ -13,14 +13,20 @@ ClientManager::ClientManager()
 	targetRandomCnt = dist(dre);
 }
 
-void ClientManager::Init(AsioSessionPtr session)
+void ClientManager::Init(int32 sessionUid, AsioSessionPtr session)
 {
-	m_Sessions.insert(session);
-	m_Session = session;
+	std::lock_guard<std::mutex> lock(m_Mutex);
+
+	if(m_Sessions.find(sessionUid) == m_Sessions.end())
+		m_Sessions.insert(std::make_pair(sessionUid, session));
+	else
+		LOGE << "Already be Session";
+	
 	//m_Service = clientService;
 	//session.reset();
 	m_RunningState = RunningState::Connect;
-	
+	int32 sessionSize = m_Sessions.size();
+	LOGD << "Session Size : " << sessionSize;
 	//ProcessStart();
 }
 

@@ -93,16 +93,6 @@ int main()
 				}
 				
 				ioContext.run();
-				// 생각 정리
-				// 세션이 전부 Connect 되면 Init을 해야하는가?
-				// 세션 10개가 단체 행동 하는거 아닌가?
-				// 세션이 들어오면 각자 Process 돌리고 나가면 되는거 아닌가?
-				// 근데 그게 맞는 구조인가?
-				AsioSessionPtr asioSession = nullptr;
-				ClientManager::GetInstance().Init(asioSession);
-
-				ClientManager::GetInstance().Process();
-
 			});
 		}
 

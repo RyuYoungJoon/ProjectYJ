@@ -38,6 +38,9 @@ AsioSessionPtr AsioService::CreateSession(boost::asio::io_context& iocontext, tc
 {
 	AsioSessionPtr session = m_SessionMaker(iocontext, std::move(socket));
 	session->SetService(shared_from_this());
+	AddSession(session);
+	session->SetSessionUID(m_SessionCount);
+
 	return session;
 }
 
@@ -120,6 +123,7 @@ bool AsioClientService::Start()
 		}
 		else
 		{
+			session->SetSessionUID(i);
 			LOGD << "Session : " << i << ", Socket Handle : " << session->GetSocket().native_handle();
 		}
 	}
