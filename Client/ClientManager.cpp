@@ -21,7 +21,7 @@ void ClientManager::Init(AsioSessionPtr session)
 	//session.reset();
 	m_RunningState = RunningState::Connect;
 	
-	ProcessStart();
+	//ProcessStart();
 }
 
 void ClientManager::Process()

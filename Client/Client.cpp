@@ -72,7 +72,7 @@ int main()
 		for (int i = 0; i < threadCnt; ++i)
 		{
 			ConnectThreads.emplace_back([&ioContext, &maxSessionCnt]() {
-				
+
 				ClientServicePtr clientService = std::make_shared<AsioClientService>(
 					ioContext,
 					serverIP,
@@ -93,13 +93,15 @@ int main()
 				}
 				
 				ioContext.run();
-
-				ClientManager::GetInstance().Init();
+				// 생각 정리
+				// 세션이 전부 Connect 되면 Init을 해야하는가?
+				// 세션 10개가 단체 행동 하는거 아닌가?
+				// 세션이 들어오면 각자 Process 돌리고 나가면 되는거 아닌가?
+				// 근데 그게 맞는 구조인가?
+				AsioSessionPtr asioSession = nullptr;
+				ClientManager::GetInstance().Init(asioSession);
 
 				ClientManager::GetInstance().Process();
-
-				//ClientManager::GetInstance().Process();
-
 
 			});
 		}
@@ -110,7 +112,7 @@ int main()
 			}
 		}
 
-		ioContext.stop();
+		//ioContext.stop();
 
 		return 0;
 	}

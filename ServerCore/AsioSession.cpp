@@ -39,19 +39,11 @@ void AsioSession::Send(const Packet& message)
 
 bool AsioSession::Connect(const string& host, const string& port)
 {
-	/*if (m_Socket->is_open())
-	{
-		LOGW << "Socket이 이미 열려있슴.";
-	}*/
-
 	m_Socket = tcp::socket(m_IoContext);
 	// 새로운 소켓 생성
-	LOGI <<"Socket Handle value : " << m_Socket.native_handle();
 	tcp::resolver::query targetQuery(host, port);
 	auto targetEndpoint = m_Resolver.resolve(targetQuery);
 	
-	LOGI << "Before m_Socket Handle : " << m_Socket.lowest_layer().native_handle();
-	// TODO Cnt 위치 옮기기
 	auto self = shared_from_this();
 	boost::asio::async_connect(m_Socket, targetEndpoint,
 		[this, self](boost::system::error_code ec, tcp::endpoint endpoint)
@@ -79,12 +71,6 @@ void AsioSession::Disconnect()
 
 	LOGI << "SessionUID : " << GetSessionUID() << ", Disconnecting";
 
-	//m_Socket.cancel(ec);
-	//if (ec)
-	//{
-	//	LOGE << "Cancle error : " << ec.value() << ", " << ec.message();
-	//}
-
 	OnDisconnected();
 	CloseSession();
 
@@ -101,8 +87,6 @@ void AsioSession::DoRead()
 
 	m_Socket.async_read_some(boost::asio::buffer(m_PacketBuffer.WritePos(), m_PacketBuffer.FreeSize()),
 		std::bind(&AsioSession::HandleRead, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
-
-	LOGD << "Recv Socket Handle : " << m_Socket.lowest_layer().native_handle();
 }
 
 void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
