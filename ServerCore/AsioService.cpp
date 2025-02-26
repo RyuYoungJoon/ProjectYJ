@@ -3,9 +3,6 @@
 #include "AsioAcceptor.h"
 #include "AsioService.h"
 
-int totalCnt = 0;
-int RealTryCnt = 0;
-
 AsioService::AsioService(ServiceType type, boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
 	:m_type(type), iocontext(iocontext), m_Host(host), m_Port(port), m_SessionMaker(SessionMaker), m_MaxSessionCount(maxSessionCount)
 {
@@ -123,7 +120,7 @@ bool AsioClientService::Start()
 		}
 		else
 		{
-			session->SetSessionUID(i);
+			//session->SetSessionUID(i);
 			LOGD << "Session : " << i << ", Socket Handle : " << session->GetSocket().native_handle();
 		}
 	}

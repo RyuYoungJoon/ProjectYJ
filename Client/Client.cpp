@@ -67,21 +67,18 @@ int main()
 	{
 		boost::asio::io_context ioContext;
 		work_guard_type work_guard(ioContext.get_executor());
-
+		ClientServicePtr clientService = std::make_shared<AsioClientService>(
+			ioContext,
+			serverIP,
+			serverPort,
+			[](boost::asio::io_context& ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
+				return std::make_shared<ClientSession>(ioContext, std::move(socket));
+			},
+			maxSessionCnt);
 		//// 스레드 생성
 		for (int i = 0; i < threadCnt; ++i)
 		{
-			ConnectThreads.emplace_back([&ioContext, &maxSessionCnt]() {
-
-				ClientServicePtr clientService = std::make_shared<AsioClientService>(
-					ioContext,
-					serverIP,
-					serverPort,
-					[](boost::asio::io_context& ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
-						return std::make_shared<ClientSession>(ioContext, std::move(socket));
-					},
-					maxSessionCnt);
-
+			ConnectThreads.emplace_back([&ioContext, &clientService]() {
 				if (clientService->Start())
 				{
 					LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << serverPort;

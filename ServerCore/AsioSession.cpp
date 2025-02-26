@@ -5,6 +5,8 @@
 #include "TaskQueue.h"
 #include "ServerAnalyzer.h"
 
+atomic<int32> SessionUID = 0;
+
 AsioSession::AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
 	: m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(65536), m_Resolver(iocontext)
 {
@@ -51,6 +53,7 @@ bool AsioSession::Connect(const string& host, const string& port)
 			if (!ec)
 			{
 				LOGI << "Successfully connected to " << endpoint;
+				m_SessionUID = SessionUID.fetch_add(1);
 				ProcessRecv();
 				OnConnected();
 				
@@ -124,11 +127,6 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 		LOGE << "Connection closed by peer";
 		CloseSession();
 	}
-	else if (ec == boost::asio::error::operation_aborted)
-	{
-		//LOGE << "Operation aborted.";
-		//CloseSession();
-	}
 	else
 	{
 		if (ec.value() == boost::asio::error::connection_reset)
@@ -150,10 +148,6 @@ void AsioSession::HandleWrite(boost::system::error_code ec, int32 length)
 	}   
 	else
 	{
-		// 다 보내면 Disconnect 해야함.
-		// 지금은 하나 보내면 다른 send 하기 전에 Disconnect 해버림.
-		// 전부 보냈다라는 플래그가 필요함!!
-		//Disconnect();
 		OnSend(length);
 	}
 }
@@ -209,7 +203,6 @@ void AsioSession::CloseSession()
 	{
 		service->ReleaseSession(shared_from_this());
 	}
-	//delete m_Socket;
 }
 
 void AsioSession::WaitForSocketClose()

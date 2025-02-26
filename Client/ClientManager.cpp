@@ -57,20 +57,8 @@ void ClientManager::Process()
 	break;
 	case RunningState::Disconnect:
 	{
-		// timer cancle
-		if (m_Timer)
-		{
-			boost::system::error_code ec;
-			m_Timer->cancel(ec);
-			if (ec)
-			{
-				LOGE << "m_Timer 에러 : " << ec.value() << ", " << ec.message();
-			}
-		}
-
 		// 클라이언트 Disconnect
-		m_Session->Disconnect();
-		m_Session.reset();
+		StopClient();
 
 		m_RunningState = RunningState::Reconnect;
 
@@ -108,4 +96,26 @@ void ClientManager::ProcessStart()
 			ProcessStart(); // 다시 실행하여 주기적으로 Process 실행
 		}
 		});
+}
+
+void ClientManager::StopClient()
+{
+	// timer cancle
+	if (m_Timer)
+	{
+		boost::system::error_code ec;
+		m_Timer->cancel(ec);
+		if (ec)
+		{
+			LOGE << "m_Timer 에러 : " << ec.value() << ", " << ec.message();
+		}
+	}
+
+	for (auto session : m_Sessions)
+	{
+		session.second->Disconnect();
+		session.second.reset();
+	}
+
+	m_Sessions.clear();
 }
