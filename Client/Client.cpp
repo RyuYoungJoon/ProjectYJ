@@ -13,7 +13,6 @@
 
 string serverPort;
 string serverIP;
-ClientServicePtr clientService;
 
 std::vector<std::thread> ConnectThreads;
 std::vector<std::thread> ClientThreads;
@@ -70,19 +69,19 @@ int main()
 		work_guard_type work_guard(ioContext.get_executor());
 
 		//// 스레드 생성
-
-		clientService = std::make_shared<AsioClientService>(
-			ioContext,
-			serverIP,
-			serverPort,
-			[](boost::asio::io_context& ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
-				return std::make_shared<ClientSession>(ioContext, std::move(socket));
-			},
-			maxSessionCnt);
-		
 		for (int i = 0; i < threadCnt; ++i)
 		{
-			ConnectThreads.emplace_back([&ioContext]() {
+			ConnectThreads.emplace_back([&ioContext, &maxSessionCnt]() {
+				
+				ClientServicePtr clientService = std::make_shared<AsioClientService>(
+					ioContext,
+					serverIP,
+					serverPort,
+					[](boost::asio::io_context& ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
+						return std::make_shared<ClientSession>(ioContext, std::move(socket));
+					},
+					maxSessionCnt);
+
 				if (clientService->Start())
 				{
 					LOGI << "[SERVER INFO] Server is running and waiting for connections on port " << serverPort;
@@ -95,8 +94,11 @@ int main()
 				
 				ioContext.run();
 
+				ClientManager::GetInstance().Init();
 
 				ClientManager::GetInstance().Process();
+
+				//ClientManager::GetInstance().Process();
 
 
 			});
@@ -109,17 +111,6 @@ int main()
 		}
 
 		ioContext.stop();
-
-		while (true)
-		{
-			LOGI << "Session Size : " << clientService->GetSessionSize();
-			std::this_thread::sleep_for(1s);
-		}
-
-		//for (auto& t : m_asioThread) {
-		//	if (t.joinable())
-		//		t.join();
-		//}
 
 		return 0;
 	}

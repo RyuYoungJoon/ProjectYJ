@@ -2,10 +2,10 @@
 #include "ClientSession.h"
 #include "ClientManager.h"
 
-extern ClientServicePtr clientService;
+//extern ClientServicePtr clientService;
 
 ClientManager::ClientManager()
-	: m_Timer(std::make_shared<boost::asio::steady_timer>(clientService->iocontext))
+	//: m_Timer(std::make_shared<boost::asio::steady_timer>(clientService->iocontext))
 {
 	std::random_device rd;
 	std::default_random_engine dre(rd());
@@ -17,7 +17,7 @@ void ClientManager::Init(AsioSessionPtr session)
 {
 	m_Sessions.insert(session);
 	m_Session = session;
-	m_Service = clientService;
+	//m_Service = clientService;
 	//session.reset();
 	m_RunningState = RunningState::Connect;
 	
@@ -42,7 +42,7 @@ void ClientManager::Process()
 			std::memcpy(packet.payload, message.c_str(), message.size());
 			packet.tail.value = 255;
 
-			m_Session->Send(packet);
+			//m_Session->Send(packet);
 			//clientService->BroadCast(packet);
 		}
 
