@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "ClientSession.h"
+#include "ServerAnalyzer.h"
 #include "ClientManager.h"
 
 extern ClientServicePtr clientService;
@@ -16,7 +17,8 @@ void ClientManager::Init(int32 sessionUid, AsioSessionPtr session)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
-	if(m_Sessions.find(sessionUid) == m_Sessions.end())
+	auto iter = m_Sessions.find(sessionUid);
+	if(iter == m_Sessions.end())
 		m_Sessions.insert(std::make_pair(sessionUid, session));
 	else
 		LOGE << "Already be Session";
@@ -26,6 +28,8 @@ void ClientManager::Init(int32 sessionUid, AsioSessionPtr session)
 	m_RunningState = RunningState::Connect;
 	int32 sessionSize = m_Sessions.size();
 	LOGD << "Session Size : " << sessionSize;
+
+	// TODO : 상수 값 대신 Config값을 읽어오기.
 	if (sessionSize == 100)
 	{
 		run = true;
@@ -50,7 +54,7 @@ void ClientManager::Process()
 
 			for (int i = 0; i < targetRandomCnt; ++i)
 			{
-				string message("In multithreaded programming, it is crucial to use mutexes and condition variables properly to prevent data races and ensure synchronization.", 128);
+				string message("In multithreaded programming, it is crucial to use mutexes and condition variables properly to prevent data races and ensure synchronization.");
 				Packet packet;
 				std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
 				std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
@@ -77,7 +81,6 @@ void ClientManager::Process()
 		break;
 		case RunningState::Reconnect:
 		{
-			//run = false;
 			std::lock_guard<std::mutex> lock(m_Mutex);
 
 			m_Service->Start();
@@ -91,7 +94,7 @@ void ClientManager::Process()
 			break;
 		}
 
-
+		LOGD << "Send Cnt : " << ServerAnalyzer::GetInstance().GetSendCount() << ", TotalSend Count : " << ServerAnalyzer::GetInstance().GetTotalSendCount();
 		LOGD << "Session Size : " << m_Sessions.size();
 		std::this_thread::sleep_for(1s);
 	}
@@ -102,7 +105,7 @@ void ClientManager::StopClient()
 	for (auto session : m_Sessions)
 	{
 		session.second->Disconnect();
-		session.second.reset();
+		session.second->Reset();
 	}
 	m_Sessions.clear();
 }

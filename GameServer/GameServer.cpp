@@ -15,7 +15,7 @@
 std::atomic<bool> g_IsRunning(true);
 shared_ptr<AsioServerService> serverService = nullptr;
 
-void InputThread(boost::asio::io_context& ioContext)
+void InputThread(boost::asio::io_context* ioContext)
 {
 	int16 input;
 	while (g_IsRunning)
@@ -29,7 +29,7 @@ void InputThread(boost::asio::io_context& ioContext)
 			LOGI << "Server Release";
 
 			serverService->CloseService();
-			ioContext.stop();
+			ioContext->stop();
 			break;
 		case 1:
 			LOGD << "TotalPacketRecvCount : " << ServerAnalyzer::GetInstance().GetTotalRecvCount();
@@ -84,7 +84,7 @@ int main()
 	
 	try
 	{
-		boost::asio::io_context IoContext;
+		boost::asio::io_context* IoContext = nullptr;
 		
 		string serverPort = reader.Get("server", "port", "7777");
 		string serverIP = reader.Get("server", "address", "127.0.0.1");
@@ -94,7 +94,7 @@ int main()
 			IoContext, 
 			serverIP,
 			serverPort,
-			[](boost::asio::io_context& ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
+			[](boost::asio::io_context* ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
 				return std::make_shared<GameSession>(ioContext, std::move(socket));
 			});
 
@@ -118,8 +118,8 @@ int main()
 		std::vector<std::thread> m_asioThread;
 		for (int i = 0; i < threadCnt; ++i)
 		{
-			m_asioThread.emplace_back([&IoContext]() {
-				IoContext.run();
+			m_asioThread.emplace_back([IoContext]() {
+				IoContext->run();
 				});
 		}
 

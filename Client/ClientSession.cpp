@@ -20,18 +20,14 @@ void ClientSession::OnConnected()
 	clientSession->SetIsRunning(true);
 	
 	ClientManager::GetInstance().Init(sessionUID, clientSession);
-	LOGI << "FINISH TEST! Total SessiounUID : " << sessionUID << ", ThreadID : " << GetCurrentThreadId();
+	LOGI << "Conntect FINISH! SessiounUID : " << sessionUID << ", ThreadID : " << GetCurrentThreadId();
 }
 
 void ClientSession::OnDisconnected()
 {
 	LOGI << "Disconnected Server!";
 	
-	if (ServerAnalyzer::GetInstance().GetTotalSendCount() < 100000)
-	{
-		ServerAnalyzer::GetInstance().ResetSendCount();
-	}
-
+	ServerAnalyzer::GetInstance().ResetSendCount();
 	m_IsRunning = false;
 }
 

@@ -3,7 +3,7 @@
 #include "AsioAcceptor.h"
 #include "AsioService.h"
 
-AsioService::AsioService(ServiceType type, boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
+AsioService::AsioService(ServiceType type, boost::asio::io_context* iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
 	:m_type(type), iocontext(iocontext), m_Host(host), m_Port(port), m_SessionMaker(SessionMaker), m_MaxSessionCount(maxSessionCount)
 {
 }
@@ -31,7 +31,7 @@ void AsioService::CloseService()
 	LOGI << "Session Clear";
 }
 
-AsioSessionPtr AsioService::CreateSession(boost::asio::io_context& iocontext, tcp::socket socket)
+AsioSessionPtr AsioService::CreateSession(boost::asio::io_context* iocontext, tcp::socket socket)
 {
 	AsioSessionPtr session = m_SessionMaker(iocontext, std::move(socket));
 	session->SetService(shared_from_this());
@@ -65,7 +65,7 @@ void AsioService::BroadCast(const Packet& packet)
 	}
 }
 
-AsioServerService::AsioServerService(boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
+AsioServerService::AsioServerService(boost::asio::io_context* iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
 	:AsioService(ServiceType::Server, iocontext, host, port, SessionMaker, maxSessionCount),
 	m_IoContext(iocontext)
 {
@@ -98,9 +98,9 @@ void AsioServerService::CloseService()
 	AsioService::CloseService();
 }
 
-AsioClientService::AsioClientService(boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
+AsioClientService::AsioClientService(boost::asio::io_context* iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
 	: AsioService(ServiceType::Client, iocontext, host, port, SessionMaker, maxSessionCount),
-	m_Socket(iocontext)
+	m_Socket(*iocontext)
 {
 }
 
@@ -112,7 +112,7 @@ bool AsioClientService::Start()
 	const int32 maxSessionCount = GetMaxSessionCount();
 	for (int i = 0; i < maxSessionCount; ++i)
 	{
-		AsioSessionPtr session = CreateSession(iocontext, tcp::socket(iocontext));
+		AsioSessionPtr session = CreateSession(iocontext, tcp::socket(*iocontext));
 		if (session->Connect(m_Host, m_Port) == false)
 		{
 			LOGE << "Connect Fail!";

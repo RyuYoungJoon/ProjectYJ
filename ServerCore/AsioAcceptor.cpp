@@ -53,7 +53,7 @@ void AsioAcceptor::Stop()
 void AsioAcceptor::DoAccept()
 {
     // 货肺款 家南 积己
-    auto newSocket = std::make_shared<tcp::socket>(m_IoContext);
+    auto newSocket = std::make_shared<tcp::socket>(*m_IoContext);
     // 货 楷搬 罐扁
     m_Acceptor.async_accept(*newSocket, std::bind(&AsioAcceptor::HandleAccept, this, newSocket, std::placeholders::_1));
 }

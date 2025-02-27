@@ -4,7 +4,7 @@
 class ClientSession : public AsioSession
 {
 public:
-	ClientSession(boost::asio::io_context& iocontext, tcp::socket socket)
+	ClientSession(boost::asio::io_context* iocontext, tcp::socket socket)
 		: AsioSession(iocontext, std::move(socket))
 	{
 	}

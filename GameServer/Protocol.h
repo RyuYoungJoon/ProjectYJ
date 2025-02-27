@@ -15,6 +15,7 @@ struct PacketHeader {
 	PacketType type;           // ±âº» : 100
 	uint8_t checkSum[16];
 	uint32_t size;
+	uint32_t seq;
 };
 
 // 1 byte
