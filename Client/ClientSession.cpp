@@ -15,7 +15,6 @@ int32 ClientSession::OnRecv(BYTE* buffer, int32 len)
 
 void ClientSession::OnConnected()
 {
-	//GetService()->AddSession(shared_from_this());
 	AsioSessionPtr clientSession = GetSession();
 	int32 sessionUID = GetSessionUID();
 	clientSession->SetIsRunning(true);

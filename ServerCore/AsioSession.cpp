@@ -64,8 +64,6 @@ bool AsioSession::Connect(const string& host, const string& port)
 			}
 		});
 
-	LOGI << "After m_Socket Handle : " << m_Socket.lowest_layer().native_handle();
-
 	return true;
 }
 
@@ -126,6 +124,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 	{
 		LOGE << "Connection closed by peer";
 		CloseSession();
+		return;
 	}
 	else if (ec == boost::asio::error::operation_aborted)
 	{
@@ -140,7 +139,6 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 			LOGE << "Read error : " << ec.message() << " (code : " << ec.value() << ")";
 
 		return;
-		//CloseSession();
 	}
 }
 
@@ -209,16 +207,4 @@ void AsioSession::CloseSession()
 	{
 		service->ReleaseSession(shared_from_this());
 	}
-}
-
-void AsioSession::WaitForSocketClose()
-{
-	m_Socket.async_wait(boost::asio::socket_base::wait_read,
-		[this](boost::system::error_code ec) {
-			if (ec)
-			{
-				LOGD << "Socket closed or error detected : " << ec.value()<< ", " << ec.message();
-				OnDisconnected();
-			}
-		});
 }

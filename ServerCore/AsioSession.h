@@ -34,7 +34,6 @@ public:
     void SetSessionUID(int32 sessionUID) { m_SessionUID = sessionUID; }
 
     void CloseSession();
-    void WaitForSocketClose();
 
     void SetIsRunning(bool isRunning) { m_IsRunning = isRunning; }
     bool GetIsRunning() { return m_IsRunning; }
@@ -47,10 +46,6 @@ protected:
     virtual void OnConnected() {}
     virtual void OnDisconnected() {}
 
-    atomic<int32> tryCnt = 0;
-    //atomic<int32> totalTryCnt = 0;
-    atomic<int32> realRecvCnt = 0;
-    atomic<int32> totalRecvCnt = 0;
     bool m_IsRunning = false;
 
 private:
