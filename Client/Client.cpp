@@ -66,7 +66,7 @@ int main()
 
 	try
 	{
-		boost::asio::io_context* ioContext = nullptr;
+		boost::asio::io_context* ioContext = new boost::asio::io_context();
 		work_guard_type work_guard(ioContext->get_executor());
 		clientService = std::make_shared<AsioClientService>(
 			ioContext,
@@ -95,9 +95,11 @@ int main()
 				}
 				catch (const std::exception& e) {
 					LOGE << "Thread exception: " << e.what();
+					return -2;
 				}
 				catch (...) {
 					LOGE << "Unknown error occurred in thread!";
+					return -3;
 				}
 				
 			});
@@ -126,6 +128,8 @@ int main()
 		}
 
 		ioContext->stop();
+
+		delete ioContext;
 
 		return 0;
 	}

@@ -19,5 +19,5 @@ public:
 private:  
 	PacketHandler m_PacketHandler;  
 
-	ObjectPool<AsioSession> m_SessionPool{100};  
+	ObjectPool<AsioSession> m_SessionPool;
 };

@@ -8,7 +8,7 @@ GameSession::GameSession()
 }
 
 GameSession::GameSession(boost::asio::io_context* iocontext, tcp::socket socket)
-	: AsioSession(iocontext, std::move(socket))
+	: AsioSession(iocontext, std::move(socket)), m_SessionPool(100)
 {
 	m_PacketHandler.Init();
 }
@@ -33,6 +33,7 @@ int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 	Packet* packet = reinterpret_cast<Packet*>(buffer);
 
 	AsioSessionPtr gameSession = m_SessionPool.Pop();
+	
 	gameSession = GetSession();
 
 	ServerAnalyzer::GetInstance().IncrementRecvCnt();

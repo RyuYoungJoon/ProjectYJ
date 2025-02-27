@@ -19,7 +19,7 @@ AsioSession::AsioSession(boost::asio::io_context* iocontext, tcp::socket socket)
 	: m_IoContext(iocontext), m_PacketBuffer(65536)
 {
 	m_Resolver = nullptr;
-	m_Socket = nullptr;
+	m_Socket = new tcp::socket(*m_IoContext);
 }
 
 AsioSession::~AsioSession()

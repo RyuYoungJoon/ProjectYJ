@@ -84,7 +84,7 @@ int main()
 	
 	try
 	{
-		boost::asio::io_context* IoContext = nullptr;
+		boost::asio::io_context* IoContext = new boost::asio::io_context();
 		
 		string serverPort = reader.Get("server", "port", "7777");
 		string serverIP = reader.Get("server", "address", "127.0.0.1");
@@ -131,6 +131,9 @@ int main()
 		}
 
 		ioThread.join();
+
+		IoContext->stop();
+		delete IoContext;
 	}
 	catch (const std::exception& e)
 	{
