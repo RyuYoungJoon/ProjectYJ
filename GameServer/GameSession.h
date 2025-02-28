@@ -7,7 +7,7 @@ class GameSession : public AsioSession
 {  
 public:
 	GameSession();
-	GameSession(boost::asio::io_context* iocontext, tcp::socket socket);  
+	GameSession(boost::asio::io_context* iocontext, tcp::socket* socket);  
 	~GameSession();  
 
 	virtual void OnSend(int32 len) override;  

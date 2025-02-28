@@ -9,7 +9,7 @@ class AsioSession : public std::enable_shared_from_this<AsioSession>
 {
 public:
     AsioSession();
-    AsioSession(boost::asio::io_context* iocontext, tcp::socket socket);
+    AsioSession(boost::asio::io_context* iocontext, tcp::socket* socket);
     virtual ~AsioSession();
 
     void ProcessRecv();

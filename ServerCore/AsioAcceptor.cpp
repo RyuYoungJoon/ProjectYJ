@@ -53,17 +53,17 @@ void AsioAcceptor::Stop()
 void AsioAcceptor::DoAccept()
 {
     // 새로운 소켓 생성
-    auto newSocket = std::make_shared<tcp::socket>(*m_IoContext);
+    auto newSocket = new tcp::socket(*m_IoContext);
     // 새 연결 받기
     m_Acceptor.async_accept(*newSocket, std::bind(&AsioAcceptor::HandleAccept, this, newSocket, std::placeholders::_1));
 }
 
-void AsioAcceptor::HandleAccept(std::shared_ptr<tcp::socket> newSocket, boost::system::error_code ec)
+void AsioAcceptor::HandleAccept(tcp::socket* newSocket, boost::system::error_code ec)
 {
     if (!ec)
     {
         // 세션 만들고 세션 스타트
-        auto session = m_Service->CreateSession(m_IoContext, std::move(*newSocket));
+        auto session = m_Service->CreateSession(m_IoContext, newSocket);
         
         // 세션 마다 내가 보내는 카운트를 저장하는 변수를 만들자.
         session->ProcessRecv();

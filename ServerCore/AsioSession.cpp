@@ -15,11 +15,11 @@ AsioSession::AsioSession()
 	m_PacketBuffer.Init(65536);
 }
 
-AsioSession::AsioSession(boost::asio::io_context* iocontext, tcp::socket socket)
+AsioSession::AsioSession(boost::asio::io_context* iocontext, tcp::socket* socket)
 	: m_IoContext(iocontext), m_PacketBuffer(65536)
 {
 	m_Resolver = nullptr;
-	m_Socket = new tcp::socket(*m_IoContext);
+	m_Socket = socket;
 }
 
 AsioSession::~AsioSession()
@@ -222,13 +222,13 @@ void AsioSession::CloseSession()
 	{
 		service->ReleaseSession(shared_from_this());
 	}
+
+	//Reset();
 }
 
 void AsioSession::Reset()
 {
 	LOGD << "Destroy AsioSession";
-	delete m_IoContext;
-	m_IoContext = nullptr;
 
 	delete m_Socket;
 	m_Socket = nullptr;

@@ -4,21 +4,21 @@ template <typename T>
 class ObjectPool
 {
 public:
-	ObjectPool() = default;
+	ObjectPool();
 	ObjectPool(size_t poolSize)
-		: m_PoolSize(poolSize), m_ObjectStack(poolSize)
+		: m_PoolSize(poolSize), m_ObjectQueue(poolSize)
 	{}
 
 	void InitPool(size_t poolSize)
 	{
 		m_PoolSize = poolSize;
-		m_ObjectStack = std::make_unique<boost::lockfree::stack<std::shared_ptr<T>>>(poolSize);
+		m_ObjectQueue.reserve(100);
 	}
 
 	std::shared_ptr<T> Pop()
 	{
 		std::shared_ptr<T> obj;
-		if (m_ObjectStack.pop(obj))
+		if (m_ObjectQueue.pop(obj))
 		{
 			return obj;
 		}
@@ -29,11 +29,15 @@ public:
 	void Push(std::shared_ptr<T> obj)
 	{
 		obj->Reset();
-		m_ObjectStack.push(obj);
+		m_ObjectQueue.push(obj);
 	}
 
 private:
 	size_t m_PoolSize;
-	boost::lockfree::stack<std::shared_ptr<T>> m_ObjectStack;
-	std::mutex m_Mutex;
+	boost::lockfree::stack<std::shared_ptr<T>> m_ObjectQueue;
 };
+
+template<typename T>
+inline ObjectPool<T>::ObjectPool()
+{
+}

@@ -94,8 +94,8 @@ int main()
 			IoContext, 
 			serverIP,
 			serverPort,
-			[](boost::asio::io_context* ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
-				return std::make_shared<GameSession>(ioContext, std::move(socket));
+			[](boost::asio::io_context* ioContext, tcp::socket* socket) -> std::shared_ptr<AsioSession> {
+				return std::make_shared<GameSession>(ioContext, socket);
 			});
 
 		if (serverService->Start())
