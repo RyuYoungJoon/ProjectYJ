@@ -26,6 +26,7 @@ public:
 	void Process();
 	void MakeSendBuffer();
 	void ProcessStart();
+	void Reset();
 
 private:
 	void StopClient();

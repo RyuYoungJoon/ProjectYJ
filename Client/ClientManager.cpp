@@ -1,11 +1,11 @@
 ﻿#include "pch.h"
 #include "ClientSession.h"
 #include "ClientManager.h"
+#include "ServerAnalyzer.h"
 
 extern ClientServicePtr clientService;
 
 ClientManager::ClientManager()
-	//: m_Timer(std::make_shared<boost::asio::steady_timer>(clientService->iocontext))
 {
 	std::random_device rd;
 	std::default_random_engine dre(rd());
@@ -49,9 +49,9 @@ void ClientManager::Process()
 		{
 			std::lock_guard<std::mutex> lock(m_Mutex);
 
-			for (int i = 0; i < targetRandomCnt; ++i)
+			for (int i = 0; i < 100; ++i)
 			{
-				string message("asdvwevljnsdvldsvnklewvlkn", 128);
+				string message("In multithreaded programming, it is crucial to use mutexes and condition variables properly to prevent data races and ensure synchronization.");
 				Packet packet;
 				std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
 				std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
@@ -91,23 +91,18 @@ void ClientManager::Process()
 			break;
 		}
 
+		LOGD << "send Count : " << ServerAnalyzer::GetInstance().GetSendCount() << ", Total Send Count : " << ServerAnalyzer::GetInstance().GetTotalSendCount();
 		std::this_thread::sleep_for(1s);
 	}
 }
 
+void ClientManager::Reset()
+{
+	run = false;
+}
+
 void ClientManager::StopClient()
 {
-	// timer cancle
-	if (m_Timer)
-	{
-		boost::system::error_code ec;
-		m_Timer->cancel(ec);
-		if (ec)
-		{
-			LOGE << "m_Timer 에러 : " << ec.value() << ", " << ec.message();
-		}
-	}
-
 	for (auto session : m_Sessions)
 	{
 		session.second->Disconnect();
@@ -115,3 +110,4 @@ void ClientManager::StopClient()
 	}
 	m_Sessions.clear();
 }
+
