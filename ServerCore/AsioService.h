@@ -18,7 +18,7 @@ public:
     AsioService(ServiceType type, boost::asio::io_context* iocontext, string& host, string& port ,SessionMaker SessionMaker, int32 maxSessionCount = 1);
     virtual ~AsioService();
 
-    virtual bool Start() abstract;
+    virtual bool Start();
     bool CanStart() { return m_SessionMaker != nullptr; }
 
     virtual void CloseService();
@@ -50,7 +50,7 @@ protected:
     tcp::endpoint m_ServiceEndpoint;
     SessionMaker m_SessionMaker;
     bool m_checkRunning = false;
-    ObjectPool<AsioSession> m_SessionPool{ 100 };
+    ObjectPool<AsioSession> m_SessionPool;
 };
 
 

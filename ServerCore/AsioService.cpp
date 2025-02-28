@@ -69,6 +69,11 @@ void AsioService::BroadCast(const Packet& packet)
 	}
 }
 
+bool AsioService::Start()
+{
+	m_SessionPool.InitPool(100, 10000);
+}
+
 AsioServerService::AsioServerService(boost::asio::io_context* iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
 	:AsioService(ServiceType::Server, iocontext, host, port, SessionMaker, maxSessionCount),
 	m_IoContext(iocontext)
