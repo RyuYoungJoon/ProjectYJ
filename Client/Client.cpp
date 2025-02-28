@@ -13,6 +13,9 @@
 
 string serverPort;
 string serverIP;
+int32 threadCnt;
+int32 maxSessionCnt;
+
 ClientServicePtr clientService;
 
 std::vector<std::thread> ConnectThreads;
@@ -43,8 +46,8 @@ int main()
 
 	serverPort = reader.Get("client", "Port", "7777");
 	serverIP = reader.Get("client", "Address", "127.0.0.1");
-	int32 threadCnt = reader.GetInteger("client", "ThreadCnt", 10);
-	int32 maxSessionCnt = reader.GetInteger("client", "MaxSessionCount", 10);
+	threadCnt = reader.GetInteger("client", "ThreadCnt", 10);
+	maxSessionCnt = reader.GetInteger("client", "MaxSessionCount", 10);
 
 	// 로그 폴더 설정
 	string logPath = filePath;
