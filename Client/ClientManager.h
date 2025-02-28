@@ -24,9 +24,6 @@ public:
 
 	void Init(int32 sessionUid, AsioSessionPtr service);
 	void Process();
-	void MakeSendBuffer();
-	void ProcessStart();
-	void Reset();
 
 private:
 	void StopClient();

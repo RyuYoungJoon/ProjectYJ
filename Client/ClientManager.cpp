@@ -96,11 +96,6 @@ void ClientManager::Process()
 	}
 }
 
-void ClientManager::Reset()
-{
-	run = false;
-}
-
 void ClientManager::StopClient()
 {
 	for (auto session : m_Sessions)
