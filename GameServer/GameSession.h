@@ -1,19 +1,23 @@
-#pragma once
-#include "AsioSession.h"
-#include "PacketHandler.h"
+#pragma once  
+#include "AsioSession.h"  
+#include "PacketHandler.h"  
+#include "ObjectPool.h"  
 
-class GameSession : public AsioSession
-{
+class GameSession : public AsioSession  
+{  
 public:
-	GameSession(boost::asio::io_context& iocontext, tcp::socket socket);
-	~GameSession();
+	GameSession();
+	GameSession(boost::asio::io_context* iocontext, tcp::socket* socket);  
+	~GameSession();  
 
-	virtual void OnSend(int32 len) override;
-	virtual void OnDisconnected() override;
-	virtual int32 OnRecv(BYTE* buffer, int32 len) override;
-	virtual void OnConnected() override;
+	virtual void OnSend(int32 len) override;  
+	virtual void OnDisconnected() override;  
+	virtual int32 OnRecv(BYTE* buffer, int32 len) override;  
+	virtual void OnConnected() override;  
 
-private:
-	PacketHandler m_PacketHandler;
+	void Reset();  
+private:  
+	PacketHandler m_PacketHandler;  
+
+	ObjectPool<AsioSession> m_SessionPool;
 };
-

@@ -37,7 +37,6 @@ private:
 	std::mutex m_Mutex;
 	bool run = false;
 	int32 targetRandomCnt = 0;
-	int32 packetCount = 0;
 
 	std::condition_variable m_cv;
 };

@@ -4,8 +4,11 @@
 class PacketBuffer
 {
 public:
+    PacketBuffer();
     PacketBuffer(int32 bufferSize);
     ~PacketBuffer() = default;
+
+    void Init(int32 bufferSize);
 
     bool OnWrite(int32 size);
     bool OnRead(int32 size);

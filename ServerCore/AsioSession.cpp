@@ -7,10 +7,24 @@
 
 atomic<int32> SessionUID = 0;
 
-AsioSession::AsioSession(boost::asio::io_context& iocontext, tcp::socket socket)
-	: m_IoContext(iocontext), m_Socket(std::move(socket)), m_PacketBuffer(65536), m_Resolver(iocontext)
+AsioSession::AsioSession()  
+{  
+	m_IoContext = nullptr;
+	m_Socket = nullptr;  
+	m_Resolver = nullptr;
+	m_PacketBuffer.Init(65536);
+}
+
+AsioSession::AsioSession(boost::asio::io_context* iocontext, tcp::socket* socket)
+	: m_IoContext(iocontext), m_PacketBuffer(65536)
 {
-	m_pcSocket = nullptr;
+	m_Resolver = nullptr;
+	m_Socket = socket;
+}
+
+AsioSession::~AsioSession()
+{
+	Reset();
 }
 
 void AsioSession::ProcessRecv()
@@ -32,7 +46,7 @@ void AsioSession::Send(const Packet& message)
 
 	// TODO : 皋葛府 DeAllocate 备炼棱扁
 	//auto self = shared_from_this();
-	m_Socket.async_write_some(boost::asio::mutable_buffer(buffer, bufferSize),
+	m_Socket->async_write_some(boost::asio::mutable_buffer(buffer, bufferSize),
 		std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 
 	//LOGD << "Send Socket Handle : " << m_Socket.lowest_layer().native_handle();
@@ -41,13 +55,14 @@ void AsioSession::Send(const Packet& message)
 
 bool AsioSession::Connect(const string& host, const string& port)
 {
-	m_Socket = tcp::socket(m_IoContext);
+	m_Resolver = new tcp::resolver(*m_IoContext);
+	m_Socket = new tcp::socket(*m_IoContext);
 	// 货肺款 家南 积己
 	tcp::resolver::query targetQuery(host, port);
-	auto targetEndpoint = m_Resolver.resolve(targetQuery);
+	auto targetEndpoint = m_Resolver->resolve(targetQuery);
 	
 	auto self = shared_from_this();
-	boost::asio::async_connect(m_Socket, targetEndpoint,
+	boost::asio::async_connect(*m_Socket, targetEndpoint,
 		[this, self](boost::system::error_code ec, tcp::endpoint endpoint)
 		{
 			if (!ec)
@@ -63,8 +78,6 @@ bool AsioSession::Connect(const string& host, const string& port)
 				LOGE << "Connection Failed : " <<ec.value()<< ", " << ec.message();
 			}
 		});
-
-	LOGI << "After m_Socket Handle : " << m_Socket.lowest_layer().native_handle();
 
 	return true;
 }
@@ -89,7 +102,7 @@ void AsioSession::DoRead()
 {
 	ServerAnalyzer::GetInstance().ResetRecvCount();
 
-	m_Socket.async_read_some(boost::asio::buffer(m_PacketBuffer.WritePos(), m_PacketBuffer.FreeSize()),
+	m_Socket->async_read_some(boost::asio::buffer(m_PacketBuffer.WritePos(), m_PacketBuffer.FreeSize()),
 		std::bind(&AsioSession::HandleRead, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
@@ -126,6 +139,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 	{
 		LOGE << "Connection closed by peer";
 		CloseSession();
+		return;
 	}
 	else if (ec == boost::asio::error::operation_aborted)
 	{
@@ -140,7 +154,6 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 			LOGE << "Read error : " << ec.message() << " (code : " << ec.value() << ")";
 
 		return;
-		//CloseSession();
 	}
 }
 
@@ -186,19 +199,19 @@ void AsioSession::CloseSession()
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
 	boost::system::error_code ec;
-	m_Socket.cancel(ec);
+	m_Socket->cancel(ec);
 	if (ec) {
 		LOGE << "Cancel error: " << ec.value() << ", " << ec.message();
 	}
 
-	if (m_Socket.is_open())
+	if (m_Socket->is_open())
 	{
-		m_Socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+		m_Socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		if (ec)
 		{
 			LOGE << "ShutDown Error : " << ec.value() << ", " << ec.message();
 		}
-		m_Socket.close(ec);
+		m_Socket->close(ec);
 		if (ec)
 		{
 			LOGE << "Close Error : " << ec.value() << ", " << ec.message();
@@ -209,16 +222,17 @@ void AsioSession::CloseSession()
 	{
 		service->ReleaseSession(shared_from_this());
 	}
+
+	//Reset();
 }
 
-void AsioSession::WaitForSocketClose()
+void AsioSession::Reset()
 {
-	m_Socket.async_wait(boost::asio::socket_base::wait_read,
-		[this](boost::system::error_code ec) {
-			if (ec)
-			{
-				LOGD << "Socket closed or error detected : " << ec.value()<< ", " << ec.message();
-				OnDisconnected();
-			}
-		});
+	LOGD << "Destroy AsioSession";
+
+	delete m_Socket;
+	m_Socket = nullptr;
+
+	delete m_Resolver;
+	m_Resolver = nullptr;
 }

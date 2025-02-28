@@ -15,24 +15,19 @@ int32 ClientSession::OnRecv(BYTE* buffer, int32 len)
 
 void ClientSession::OnConnected()
 {
-	//GetService()->AddSession(shared_from_this());
 	AsioSessionPtr clientSession = GetSession();
 	int32 sessionUID = GetSessionUID();
 	clientSession->SetIsRunning(true);
 	
 	ClientManager::GetInstance().Init(sessionUID, clientSession);
-	LOGI << "FINISH TEST! Total SessiounUID : " << sessionUID << ", ThreadID : " << GetCurrentThreadId();
+	LOGI << "Conntect FINISH! SessiounUID : " << sessionUID << ", ThreadID : " << GetCurrentThreadId();
 }
 
 void ClientSession::OnDisconnected()
 {
 	LOGI << "Disconnected Server!";
 	
-	if (ServerAnalyzer::GetInstance().GetTotalSendCount() < 100000)
-	{
-		ServerAnalyzer::GetInstance().ResetSendCount();
-	}
-
+	ServerAnalyzer::GetInstance().ResetSendCount();
 	m_IsRunning = false;
 }
 

@@ -66,20 +66,20 @@ int main()
 
 	try
 	{
-		boost::asio::io_context ioContext;
-		work_guard_type work_guard(ioContext.get_executor());
+		boost::asio::io_context* ioContext = new boost::asio::io_context();
+		work_guard_type work_guard(ioContext->get_executor());
 		clientService = std::make_shared<AsioClientService>(
 			ioContext,
 			serverIP,
 			serverPort,
-			[](boost::asio::io_context& ioContext, tcp::socket socket) -> std::shared_ptr<AsioSession> {
-				return std::make_shared<ClientSession>(ioContext, std::move(socket));
+			[](boost::asio::io_context* ioContext, tcp::socket* socket) -> std::shared_ptr<AsioSession> {
+				return std::make_shared<ClientSession>(ioContext, socket);
 			},
 			maxSessionCnt);
 		//// 스레드 생성
 		for (int i = 0; i < threadCnt; ++i)
 		{
-			ConnectThreads.emplace_back([&ioContext]() {
+			ConnectThreads.emplace_back([ioContext]() {
 				try {
 					if (clientService->Start())
 					{
@@ -95,9 +95,11 @@ int main()
 				}
 				catch (const std::exception& e) {
 					LOGE << "Thread exception: " << e.what();
+					return -2;
 				}
 				catch (...) {
 					LOGE << "Unknown error occurred in thread!";
+					return -3;
 				}
 				
 			});
@@ -107,7 +109,7 @@ int main()
 		for (int i = 0; i < threadCnt; ++i) 
 		{
 			asioThread.emplace_back([&ioContext]() {
-				ioContext.run();
+				ioContext->run();
 				});
 		}
 
@@ -125,7 +127,9 @@ int main()
 			}
 		}
 
-		ioContext.stop();
+		ioContext->stop();
+
+		delete ioContext;
 
 		return 0;
 	}

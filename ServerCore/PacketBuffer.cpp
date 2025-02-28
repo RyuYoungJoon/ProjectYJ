@@ -2,9 +2,20 @@
 #include "PacketBuffer.h"
 
 
+PacketBuffer::PacketBuffer()
+{
+}
+
 PacketBuffer::PacketBuffer(int32 bufferSize)
     : m_BufferSize(bufferSize)
 {
+    m_Capacity = bufferSize * 10;
+    m_Buffer.resize(m_Capacity);
+}
+
+void PacketBuffer::Init(int32 bufferSize)
+{
+    m_BufferSize = bufferSize;
     m_Capacity = bufferSize * 10;
     m_Buffer.resize(m_Capacity);
 }

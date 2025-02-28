@@ -3,8 +3,12 @@
 #include "PacketHandler.h"
 #include "ServerAnalyzer.h"
 
-GameSession::GameSession(boost::asio::io_context& iocontext, tcp::socket socket)
-	: AsioSession(iocontext, std::move(socket))
+GameSession::GameSession()
+{
+}
+
+GameSession::GameSession(boost::asio::io_context* iocontext, tcp::socket* socket)
+	: AsioSession(iocontext, socket), m_SessionPool(100)
 {
 	m_PacketHandler.Init();
 }
@@ -21,11 +25,14 @@ void GameSession::OnSend(int32 len)
 
 void GameSession::OnDisconnected()
 {
+	m_SessionPool.Push(shared_from_this());
 }
 
 int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 {
 	Packet* packet = reinterpret_cast<Packet*>(buffer);
+
+	//AsioSessionPtr gameSession = m_SessionPool.Pop();
 	AsioSessionPtr gameSession = GetSession();
 
 	ServerAnalyzer::GetInstance().IncrementRecvCnt();
@@ -37,4 +44,9 @@ int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 
 void GameSession::OnConnected()
 {
+}
+
+void GameSession::Reset()
+{
+	GameSession::~GameSession();
 }

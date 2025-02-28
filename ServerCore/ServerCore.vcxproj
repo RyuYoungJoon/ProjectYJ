@@ -97,6 +97,7 @@
       <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/IC:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>26495</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -121,6 +122,7 @@
       <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/IC:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>26495</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -145,6 +147,7 @@
       <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/IC:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>26495</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -169,6 +172,7 @@
       <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/IC:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>26495</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -191,6 +195,7 @@
     <ClInclude Include="MyLogger.h" />
     <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="MemoryPoolManager.h" />
+    <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="PacketBuffer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ServerAnalyzer.h" />
@@ -207,6 +212,7 @@
     <ClCompile Include="MyLogger.cpp" />
     <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="MemoryPoolManager.cpp" />
+    <ClCompile Include="ObjectPool.cpp" />
     <ClCompile Include="PacketBuffer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

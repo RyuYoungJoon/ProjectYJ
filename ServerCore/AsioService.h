@@ -1,5 +1,5 @@
 #pragma once
-
+#include "ObjectPool.h"
 
 enum class ServiceType : uint8
 {
@@ -8,15 +8,14 @@ enum class ServiceType : uint8
 };
 
 class AsioSession;
-
-using SessionMaker = std::function<AsioSessionPtr(boost::asio::io_context&, tcp::socket)>;
-
 class AsioAcceptor;
+
+using SessionMaker = std::function<AsioSessionPtr(boost::asio::io_context*, tcp::socket*)>;
 
 class AsioService : public std::enable_shared_from_this<AsioService>
 {
 public:
-    AsioService(ServiceType type, boost::asio::io_context& iocontext, string& host, string& port ,SessionMaker SessionMaker, int32 maxSessionCount = 1);
+    AsioService(ServiceType type, boost::asio::io_context* iocontext, string& host, string& port ,SessionMaker SessionMaker, int32 maxSessionCount = 1);
     virtual ~AsioService();
 
     virtual bool Start() abstract;
@@ -24,7 +23,7 @@ public:
 
     virtual void CloseService();
 
-    AsioSessionPtr CreateSession(boost::asio::io_context& iocontext, tcp::socket socket);
+    AsioSessionPtr CreateSession(boost::asio::io_context* iocontext, tcp::socket* socket);
     void AddSession(AsioSessionPtr session);
     void ReleaseSession(AsioSessionPtr session);
     void BroadCast(const Packet& packet);
@@ -33,7 +32,7 @@ public:
     
     size_t GetSessionSize() { return m_Sessions.size(); }
 
-    boost::asio::io_context& iocontext;
+    boost::asio::io_context* iocontext;
     tcp::endpoint GetServiceEndpoint() { return m_ServiceEndpoint; }
 public:
     ServiceType GetServiceType() { return m_type; }
@@ -51,14 +50,14 @@ protected:
     tcp::endpoint m_ServiceEndpoint;
     SessionMaker m_SessionMaker;
     bool m_checkRunning = false;
-
+    ObjectPool<AsioSession> m_SessionPool{ 100 };
 };
 
 
 class AsioServerService : public AsioService
 {
 public:
-    AsioServerService(boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount = 1);
+    AsioServerService(boost::asio::io_context* iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount = 1);
     virtual ~AsioServerService();
 
 public:
@@ -66,7 +65,7 @@ public:
     virtual void CloseService() override;
 
 private:
-    boost::asio::io_context& m_IoContext;
+    boost::asio::io_context* m_IoContext;
     std::shared_ptr<AsioAcceptor> m_Acceptor;
 
 };
@@ -75,11 +74,11 @@ private:
 class AsioClientService : public AsioService
 {
 public:
-    AsioClientService(boost::asio::io_context& iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount = 1);
+    AsioClientService(boost::asio::io_context* iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount = 1);
 
-    virtual ~AsioClientService() = default;
+    virtual ~AsioClientService();
 
     virtual bool Start() override;
 private:
-    tcp::socket m_Socket;
+    tcp::socket* m_Socket;
 };
