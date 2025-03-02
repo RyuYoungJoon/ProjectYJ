@@ -4,6 +4,10 @@
 #include "ClientSession.h"
 #include "ServerAnalyzer.h"
 
+ClientSession::ClientSession()
+{
+}
+
 void ClientSession::OnSend(int32 len)
 {
 }

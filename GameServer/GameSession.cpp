@@ -8,7 +8,7 @@ GameSession::GameSession()
 }
 
 GameSession::GameSession(boost::asio::io_context* iocontext, tcp::socket* socket)
-	: AsioSession(iocontext, socket), m_SessionPool(100)
+	: AsioSession(iocontext, socket)
 {
 	m_PacketHandler.Init();
 }
@@ -25,7 +25,7 @@ void GameSession::OnSend(int32 len)
 
 void GameSession::OnDisconnected()
 {
-	m_SessionPool.Push(shared_from_this());
+	//m_SessionPool.Push(shared_from_this());
 }
 
 int32 GameSession::OnRecv(BYTE* buffer, int32 len)

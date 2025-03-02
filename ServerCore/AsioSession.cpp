@@ -12,7 +12,6 @@ AsioSession::AsioSession()
 	m_IoContext = nullptr;
 	m_Socket = nullptr;  
 	m_Resolver = nullptr;
-	m_PacketBuffer.Init(65536);
 }
 
 AsioSession::AsioSession(boost::asio::io_context* iocontext, tcp::socket* socket)
@@ -30,6 +29,13 @@ AsioSession::~AsioSession()
 void AsioSession::ProcessRecv()
 {
 	DoRead();
+}
+
+void AsioSession::InitSession(boost::asio::io_context* ioContext, tcp::socket* socket)
+{
+	m_IoContext = ioContext;
+	m_Socket = socket;
+	m_PacketBuffer.Init(65536);
 }
 
 void AsioSession::Send(const Packet& message)

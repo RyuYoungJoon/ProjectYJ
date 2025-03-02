@@ -5,7 +5,7 @@
 #include "ServerAnalyzer.h"
 
 extern ClientServicePtr clientService;
-extern int32 maxSessionCount;
+extern int32 maxSessionCnt;
 extern int32 threadCnt;
 
 ClientManager::ClientManager()
@@ -33,7 +33,7 @@ void ClientManager::Init(int32 sessionUid, AsioSessionPtr session)
 	LOGD << "Session Size : " << sessionSize;
 
 	// TODO : 상수 값 대신 Config값을 읽어오기.
-	if (sessionSize == threadCnt * maxSessionCount)
+	if (sessionSize == threadCnt * maxSessionCnt)
 	{
 		run = true;
 		m_cv.notify_all();

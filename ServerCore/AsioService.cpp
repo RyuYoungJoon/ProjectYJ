@@ -6,6 +6,8 @@
 AsioService::AsioService(ServiceType type, boost::asio::io_context* iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)
 	:m_type(type), iocontext(iocontext), m_Host(host), m_Port(port), m_SessionMaker(SessionMaker), m_MaxSessionCount(maxSessionCount)
 {
+	m_SessionPool.InitPool(80);
+	LOGI << "SessionPool Init! Size : " << m_SessionPool.size();
 }
 
 AsioService::~AsioService()
@@ -33,9 +35,10 @@ void AsioService::CloseService()
 
 AsioSessionPtr AsioService::CreateSession(boost::asio::io_context* iocontext, tcp::socket* socket)
 {
-	//AsioSessionPtr session = m_SessionPool.Pop();
-	AsioSessionPtr session = m_SessionMaker(iocontext, socket);
+	AsioSessionPtr session = m_SessionPool.Pop();
+	session = m_SessionMaker();
 
+	session->InitSession(iocontext, socket);
 	session->SetService(shared_from_this());
 	AddSession(session);
 	session->SetSessionUID(m_SessionCount);
@@ -55,8 +58,6 @@ void AsioService::ReleaseSession(AsioSessionPtr session)
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
-	//m_SessionPool.Push(session);
-	
 	m_Sessions.erase(session);
 	m_SessionCount--;
 }
@@ -71,7 +72,7 @@ void AsioService::BroadCast(const Packet& packet)
 
 bool AsioService::Start()
 {
-	m_SessionPool.InitPool(100, 10000);
+	return true;
 }
 
 AsioServerService::AsioServerService(boost::asio::io_context* iocontext, string& host, string& port, SessionMaker SessionMaker, int32 maxSessionCount)

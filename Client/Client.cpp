@@ -46,8 +46,8 @@ int main()
 
 	serverPort = reader.Get("client", "Port", "7777");
 	serverIP = reader.Get("client", "Address", "127.0.0.1");
-	threadCnt = reader.GetInteger("client", "ThreadCnt", 10);
-	maxSessionCnt = reader.GetInteger("client", "MaxSessionCount", 10);
+	threadCnt = reader.GetInteger("client", "threadCnt", 10);
+	maxSessionCnt = reader.GetInteger("client", "maxSessionCnt", 10);
 
 	// 로그 폴더 설정
 	string logPath = filePath;
@@ -75,8 +75,8 @@ int main()
 			ioContext,
 			serverIP,
 			serverPort,
-			[](boost::asio::io_context* ioContext, tcp::socket* socket) -> std::shared_ptr<AsioSession> {
-				return std::make_shared<ClientSession>(ioContext, socket);
+			[]() -> std::shared_ptr<AsioSession> {
+				return std::make_shared<ClientSession>();
 			},
 			maxSessionCnt);
 		//// 스레드 생성

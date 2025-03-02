@@ -1,7 +1,6 @@
 #pragma once
 #include "pch.h"
 #include "PacketBuffer.h"
-//#include "..\GameServer\Protocol.h"
 
 class AsioService;
 
@@ -11,6 +10,8 @@ public:
     AsioSession();
     AsioSession(boost::asio::io_context* iocontext, tcp::socket* socket);
     virtual ~AsioSession();
+
+    void InitSession(boost::asio::io_context* ioContext, tcp::socket* socket);
 
     void ProcessRecv();
     void Send(const Packet& message);
