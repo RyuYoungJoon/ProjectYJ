@@ -3,50 +3,57 @@
 template <typename T>
 class ObjectPool {
 public:
-    ObjectPool() = default;  // 생성자에서 초기화하지 않음
+    ObjectPool() {};
 
-    void InitPool(std::size_t initialSize, std::size_t maxSize) {
-        _maxSize = maxSize;
-        _pool = std::make_unique<boost::object_pool<T>>(initialSize, initialSize / 2);
-        PreAllocate(initialSize);
-    }
-
-    template <typename... Args>
-    T* Allocate(Args&&... args) {
-        if (_available.empty()) {
-            if (_allocated.size() >= _maxSize) {
-                std::cerr << "ObjectPool is full! Cannot allocate more.\n";
-                return nullptr;
-            }
-            // 새 객체 생성
-            T* obj = _pool->construct(std::forward<Args>(args)...);
-            _allocated.push_back(obj);
-            return obj;
-        } else {
-            // 기존 객체 재사용
-            T* obj = _available.back();
-            _available.pop_back();
-            return obj;
+    ~ObjectPool() {
+        // 객체 풀에 남아있는 모든 객체 해제
+        std::lock_guard<std::mutex> lock(mutex_);
+        while (!pool_.empty()) {
+            delete pool_.top();
+            pool_.pop();
         }
     }
 
-    void Deallocate(T* obj) {
-        if (obj) {
-            _available.push_back(obj);  // 해제된 객체를 다시 풀로 반환
+    // InitPool: 미리 count개의 객체를 생성하여 풀에 저장
+    void InitPool(size_t count) {
+        std::lock_guard<std::mutex> lock(mutex_);
+        for (size_t i = 0; i < count; ++i) {
+            pool_.push(new T());
         }
+    }
+
+    // Pop: 풀에서 객체를 꺼내 shared_ptr로 반환
+    std::shared_ptr<T> Pop() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        T* obj = nullptr;
+        if (pool_.empty()) {
+            // 풀에 남은 객체가 없으면 새로 생성
+            LOGD << "Pool Size Expand! Pool Size : " << size();
+            obj = new T();
+        }
+        else {
+            obj = pool_.top();
+            pool_.pop();
+        }
+        // custom deleter를 통해 shared_ptr가 소멸될 때 Push를 호출하여 객체를 풀로 복귀
+        return std::shared_ptr<T>(obj, [this](T* ptr) {
+            this->Push(ptr);
+            });
+    }
+
+    // Push: 객체를 풀에 반환 (메모리 환원)
+    void Push(T* obj) {
+        std::lock_guard<std::mutex> lock(mutex_);
+        pool_.push(obj);
+    }
+
+    // 현재 풀에 저장되어 있는 객체 수 반환
+    size_t size() const {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return pool_.size();
     }
 
 private:
-    void PreAllocate(std::size_t count) {
-        for (std::size_t i = 0; i < count; ++i) {
-            T* obj = _pool->construct();
-            _available.push_back(obj);
-            _allocated.push_back(obj);
-        }
-    }
-
-    std::size_t _maxSize = 0;
-    std::unique_ptr<boost::object_pool<T>> _pool;
-    std::vector<T*> _allocated;
-    std::vector<T*> _available;
+    mutable std::mutex mutex_;
+    std::stack<T*> pool_;  // push/pop 연산에 특화된 컨테이너
 };
