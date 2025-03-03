@@ -5,6 +5,7 @@
 
 GameSession::GameSession()
 {
+	m_PacketHandler.Init();
 }
 
 GameSession::GameSession(boost::asio::io_context* iocontext, tcp::socket* socket)
