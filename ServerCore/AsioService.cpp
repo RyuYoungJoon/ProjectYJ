@@ -7,7 +7,7 @@ AsioService::AsioService(ServiceType type, boost::asio::io_context* iocontext, s
 	:m_type(type), iocontext(iocontext), m_Host(host), m_Port(port), m_SessionMaker(SessionMaker), m_MaxSessionCount(maxSessionCount)
 {
 	m_SessionPool.InitPool(80);
-	LOGI << "SessionPool Init! Size : " << m_SessionPool.size();
+	LOGI << "SessionPool Init! Size : " << m_SessionPool.GetSize();
 }
 
 AsioService::~AsioService()
@@ -35,9 +35,10 @@ void AsioService::CloseService()
 
 AsioSessionPtr AsioService::CreateSession(boost::asio::io_context* iocontext, tcp::socket* socket)
 {
+	// SessionPool을 사용하면 함수포인터가 선언되지 않아 어플리케이션단에서 Session이 생성 되지 않는 문제 발생.
 	AsioSessionPtr session = m_SessionPool.Pop();
-	session = m_SessionMaker();
 
+	session = m_SessionMaker();
 	session->InitSession(iocontext, socket);
 	session->SetService(shared_from_this());
 	AddSession(session);
