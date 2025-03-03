@@ -110,10 +110,13 @@ int main()
 
 		// TODO : 실제로 쓰는것만 놔두기 OR TaskQueue 추가 개발하기
 		std::thread ioThread(InputThread, std::ref(IoContext));
-		std::thread WorkerThread([=]() {
-			TaskQueue::GetInstance().ProcessTask();
-			//serverService->Process();
+		std::vector<std::thread> m_TaskThread;
+		for (int i = 0; i < 4; ++i)
+		{
+			m_TaskThread.emplace_back([]() {
+				TaskQueue::GetInstance().ProcessTask();
 			});
+		}
 
 		std::vector<std::thread> m_asioThread;
 		for (int i = 0; i < threadCnt; ++i)
@@ -123,8 +126,13 @@ int main()
 				});
 		}
 
-		WorkerThread.detach();
 		for (auto& thread : m_asioThread)
+		{
+			if (thread.joinable())
+				thread.join();
+		}
+
+		for (auto& thread : m_TaskThread)
 		{
 			if (thread.joinable())
 				thread.join();
