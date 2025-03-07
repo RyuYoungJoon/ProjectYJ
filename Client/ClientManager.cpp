@@ -59,7 +59,7 @@ void ClientManager::Process()
 
 			for (int i = 0; i < 100; ++i)
 			{
-				string message("In multithreaded programming, it is crucial to use mutexes and condition variables properly to prevent data races and ensure synchronization.");
+				string message("In multithreaded programming, it is crucial to use mutexes and condition variables");
 				Packet packet;
 				packet.header.seqNum = 0;
 				std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
@@ -71,7 +71,7 @@ void ClientManager::Process()
 
 				clientService->BroadCast(packet);
 			}
-
+			//run = false;
 			m_RunningState = RunningState::Disconnect;
 		}
 		break;

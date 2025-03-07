@@ -38,6 +38,8 @@ public:
     
     void Reset();
 
+    void ProcessBufferData();
+
 protected:
     virtual void OnSend(int32 len) {}
     virtual int32 OnRecv(BYTE* buffer, int32 len) { return len; }

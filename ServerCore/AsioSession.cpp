@@ -123,18 +123,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 			return;
 		}
 		
-		int32 dataSize = m_PacketBuffer.DataSize();
-		int32 processLen = ProcessPacket(m_PacketBuffer.ReadPos(), dataSize);
-		if (processLen < 0 || dataSize < processLen || m_PacketBuffer.OnRead(processLen) == false)
-		{
-			LOGE << "OnRead OverFlow";
-			CloseSession();
-			return;
-		}
-
-		m_PacketBuffer.Clear();
-		LOGD << "RecvCount : " << ServerAnalyzer::GetInstance().GetRecvCount() 
-			<< ", TotalRecvCount : " << ServerAnalyzer::GetInstance().GetTotalRecvCount();
+		ProcessBufferData();
 
 		// 다음 비동기 읽기 시작
 		DoRead();
@@ -194,7 +183,8 @@ int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
 		processLen += header.size;
 	}
 
-	return processLen;
+	return processLen; //pASSwORD79!
+
 }
 
 void AsioSession::CloseSession()
@@ -239,4 +229,41 @@ void AsioSession::Reset()
 
 	delete m_Resolver;
 	m_Resolver = nullptr;
+}
+
+void AsioSession::ProcessBufferData()
+{
+	while (m_PacketBuffer.DataSize() > 0)
+    {
+        // 현재 데이터를 TaskQueue에 넘겨서 처리
+        int32 dataSize = m_PacketBuffer.DataSize();
+        auto packetCopy = std::make_shared<std::vector<BYTE>>(
+            m_PacketBuffer.ReadPos(), 
+            m_PacketBuffer.ReadPos() + dataSize
+        );
+        
+        auto sessionPtr = GetSession();
+        TaskQueue::GetInstance().PushTask([this, sessionPtr, packetCopy]() {
+            if (!sessionPtr)
+                return;
+                
+            // ProcessPacket에서 처리된 데이터 크기를 반환받음
+            int32 processedLen = ProcessPacket(packetCopy->data(), packetCopy->size());
+            
+            if (processedLen > 0)
+            {
+                // I/O 스레드에서 버퍼 위치 업데이트
+                boost::asio::post(*m_IoContext, [this, processedLen]() {
+                    m_PacketBuffer.OnRead(processedLen);
+					m_PacketBuffer.Clear();
+					LOGD << "RecvCount : " << ServerAnalyzer::GetInstance().GetRecvCount()
+						<< ", TotalRecvCount : " << ServerAnalyzer::GetInstance().GetTotalRecvCount();
+
+                });
+            }
+        });
+        
+        // 모든 데이터를 TaskQueue로 넘겼으므로 반복 종료
+        break;
+    }
 }
