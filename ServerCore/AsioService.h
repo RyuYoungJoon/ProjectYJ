@@ -10,7 +10,7 @@ enum class ServiceType : uint8
 class AsioSession;
 class AsioAcceptor;
 
-using SessionMaker = std::function<AsioSessionPtr()>;
+using SessionMaker = std::function<AsioSessionPtr(boost::asio::io_context*, tcp::socket*)>;
 
 class AsioService : public std::enable_shared_from_this<AsioService>
 {

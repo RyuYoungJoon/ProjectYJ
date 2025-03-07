@@ -12,10 +12,10 @@ enum class PacketType : uint8_t
 // 21 bytes
 #pragma pack(push, 1)
 struct PacketHeader {
+	uint32_t seqNum;
 	PacketType type;           // ±âº» : 100
 	uint8_t checkSum[16];
 	uint32_t size;
-	uint32_t seq;
 };
 
 // 1 byte

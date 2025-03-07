@@ -8,6 +8,8 @@ extern ClientServicePtr clientService;
 extern int32 maxSessionCnt;
 extern int32 threadCnt;
 
+atomic<int> seqNumber;
+
 ClientManager::ClientManager()
 {
 	std::random_device rd;
@@ -59,6 +61,7 @@ void ClientManager::Process()
 			{
 				string message("In multithreaded programming, it is crucial to use mutexes and condition variables properly to prevent data races and ensure synchronization.");
 				Packet packet;
+				packet.header.seqNum = 0;
 				std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
 				std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
 				packet.header.type = PacketType::YJ;

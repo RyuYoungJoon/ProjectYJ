@@ -75,8 +75,8 @@ int main()
 			ioContext,
 			serverIP,
 			serverPort,
-			[]() -> std::shared_ptr<AsioSession> {
-				return std::make_shared<ClientSession>();
+			[](boost::asio::io_context* ioContext, tcp::socket* socket) -> std::shared_ptr<AsioSession> {
+				return std::make_shared<ClientSession>(ioContext, socket);
 			},
 			maxSessionCnt);
 		//// 스레드 생성

@@ -124,24 +124,17 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 		}
 		
 		int32 dataSize = m_PacketBuffer.DataSize();
-		std::unique_ptr<BYTE[]> buffer(new BYTE[dataSize]);
-		std::memcpy(buffer.get(), m_PacketBuffer.ReadPos(), dataSize);
-
-		// 이걸 작업 큐에
-		TaskQueue::GetInstance().PushTask([this, &buffer, &dataSize]() {
-			int32 processLen = ProcessPacket(buffer.get(), dataSize);
-			if (processLen < 0 || dataSize < processLen || m_PacketBuffer.OnRead(processLen) == false)
-			{
-				LOGE << "OnRead OverFlow";
-				CloseSession();
-				return;
-			}
-		});
-		
-		LOGD << "RecvCount : " << ServerAnalyzer::GetInstance().GetRecvCount() 
-			<< ", TotalRecvCount : " << ServerAnalyzer::GetInstance().GetTotalRecvCount();
+		int32 processLen = ProcessPacket(m_PacketBuffer.ReadPos(), dataSize);
+		if (processLen < 0 || dataSize < processLen || m_PacketBuffer.OnRead(processLen) == false)
+		{
+			LOGE << "OnRead OverFlow";
+			CloseSession();
+			return;
+		}
 
 		m_PacketBuffer.Clear();
+		LOGD << "RecvCount : " << ServerAnalyzer::GetInstance().GetRecvCount() 
+			<< ", TotalRecvCount : " << ServerAnalyzer::GetInstance().GetTotalRecvCount();
 
 		// 다음 비동기 읽기 시작
 		DoRead();

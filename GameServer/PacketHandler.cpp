@@ -43,7 +43,7 @@ void PacketHandler::HandledefEchoString(AsioSessionPtr& session, const Packet& p
 		return;
 	}
 
-	LOGD << "SessionUID : "<<gameSession->GetSessionUID()<<"-> Payload : " << packet.payload;
+	LOGD << "SessionUID : "<<gameSession->GetSessionUID()<<", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
 }
 
 void PacketHandler::HandleJH(AsioSessionPtr& session, const Packet& packet)
@@ -58,8 +58,9 @@ void PacketHandler::HandleJH(AsioSessionPtr& session, const Packet& packet)
 		return;
 	}
 
-	LOGD << "SessionUID : " << gameSession->GetSessionUID() << "-> Payload : " << packet.payload;
+	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
 	// 추가 처리 로직
+
 }
 
 void PacketHandler::HandleYJ(AsioSessionPtr& session, const Packet& packet)
@@ -74,7 +75,7 @@ void PacketHandler::HandleYJ(AsioSessionPtr& session, const Packet& packet)
 		return;
 	}
 
-	LOGD << "SessionUID : " << gameSession->GetSessionUID() << "-> Payload : " << packet.payload;
+	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
 }
 
 void PacketHandler::HandleES(AsioSessionPtr& session, const Packet& packet)
@@ -89,7 +90,7 @@ void PacketHandler::HandleES(AsioSessionPtr& session, const Packet& packet)
 		return;
 	}
 
-	LOGD << "SessionUID : " << gameSession->GetSessionUID() << "-> Payload : " << packet.payload << endl;
+	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
 }
 
 void PacketHandler::HandleInvalid(AsioSessionPtr& session, const Packet& packet)
