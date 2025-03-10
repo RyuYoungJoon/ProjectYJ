@@ -14,6 +14,7 @@
 #include <format>
 #include <filesystem>
 #include <random>
+#include <concurrent_queue.h>
 
 #include <..\include\plog\Log.h>
 #include <..\include\plog\Appenders\ColorConsoleAppender.h>

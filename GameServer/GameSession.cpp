@@ -39,7 +39,7 @@ int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 	ServerAnalyzer::GetInstance().IncrementRecvCnt();
 
 	m_PacketHandler.HandlePacket(gameSession, packet);
-
+	
 	return int32();
 }
 

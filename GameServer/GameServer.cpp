@@ -110,7 +110,7 @@ int main()
 
 		// TODO : 실제로 쓰는것만 놔두기 OR TaskQueue 추가 개발하기
 		std::thread ioThread(InputThread, std::ref(IoContext));
-		TaskQueue::GetInstance().Initialize();
+		PacketQueue::GetInstance().Initialize();
 		LOGI << "Task queue initialized with " << std::thread::hardware_concurrency() / 2 << " worker threads";
 	
 		std::vector<std::thread> m_asioThread;
@@ -127,7 +127,7 @@ int main()
 				thread.join();
 		}
 
-		TaskQueue::GetInstance().Shutdown();
+		PacketQueue::GetInstance().Shutdown();
 		LOGI << "Task queue shutdown complete";
 
 		ioThread.join();

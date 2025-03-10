@@ -39,6 +39,11 @@ public:
     void Reset();
 
     void ProcessBufferData();
+    int32 ProcessPacket(BYTE* buffer, int32 len);
+
+    void UpdateBufferReadPosition(int32 processedLen);
+
+    boost::asio::io_context* GetIocontext() { return m_IoContext; }
 
 protected:
     virtual void OnSend(int32 len) {}
@@ -55,7 +60,6 @@ private:
     void DoRead();
     void HandleRead(boost::system::error_code ec, int32 length);
     void HandleWrite(boost::system::error_code ec, int32 length);
-    int32 ProcessPacket(BYTE* buffer, int32 len);
 
 private:
     std::mutex m_Mutex;
