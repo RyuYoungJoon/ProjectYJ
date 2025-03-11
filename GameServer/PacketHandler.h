@@ -18,9 +18,13 @@ public:
 	void HandleYJ(AsioSessionPtr& session, const Packet& packet);
 	void HandleES(AsioSessionPtr& session, const Packet& packet);
 
+	void ProcessPendingPackets(AsioSessionPtr& session, int32 sessionUID);
+
 	static void HandleInvalid(AsioSessionPtr& session, const Packet& packet);
 
 private:
 	std::map<PacketType, HandlerFunc> m_Handlers;
+	std::map<int32, int32> m_NextSeq;
+	std::mutex m_Mutex;
+	std::map<int32, std::queue<Packet>> m_PendingPackets;
 };
-

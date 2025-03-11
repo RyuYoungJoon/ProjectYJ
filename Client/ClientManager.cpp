@@ -61,7 +61,7 @@ void ClientManager::Process()
 			{
 				string message("In multithreaded programming, it is crucial to use mutexes and condition variables");
 				Packet packet;
-				packet.header.seqNum = 0;
+				packet.header.seqNum = i;
 				std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
 				std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
 				packet.header.type = PacketType::YJ;
@@ -71,7 +71,7 @@ void ClientManager::Process()
 
 				clientService->BroadCast(packet);
 			}
-			run = false;
+			//run = false;
 			m_RunningState = RunningState::Disconnect;
 		}
 		break;
