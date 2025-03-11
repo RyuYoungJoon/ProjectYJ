@@ -31,7 +31,7 @@ public:
     int32 GetSessionUID() { return m_SessionUID; }
     void SetSessionUID(int32 sessionUID) { m_SessionUID = sessionUID; }
 
-    void CloseSession();
+    void CloseSession(const char* pCallFunc = nullptr);
 
     void SetIsRunning(bool isRunning) { m_IsRunning = isRunning; }
     bool GetIsRunning() { return m_IsRunning; }

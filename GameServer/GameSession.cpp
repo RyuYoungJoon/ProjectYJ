@@ -27,6 +27,7 @@ void GameSession::OnSend(int32 len)
 void GameSession::OnDisconnected()
 {
 	//m_SessionPool.Push(shared_from_this());
+	m_PacketHandler.Reset(GetSessionUID());
 }
 
 int32 GameSession::OnRecv(BYTE* buffer, int32 len)
@@ -35,7 +36,6 @@ int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 
 	//AsioSessionPtr gameSession = m_SessionPool.Pop();
 	AsioSessionPtr gameSession = GetSession();
-
 	ServerAnalyzer::GetInstance().IncrementRecvCnt();
 
 	m_PacketHandler.HandlePacket(gameSession, packet);

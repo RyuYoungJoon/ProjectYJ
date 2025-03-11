@@ -23,7 +23,7 @@ void AsioService::CloseService()
 	{
 		if (session)
 		{
-			session->CloseSession();
+			session->CloseSession(__FUNCTION__);
 		}
 	}
 

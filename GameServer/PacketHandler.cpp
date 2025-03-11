@@ -28,7 +28,7 @@ void PacketHandler::HandlePacket(AsioSessionPtr& session, const Packet* packet)
 
     std::lock_guard<std::mutex> lock(m_Mutex);
 
-    // 처음 받는 패킷이면 시퀀스 번호 초기화 (0부터 시작 가정)
+    // 처음 받는 패킷이면 시퀀스 번호 초기화 (0부터 시작)
     if (m_NextSeq.find(sessionUID) == m_NextSeq.end())
     {
         m_NextSeq[sessionUID] = 0;
@@ -55,7 +55,7 @@ void PacketHandler::HandlePacket(AsioSessionPtr& session, const Packet* packet)
         m_NextSeq[sessionUID]++;
 
         // 대기 중인 패킷 처리
-        ProcessPendingPackets(session, sessionUID);
+        ProcessPendingPacket(session, sessionUID);
     }
     else if (receivedSeqNum > expectedSeqNum)
     {
@@ -63,7 +63,7 @@ void PacketHandler::HandlePacket(AsioSessionPtr& session, const Packet* packet)
         LOGE << "시퀀스 처리 에러! Expected: " << expectedSeqNum
             << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
 
-        m_PendingPackets[sessionUID].push(*packet);
+        m_PendingPacket[sessionUID].push(*packet);
     }
     else
     {
@@ -73,10 +73,10 @@ void PacketHandler::HandlePacket(AsioSessionPtr& session, const Packet* packet)
     }
 }
 
-void PacketHandler::ProcessPendingPackets(AsioSessionPtr& session, int32 sessionUID)
+void PacketHandler::ProcessPendingPacket(AsioSessionPtr& session, int32 sessionUID)
 {
     // 재귀적으로 대기 중인 패킷 처리
-    auto& queue = m_PendingPackets[sessionUID];
+    auto& queue = m_PendingPacket[sessionUID];
     int32& expectedSeqNum = m_NextSeq[sessionUID];
 
     while (!queue.empty())
@@ -107,6 +107,13 @@ void PacketHandler::ProcessPendingPackets(AsioSessionPtr& session, int32 session
             break;
         }
     }
+}
+
+void PacketHandler::Reset(int32 sessionUID)
+{
+    std::lock_guard<std::mutex> lock(m_Mutex);
+    m_PendingPacket.erase(sessionUID);
+    m_NextSeq.erase(sessionUID);
 }
 
 void PacketHandler::HandledefEchoString(AsioSessionPtr& session, const Packet& packet)

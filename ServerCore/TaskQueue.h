@@ -92,7 +92,7 @@ public:
         m_TaskQueue.push(std::move(task));
     }
 
-    // 현재 큐에 있는 작업 수 반환 (근사값)
+    // 현재 큐에 있는 작업 수 반환
     size_t GetQueueSize() const
     {
         return m_TaskQueue.unsafe_size();
@@ -142,6 +142,6 @@ private:
 
 private:
     std::atomic<bool> m_IsRunning;
-    Concurrency::concurrent_queue<PacketTask> m_TaskQueue; // lock-free 구현
+    Concurrency::concurrent_queue<PacketTask> m_TaskQueue;
     std::vector<std::thread> m_WorkerThreads;
 };

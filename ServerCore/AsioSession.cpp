@@ -95,7 +95,7 @@ void AsioSession::Disconnect()
 	LOGI << "SessionUID : " << GetSessionUID() << ", Disconnecting";
 
 	OnDisconnected();
-	CloseSession();
+	CloseSession(__FUNCTION__);
 
 }
 
@@ -119,7 +119,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 		if (m_PacketBuffer.OnWrite(length) == false)
 		{
 			LOGE << "OnWrite OverFlow";
-			CloseSession();
+			CloseSession(__FUNCTION__);
 			return;
 		}
 		
@@ -133,7 +133,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 	else if (ec == boost::asio::error::eof)
 	{
 		LOGE << "Connection closed by peer";
-		CloseSession();
+		CloseSession(__FUNCTION__);
 		return;
 	}
 	else if (ec == boost::asio::error::operation_aborted)
@@ -158,7 +158,7 @@ void AsioSession::HandleWrite(boost::system::error_code ec, int32 length)
 	{
 		LOGE << "Session Close : " << ec.value() << ", Message : " << ec.message();
 
-		CloseSession();
+		CloseSession(__FUNCTION__);
 	}   
 	else
 	{
@@ -205,9 +205,9 @@ void AsioSession::UpdateBufferReadPosition(int32 processedLen)
 	}
 }
 
-void AsioSession::CloseSession()
+void AsioSession::CloseSession(const char* pCallFunc)
 {
-	LOGD << "CloseSession Called!";
+	LOGD << "CloseSession Called! " << pCallFunc << ", socket handle : " << m_Socket->native_handle();
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
 	boost::system::error_code ec;
