@@ -195,10 +195,14 @@
     <ClInclude Include="MyLogger.h" />
     <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="MemoryPoolManager.h" />
+    <ClInclude Include="NetworkHandler.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="PacketBuffer.h" />
+    <ClInclude Include="PacketRouter.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="SendPacketBuffer.h" />
     <ClInclude Include="ServerAnalyzer.h" />
+    <ClInclude Include="SessionManager.h" />
     <ClInclude Include="SocketUtil.h" />
     <ClInclude Include="TaskQueue.h" />
     <ClInclude Include="Types.h" />
@@ -212,15 +216,19 @@
     <ClCompile Include="MyLogger.cpp" />
     <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="MemoryPoolManager.cpp" />
+    <ClCompile Include="NetworkHandler.cpp" />
     <ClCompile Include="ObjectPool.cpp" />
     <ClCompile Include="PacketBuffer.cpp" />
+    <ClCompile Include="PacketRouter.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SendPacketBuffer.cpp" />
     <ClCompile Include="ServerAnalyzer.cpp" />
+    <ClCompile Include="SessionManager.cpp" />
     <ClCompile Include="SocketUtil.cpp" />
     <ClCompile Include="TaskQueue.cpp" />
   </ItemGroup>

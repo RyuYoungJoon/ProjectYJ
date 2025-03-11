@@ -57,6 +57,18 @@
     <ClInclude Include="ObjectPool.h">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="NetworkHandler.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionManager.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SendPacketBuffer.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketRouter.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -100,6 +112,18 @@
     </ClCompile>
     <ClCompile Include="ObjectPool.cpp">
       <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkHandler.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionManager.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="SendPacketBuffer.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketRouter.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

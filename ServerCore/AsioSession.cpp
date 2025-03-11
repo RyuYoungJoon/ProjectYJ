@@ -189,22 +189,6 @@ int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
 
 }
 
-void AsioSession::UpdateBufferReadPosition(int32 processedLen)
-{
-	if (processedLen > 0)
-	{
-		m_PacketBuffer.OnRead(processedLen);
-
-		m_PacketBuffer.Clear();
-		// 버퍼에 남은 데이터가 있다면 다시 큐에 넣어 처리
-		if (m_PacketBuffer.DataSize() > 0)
-		{
-			PacketQueue::GetInstance().PushPacket(shared_from_this(),
-				m_PacketBuffer.ReadPos(), m_PacketBuffer.DataSize());
-		}
-	}
-}
-
 void AsioSession::CloseSession(const char* pCallFunc)
 {
 	LOGD << "CloseSession Called! " << pCallFunc << ", socket handle : " << m_Socket->native_handle();
@@ -248,40 +232,3 @@ void AsioSession::Reset()
 	delete m_Resolver;
 	m_Resolver = nullptr;
 }
-
-//void AsioSession::ProcessBufferData()
-//{
-//	while (m_PacketBuffer.DataSize() > 0)
-//    {
-//        // 현재 데이터를 TaskQueue에 넘겨서 처리
-//        int32 dataSize = m_PacketBuffer.DataSize();
-//        auto packetCopy = std::make_shared<std::vector<BYTE>>(
-//            m_PacketBuffer.ReadPos(), 
-//            m_PacketBuffer.ReadPos() + dataSize
-//        );
-//        
-//        auto sessionPtr = GetSession();
-//        TaskQueue::GetInstance().PushTask([this, sessionPtr, packetCopy]() {
-//            if (!sessionPtr)
-//                return;
-//                
-//            // ProcessPacket에서 처리된 데이터 크기를 반환받음
-//            int32 processedLen = ProcessPacket(packetCopy->data(), packetCopy->size());
-//            
-//            if (processedLen > 0)
-//            {
-//                // I/O 스레드에서 버퍼 위치 업데이트
-//                boost::asio::post(*m_IoContext, [this, processedLen]() {
-//                    m_PacketBuffer.OnRead(processedLen);
-//					m_PacketBuffer.Clear();
-//					LOGD << "RecvCount : " << ServerAnalyzer::GetInstance().GetRecvCount()
-//						<< ", TotalRecvCount : " << ServerAnalyzer::GetInstance().GetTotalRecvCount();
-//
-//                });
-//            }
-//        });
-//        
-//        // 모든 데이터를 TaskQueue로 넘겼으므로 반복 종료
-//        break;
-//    }
-//}

@@ -20,20 +20,22 @@ void PacketBuffer::Init(int32 bufferSize)
     m_Buffer.resize(m_Capacity);
 }
 
-bool PacketBuffer::OnWrite(int32 size)
+bool PacketBuffer::OnWrite(const BYTE* data, int32 size)
 {
-    if (size > FreeSize())
+    if (FreeSize() < size)
         return false;
 
+    memcpy(&m_Buffer[m_WritePos], data, size);
     m_WritePos += size;
     return true;
 }
 
-bool PacketBuffer::OnRead(int32 size)
+bool PacketBuffer::OnRead(BYTE* data, int32 size)
 {
-    if (size > DataSize())
+    if (DataSize() < size)
         return false;
 
+    memcpy(data, &m_Buffer[m_ReadPos], size);
     m_ReadPos += size;
     return true;
 }

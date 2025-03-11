@@ -10,8 +10,8 @@ public:
 
     void Init(int32 bufferSize);
 
-    bool OnWrite(int32 size);
-    bool OnRead(int32 size);
+    bool OnWrite(const BYTE* data, int32 size);
+    bool OnRead(BYTE* data, int32 size);
     void Clear();
 
     BYTE* ReadPos() { return &m_Buffer[m_ReadPos]; }
