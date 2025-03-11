@@ -1,5 +1,15 @@
 #pragma once
 
+struct PacketQueueItem {
+    int32 sessionId;
+    Packet packet;
+
+    PacketQueueItem() = default;
+    PacketQueueItem(int32 id, const Packet& p) : sessionId(id), packet(p) {}
+};
+
+// PacketRouter에서 큐 벡터 선언 변경
+
 using PacketHandlerFunc = std::function<void(AsioSessionPtr&, const Packet&)>;
 
 class PacketRouter
@@ -28,7 +38,7 @@ private:
     std::atomic<bool> m_IsRunning;
     int32 m_NumWorkers;
     std::vector<std::thread> m_WorkerThreads;
-    std::vector<std::unique_ptr<boost::lockfree::queue<std::tuple<int32, Packet>>>> m_WorkerQueues;
+    std::vector<std::unique_ptr<Concurrency::concurrent_queue<PacketQueueItem>>> m_WorkerQueues;
     std::unordered_map<PacketType, PacketHandlerFunc> m_Handlers;
     std::mutex m_HandlerMutex;
 };
@@ -36,7 +46,7 @@ private:
 class WorkerThread
 {
 public:
-    WorkerThread(int32 id, boost::lockfree::queue<std::tuple<int32, Packet>>* queue,
+    WorkerThread(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue,
         std::atomic<bool>* isRunning,
         std::unordered_map<PacketType, PacketHandlerFunc>* handlers);
 
@@ -47,7 +57,7 @@ public:
 
 private:
     int32 m_Id;
-    boost::lockfree::queue<std::tuple<int32, Packet>>* m_Queue;
+    Concurrency::concurrent_queue<PacketQueueItem>* m_Queue;
     std::atomic<bool>* m_IsRunning;
     std::unordered_map<PacketType, PacketHandlerFunc>* m_Handlers;
 };

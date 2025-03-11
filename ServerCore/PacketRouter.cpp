@@ -23,7 +23,7 @@ void PacketRouter::Init(int32 numThread)
     for (int32 i = 0; i < m_NumWorkers; ++i)
     {
         // boost::lockfree::queue 생성 (크기 1024)
-        m_WorkerQueues.push_back(std::make_unique<boost::lockfree::queue<std::tuple<int32, Packet>>>(1024));
+        m_WorkerQueues.push_back(std::make_unique<Concurrency::concurrent_queue<PacketQueueItem>>());
     }
 
     // 워커 스레드 생성
@@ -67,15 +67,9 @@ void PacketRouter::Dispatch(AsioSessionPtr session, const Packet& packet)
     int32 sessionId = session->GetSessionUID();
     int32 workerIdx = GetWorkerIndex(sessionId);
 
-    // boost::lockfree::queue는 복사를 하므로 패킷을 복사해야 함
-    std::tuple<int32, Packet> item(sessionId, packet);
-
-    // 큐에 추가 시도
-    if (!m_WorkerQueues[workerIdx]->push(item))
-    {
-        // 큐가 가득 찬 경우
-        LOGE << "Worker queue " << workerIdx << " is full, packet dropped for session " << sessionId;
-    }
+    // 큐에 패킷 항목 추가
+    PacketQueueItem item(sessionId, packet);
+    m_WorkerQueues[workerIdx]->push(item);
 }
 
 void PacketRouter::RegisterHandler(PacketType type, PacketHandlerFunc handler)
@@ -89,7 +83,7 @@ int32 PacketRouter::GetWorkerIndex(int32 sessionUID) const
     return sessionUID % m_NumWorkers;
 }
 
-WorkerThread::WorkerThread(int32 id, boost::lockfree::queue<std::tuple<int32, Packet>>* queue, std::atomic<bool>* isRunning, std::unordered_map<PacketType, PacketHandlerFunc>* handlers)
+WorkerThread::WorkerThread(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, std::atomic<bool>* isRunning, std::unordered_map<PacketType, PacketHandlerFunc>* handlers)
 {
     
 }
@@ -98,31 +92,32 @@ void WorkerThread::Run()
 {
     LOGI << "Worker thread " << m_Id << " started";
 
-    std::tuple<int32, Packet> item;
+    PacketQueueItem item;
 
-    while (*m_IsRunning)
-    {
+    while (*m_IsRunning) {
         // 큐에서 패킷 가져오기
         bool hasWork = false;
 
         // 배치 처리 (최대 32개 패킷 한번에 처리)
-        for (int i = 0; i < 32 && m_Queue->pop(item); ++i)
-        {
-            hasWork = true;
-            int32 sessionId = std::get<0>(item);
-            const Packet& packet = std::get<1>(item);
+        for (int i = 0; i < 32; ++i) {
+            if (m_Queue->try_pop(item)) {
+                hasWork = true;
+                int32 sessionId = item.sessionId;
+                const Packet& packet = item.packet;
 
-            // 세션 찾기
-            AsioSessionPtr session = SessionManager::GetInstance().GetSession(sessionId);
-            if (session)
-            {
-                ProcessPacket(session, packet);
+                // 세션 찾기
+                AsioSessionPtr session = SessionManager::GetInstance().GetSession(sessionId);
+                if (session) {
+                    ProcessPacket(session, packet);
+                }
+            }
+            else {
+                break;  // 큐가 비었으면 루프 종료
             }
         }
 
-        // 작업이 없으면 CPU 양보
-        if (!hasWork)
-        {
+        // 작업이 없으면 잠시 대기
+        if (!hasWork) {
             std::this_thread::yield();
         }
     }

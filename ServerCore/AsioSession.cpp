@@ -3,6 +3,7 @@
 #include "AsioService.h"
 #include "MemoryPoolManager.h"
 #include "TaskQueue.h"
+#include "NetworkHandler.h"
 #include "ServerAnalyzer.h"
 
 atomic<int32> SessionUID = 0;
@@ -123,7 +124,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 			return;
 		}
 		
-		PacketQueue::GetInstance().PushPacket(shared_from_this(), m_PacketBuffer.ReadPos(), m_PacketBuffer.DataSize());
+		NetworkHandler::GetInstance().RecvData(shared_from_this(), m_PacketBuffer.ReadPos(), m_PacketBuffer.DataSize());
 		// 다음 비동기 읽기 시작
 		m_PacketBuffer.OnRead(length);
 		m_PacketBuffer.Clear();

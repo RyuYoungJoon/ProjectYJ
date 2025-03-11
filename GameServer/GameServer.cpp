@@ -5,6 +5,7 @@
 #include "GameSession.h"
 #include "TaskQueue.h"
 #include "ServerAnalyzer.h"
+#include "PacketRouter.h"
 
 #include <..\include\INIReader\ini.h>
 #include <..\include\INIReader\ini.c>
@@ -89,6 +90,8 @@ int main()
 		string serverPort = reader.Get("server", "port", "7777");
 		string serverIP = reader.Get("server", "address", "127.0.0.1");
 		long threadCnt = reader.GetInteger("server", "ThreadCnt", 4);
+
+		PacketRouter::GetInstance().Init();
 
 		serverService = std::make_shared<AsioServerService>(
 			IoContext, 

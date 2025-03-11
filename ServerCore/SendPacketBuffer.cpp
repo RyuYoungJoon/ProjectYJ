@@ -2,6 +2,7 @@
 #include "SendPacketBuffer.h"
 #include "AsioSession.h"
 #include "PacketRouter.h"
+#include "ObjectPool.h"
 
 SendPacketBuffer::SendPacketBuffer()
 {
@@ -71,8 +72,8 @@ void SendPacketBuffer::ProcessSessionBuffer(AsioSessionPtr session)
         buffer->OnRead(reinterpret_cast<BYTE*>(packet), header.size);
 
         // 패킷 디스패처로 전달
-        PacketDispatcher::GetInstance().DispatchPacket(session, *packet);
-
+        PacketRouter::GetInstance().Dispatch(session, *packet);
+        
         // 패킷 반환
         PacketPool::GetInstance().ReleasePacket(packet);
     }
