@@ -123,7 +123,11 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 			CloseSession(__FUNCTION__);
 			return;
 		}
-		
+
+		int32 dataSize = m_PacketBuffer.DataSize();
+		std::vector<BYTE> dataCopy(dataSize);
+		memcpy(dataCopy.data(), m_PacketBuffer.ReadPos(), dataSize);
+
 		NetworkHandler::GetInstance().RecvData(shared_from_this(), m_PacketBuffer.ReadPos(), m_PacketBuffer.DataSize());
 		// 다음 비동기 읽기 시작
 		m_PacketBuffer.OnRead(length);

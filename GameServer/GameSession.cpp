@@ -2,6 +2,7 @@
 #include "GameSession.h"
 #include "PacketHandler.h"
 #include "ServerAnalyzer.h"
+#include "SessionManager.h"
 
 GameSession::GameSession()
 {
@@ -16,7 +17,7 @@ GameSession::GameSession(boost::asio::io_context* iocontext, tcp::socket* socket
 
 GameSession::~GameSession()
 {
-	LOGD << "Delete GameSession";
+	Reset();
 }
 
 void GameSession::OnSend(int32 len)
@@ -28,6 +29,7 @@ void GameSession::OnDisconnected()
 {
 	//m_SessionPool.Push(shared_from_this());
 	m_PacketHandler.Reset(GetSessionUID());
+	SessionManager::GetInstance().UnregisterSession(GetSession());
 }
 
 int32 GameSession::OnRecv(BYTE* buffer, int32 len)
@@ -45,9 +47,10 @@ int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 
 void GameSession::OnConnected()
 {
+	SessionManager::GetInstance().RegisterSession(GetSession());
 }
 
 void GameSession::Reset()
 {
-	GameSession::~GameSession();
+	LOGD << "Delete Session";
 }

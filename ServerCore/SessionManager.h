@@ -13,8 +13,8 @@ public:
     AsioSessionPtr GetSession(int32 sessionId);
 
 private:
-    SessionManager() = default;
-    ~SessionManager() = default;
+    SessionManager();
+    ~SessionManager();
 
     std::mutex m_Mutex;
     std::unordered_map<int32, AsioSessionPtr> m_Sessions;

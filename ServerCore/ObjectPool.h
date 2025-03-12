@@ -1,4 +1,5 @@
 #pragma once
+#include "MemoryPoolManager.h"
 
 template <typename T>
 class ObjectPool {
@@ -58,4 +59,50 @@ public:
 private:
     mutable std::mutex m_Mutex;
     std::stack<T*> m_Pool;  // push/pop 연산에 특화된 컨테이너
+};
+
+// MemoryPool을 활용한 Packet 객체 풀
+class PacketPool
+{
+public:
+    static PacketPool& GetInstance()
+    {
+        static PacketPool instance;
+        return instance;
+    }
+
+    // Packet 객체 가져오기
+    Packet* Pop()
+    {
+        // MemoryPoolManager에서 Packet 크기만큼의 메모리 할당
+        BYTE* memory = static_cast<BYTE*>(MemoryPoolManager::GetMemoryPool(sizeof(Packet)).Allocate());
+
+        // 메모리 초기화
+        memset(memory, 0, sizeof(Packet));
+
+        // BYTE* 포인터를 Packet* 포인터로 변환
+        return reinterpret_cast<Packet*>(memory);
+    }
+
+    // Packet 객체 반환
+    void Push(Packet* packet)
+    {
+        if (!packet)
+            return;
+
+        // Packet 포인터를 BYTE* 포인터로 변환 후 MemoryPool에 반환
+        MemoryPoolManager::GetMemoryPool(sizeof(Packet)).Deallocate(reinterpret_cast<void*>(packet));
+    }
+
+    // 패킷 크기에 맞는 메모리 풀 사전 초기화 (선택적)
+    void InitPool(size_t initialSize = 1000)
+    {
+        // 이미 MemoryPoolManager가 내부적으로 풀을 관리하므로 
+        // 여기서는 로그만 출력
+        LOGI << "PacketPool initialized using MemoryPoolManager";
+    }
+
+private:
+    PacketPool() {}
+    ~PacketPool() {}
 };

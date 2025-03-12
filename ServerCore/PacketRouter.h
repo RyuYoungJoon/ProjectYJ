@@ -35,7 +35,7 @@ private:
 
     int32 GetWorkerIndex(int32 sessionUID) const;
 
-    std::atomic<bool> m_IsRunning;
+    bool m_IsRunning = false;
     int32 m_NumWorkers;
     std::vector<std::thread> m_WorkerThreads;
     std::vector<std::unique_ptr<Concurrency::concurrent_queue<PacketQueueItem>>> m_WorkerQueues;
@@ -47,7 +47,7 @@ class WorkerThread
 {
 public:
     WorkerThread(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue,
-        std::atomic<bool>* isRunning,
+        bool isRunning,
         std::unordered_map<PacketType, PacketHandlerFunc>* handlers);
 
     ~WorkerThread() = default;
@@ -58,6 +58,6 @@ public:
 private:
     int32 m_Id;
     Concurrency::concurrent_queue<PacketQueueItem>* m_Queue;
-    std::atomic<bool>* m_IsRunning;
+    bool m_IsRunning;
     std::unordered_map<PacketType, PacketHandlerFunc>* m_Handlers;
 };

@@ -4,6 +4,7 @@
 
 PacketBuffer::PacketBuffer()
 {
+    Init(65536);
 }
 
 PacketBuffer::PacketBuffer(int32 bufferSize)
@@ -20,22 +21,40 @@ void PacketBuffer::Init(int32 bufferSize)
     m_Buffer.resize(m_Capacity);
 }
 
-bool PacketBuffer::OnWrite(const BYTE* data, int32 size)
+bool PacketBuffer::OnWrite(const BYTE* buffer, int32 size)
 {
     if (FreeSize() < size)
         return false;
 
-    memcpy(&m_Buffer[m_WritePos], data, size);
+    memcpy(&m_Buffer[m_WritePos], buffer, size);
     m_WritePos += size;
     return true;
 }
 
-bool PacketBuffer::OnRead(BYTE* data, int32 size)
+bool PacketBuffer::OnRead(BYTE* buffer ,int32 size)
 {
     if (DataSize() < size)
         return false;
 
-    memcpy(data, &m_Buffer[m_ReadPos], size);
+    memcpy(&m_Buffer[m_WritePos], buffer, size);
+    m_ReadPos += size;
+    return true;
+}
+
+bool PacketBuffer::OnWrite(int32 size)
+{
+    if (FreeSize() < size)
+        return false;
+
+    m_WritePos += size;
+    return true;
+}
+
+bool PacketBuffer::OnRead(int32 size)
+{
+    if (DataSize() < size)
+        return false;
+
     m_ReadPos += size;
     return true;
 }

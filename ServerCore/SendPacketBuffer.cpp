@@ -66,8 +66,13 @@ void SendPacketBuffer::ProcessSessionBuffer(AsioSessionPtr session)
             break;
 
         // 패킷 풀에서 패킷 가져오기
-        Packet* packet = PacketPool::GetInstance().AcquirePacket();
+        Packet* packet = PacketPool::GetInstance().Pop();
 
+        // 풀에서 가져온 Packet에는 아직 아무 값이 없는데
+        // 이 packet 값을 buffer에 넣는 무의미한 작업.
+        // packet에는 아무 값도 없는데 buffer에 덮고 패킷 라우터로 Dispatch하는중.
+        // 수정 꼭 필요.
+        // 
         // 패킷 데이터 복사
         buffer->OnRead(reinterpret_cast<BYTE*>(packet), header.size);
 
@@ -75,7 +80,7 @@ void SendPacketBuffer::ProcessSessionBuffer(AsioSessionPtr session)
         PacketRouter::GetInstance().Dispatch(session, *packet);
         
         // 패킷 반환
-        PacketPool::GetInstance().ReleasePacket(packet);
+        PacketPool::GetInstance().Push(packet);
     }
 
     // 버퍼 정리

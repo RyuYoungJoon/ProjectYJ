@@ -30,7 +30,7 @@ void PacketRouter::Init(int32 numThread)
     for (int32 i = 0; i < m_NumWorkers; ++i)
     {
         m_WorkerThreads.emplace_back([this, i]() {
-            WorkerThread worker(i, m_WorkerQueues[i].get(), &m_IsRunning, &m_Handlers);
+            WorkerThread worker(i, m_WorkerQueues[i].get(), m_IsRunning, &m_Handlers);
             worker.Run();
             });
     }
@@ -56,7 +56,7 @@ void PacketRouter::Shutdown()
     m_WorkerQueues.clear();
     m_WorkerThreads.clear();
 
-    LOGI << "PacketDispatcher shutdown complete";
+    LOGI << "PacketRouter shutdown complete";
 }
 
 void PacketRouter::Dispatch(AsioSessionPtr session, const Packet& packet)
@@ -83,9 +83,9 @@ int32 PacketRouter::GetWorkerIndex(int32 sessionUID) const
     return sessionUID % m_NumWorkers;
 }
 
-WorkerThread::WorkerThread(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, std::atomic<bool>* isRunning, std::unordered_map<PacketType, PacketHandlerFunc>* handlers)
+WorkerThread::WorkerThread(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool isRunning, std::unordered_map<PacketType, PacketHandlerFunc>* handlers)
+    :m_Id(id), m_Queue(queue), m_IsRunning(isRunning), m_Handlers(handlers)
 {
-    
 }
 
 void WorkerThread::Run()
@@ -94,7 +94,7 @@ void WorkerThread::Run()
 
     PacketQueueItem item;
 
-    while (*m_IsRunning) {
+    while (m_IsRunning) {
         // 큐에서 패킷 가져오기
         bool hasWork = false;
 
