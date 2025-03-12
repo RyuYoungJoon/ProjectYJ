@@ -91,7 +91,7 @@ int main()
 		string serverIP = reader.Get("server", "address", "127.0.0.1");
 		long threadCnt = reader.GetInteger("server", "ThreadCnt", 4);
 
-		PacketRouter::GetInstance().Init();
+		PacketRouter::GetInstance().Init(1);
 
 		serverService = std::make_shared<AsioServerService>(
 			IoContext, 

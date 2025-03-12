@@ -29,6 +29,8 @@ AsioSession::~AsioSession()
 
 void AsioSession::ProcessRecv()
 {
+	OnConnected();
+
 	DoRead();
 }
 
@@ -77,8 +79,6 @@ bool AsioSession::Connect(const string& host, const string& port)
 				LOGI << "Successfully connected to " << endpoint;
 				m_SessionUID = SessionUID.fetch_add(1);
 				ProcessRecv();
-				OnConnected();
-				
 			}
 			else
 			{
