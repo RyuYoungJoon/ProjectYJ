@@ -17,7 +17,10 @@ void SessionManager::RegisterSession(AsioSessionPtr session)
 
 	std::lock_guard<std::mutex> lock(m_Mutex);
 	int32 sessionUID = session->GetSessionUID();
-	m_Sessions[sessionUID] = session;
+	//m_Sessions[sessionUID] = session;
+	auto it = m_Sessions.find(sessionUID);
+	if (it == m_Sessions.end())
+		m_Sessions.insert(std::make_pair(sessionUID, session));
 }
 
 void SessionManager::UnregisterSession(AsioSessionPtr session)

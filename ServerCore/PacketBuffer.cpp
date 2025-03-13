@@ -38,8 +38,7 @@ bool PacketBuffer::OnRead(BYTE* buffer ,int32 size)
 
     memcpy(&m_Buffer[m_WritePos], buffer, size);
     m_ReadPos += size;
-    return true;
-}
+    return true;}
 
 bool PacketBuffer::OnWrite(int32 size)
 {

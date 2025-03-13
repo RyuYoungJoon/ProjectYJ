@@ -22,5 +22,4 @@ private:
     boost::asio::io_context* m_IoContext;
     tcp::acceptor m_Acceptor;
     std::shared_ptr<AsioService> m_Service; // Reference to the parent service
-    atomic<int32> m_SessionUID;
 };
