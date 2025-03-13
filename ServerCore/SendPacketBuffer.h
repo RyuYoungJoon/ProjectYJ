@@ -1,5 +1,6 @@
 #pragma once
 #include "PacketBuffer.h"
+#include "ObjectPool.h"
 // SendPacketBuffer: 세션별 패킷 버퍼 관리
 class SendPacketBuffer
 {
@@ -11,7 +12,7 @@ public:
     }
 
     void AddData(AsioSessionPtr session, const BYTE* data, size_t length);
-    void ProcessSessionBuffer(AsioSessionPtr session);
+    void ProcessSessionBuffer(AsioSessionPtr session, size_t length);
 
 private:
     SendPacketBuffer();
@@ -19,4 +20,5 @@ private:
 
     std::mutex m_Mutex;
     std::unordered_map<int32, std::unique_ptr<PacketBuffer>> m_SessionBuffers;
+    ObjectPool<Packet> m_PacketPool;
 };

@@ -2,6 +2,7 @@
 #include "PacketRouter.h"
 #include "AsioSession.h"
 #include "SessionManager.h"
+#include "ServerAnalyzer.h"
 
 void PacketRouter::Init(int32 numThread)
 {
@@ -22,7 +23,6 @@ void PacketRouter::Init(int32 numThread)
     // 워커별 큐 생성
     for (int32 i = 0; i < m_NumWorkers; ++i)
     {
-        // boost::lockfree::queue 생성 (크기 1024)
         m_WorkerQueues.push_back(std::make_unique<Concurrency::concurrent_queue<PacketQueueItem>>());
     }
 
@@ -35,7 +35,7 @@ void PacketRouter::Init(int32 numThread)
             });
     }
 
-    LOGI << "PacketDispatcher initialized with " << m_NumWorkers << " worker threads";
+    LOGI << "PacketRouter initialized with " << m_NumWorkers << " worker threads";
 }
 
 void PacketRouter::Shutdown()
@@ -59,10 +59,12 @@ void PacketRouter::Shutdown()
     LOGI << "PacketRouter shutdown complete";
 }
 
-void PacketRouter::Dispatch(AsioSessionPtr session, const Packet& packet)
+void PacketRouter::Dispatch(AsioSessionPtr session, BYTE* buffer)
 {
     if (!session || !m_IsRunning)
         return;
+
+    Packet* packet = reinterpret_cast<Packet*>(buffer);
 
     int32 sessionId = session->GetSessionUID();
     int32 workerIdx = GetWorkerIndex(sessionId);
@@ -75,7 +77,10 @@ void PacketRouter::Dispatch(AsioSessionPtr session, const Packet& packet)
 void PacketRouter::RegisterHandler(PacketType type, PacketHandlerFunc handler)
 {
     std::lock_guard<std::mutex> lock(m_HandlerMutex);
-    m_Handlers[type] = handler;
+
+    auto it = m_Handlers.find(type);
+    if (it == m_Handlers.end())
+        m_Handlers.insert(std::make_pair(type, handler));
 }
 
 int32 PacketRouter::GetWorkerIndex(int32 sessionUID) const
@@ -98,21 +103,16 @@ void WorkerThread::Run()
         // 큐에서 패킷 가져오기
         bool hasWork = false;
 
-        // 배치 처리 (최대 32개 패킷 한번에 처리)
-        for (int i = 0; i < 32; ++i) {
-            if (m_Queue->try_pop(item)) {
-                hasWork = true;
-                int32 sessionId = item.sessionId;
-                const Packet& packet = item.packet;
+        if (m_Queue->try_pop(item)) {
+            hasWork = true;
+            int32 sessionId = item.sessionId;
+            const Packet& packet = item.packet;
 
-                // 세션 찾기
-                AsioSessionPtr session = SessionManager::GetInstance().GetSession(sessionId);
-                if (session) {
-                    ProcessPacket(session, packet);
-                }
-            }
-            else {
-                break;  // 큐가 비었으면 루프 종료
+            // 세션 찾기
+            AsioSessionPtr session = SessionManager::GetInstance().GetSession(sessionId);
+            if (session) {
+                ProcessPacket(session, packet);
+                LOGI << "Packet Queue Size : " << m_Queue->unsafe_size();
             }
         }
 
@@ -122,13 +122,13 @@ void WorkerThread::Run()
         }
     }
 
-    LOGI << "Worker thread " << m_Id << " stopped";
+    LOGE << "Worker thread " << m_Id << " stopped";
 }
 
 void WorkerThread::ProcessPacket(AsioSessionPtr session, const Packet& packet)
 {
     PacketType type = packet.header.type;
-
+    //LOGD << "packet payload -> " << packet.payload;
     // 핸들러 찾기
     auto it = m_Handlers->find(type);
     if (it != m_Handlers->end())

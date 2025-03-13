@@ -67,10 +67,6 @@ void AsioAcceptor::HandleAccept(tcp::socket* newSocket, boost::system::error_cod
         
         // 세션 마다 내가 보내는 카운트를 저장하는 변수를 만들자.
         session->ProcessRecv();
-        //session->SetSessionUID(m_SessionUID);
-
-        //m_SessionUID.fetch_add(1);
-        m_Service->AddSession(session);
         LOGI << "New Client Connected [" << session->GetSessionUID();
 
         // 또 받으러 가기

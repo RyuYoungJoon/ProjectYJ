@@ -5,6 +5,7 @@
 #include "TaskQueue.h"
 #include "NetworkHandler.h"
 #include "ServerAnalyzer.h"
+#include "PacketRouter.h"
 
 atomic<int32> SessionUID = 0;
 
@@ -128,7 +129,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 		std::vector<BYTE> dataCopy(dataSize);
 		memcpy(dataCopy.data(), m_PacketBuffer.ReadPos(), dataSize);
 
-		NetworkHandler::GetInstance().RecvData(shared_from_this(), m_PacketBuffer.ReadPos(), m_PacketBuffer.DataSize());
+		NetworkHandler::GetInstance().RecvData(shared_from_this(), dataCopy.data(), dataSize);
 		// 다음 비동기 읽기 시작
 		m_PacketBuffer.OnRead(length);
 		m_PacketBuffer.Clear();
@@ -186,11 +187,12 @@ int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
 			break;
 
 		OnRecv(&buffer[processLen], header.size);
+		PacketRouter::GetInstance().Dispatch(shared_from_this(), &buffer[)
 
 		processLen += header.size;
 	}
 
-	return processLen; //pASSwORD79!
+	return processLen;
 
 }
 

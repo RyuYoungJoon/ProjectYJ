@@ -5,7 +5,7 @@ struct PacketQueueItem {
     Packet packet;
 
     PacketQueueItem() = default;
-    PacketQueueItem(int32 id, const Packet& p) : sessionId(id), packet(p) {}
+    PacketQueueItem(int32 id, Packet* p) : sessionId(id), packet(p) {}
 };
 
 // PacketRouter에서 큐 벡터 선언 변경
@@ -23,7 +23,7 @@ public:
 
 	void Init(int32 numThread = 0);
 	void Shutdown();
-	void Dispatch(AsioSessionPtr session, const Packet& packet);
+	void Dispatch(AsioSessionPtr session, BYTE* buffer);
 	void RegisterHandler(PacketType type, PacketHandlerFunc handler);
 
 private:

@@ -2,13 +2,15 @@
 #include "PacketHandler.h"
 #include "GameSession.h"
 #include "Logger.h"
+#include "PacketRouter.h"
 
+atomic<int> a;
 void PacketHandler::Init()
 {
-	RegisterHandler(PacketType::defEchoString, std::bind(&PacketHandler::HandledefEchoString, this, std::placeholders::_1, std::placeholders::_2));
-	RegisterHandler(PacketType::JH, std::bind(&PacketHandler::HandleJH, this, std::placeholders::_1, std::placeholders::_2));
-	RegisterHandler(PacketType::YJ, std::bind(&PacketHandler::HandleYJ, this, std::placeholders::_1, std::placeholders::_2));
-	RegisterHandler(PacketType::ES, std::bind(&PacketHandler::HandleES, this, std::placeholders::_1, std::placeholders::_2));
+	PacketRouter::GetInstance().RegisterHandler(PacketType::defEchoString, std::bind(&PacketHandler::HandledefEchoString, this, std::placeholders::_1, std::placeholders::_2));
+	PacketRouter::GetInstance().RegisterHandler(PacketType::JH, std::bind(&PacketHandler::HandleJH, this, std::placeholders::_1, std::placeholders::_2));
+	PacketRouter::GetInstance().RegisterHandler(PacketType::YJ, std::bind(&PacketHandler::HandleYJ, this, std::placeholders::_1, std::placeholders::_2));
+	PacketRouter::GetInstance().RegisterHandler(PacketType::ES, std::bind(&PacketHandler::HandleES, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
@@ -128,7 +130,7 @@ void PacketHandler::HandledefEchoString(AsioSessionPtr& session, const Packet& p
 		return;
 	}
 
-	LOGD << "SessionUID : "<<gameSession->GetSessionUID()<<", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
+	//LOGD << "SessionUID : "<<gameSession->GetSessionUID()<<", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
 }
 
 void PacketHandler::HandleJH(AsioSessionPtr& session, const Packet& packet)
@@ -143,7 +145,7 @@ void PacketHandler::HandleJH(AsioSessionPtr& session, const Packet& packet)
 		return;
 	}
 
-	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
+	//LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
 	// 추가 처리 로직
 
 }
@@ -152,7 +154,7 @@ void PacketHandler::HandleYJ(AsioSessionPtr& session, const Packet& packet)
 {
 	if (packet.header.type != PacketType::YJ)
 		return;
-
+    a.fetch_add(1);
 	GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
 	if (gameSession == nullptr)
 	{
@@ -160,7 +162,7 @@ void PacketHandler::HandleYJ(AsioSessionPtr& session, const Packet& packet)
 		return;
 	}
 
-	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
+    //LOGD << "[" << a << "]SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
 }
 
 void PacketHandler::HandleES(AsioSessionPtr& session, const Packet& packet)
@@ -175,7 +177,7 @@ void PacketHandler::HandleES(AsioSessionPtr& session, const Packet& packet)
 		return;
 	}
 
-	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
+	//LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
 }
 
 void PacketHandler::HandleInvalid(AsioSessionPtr& session, const Packet& packet)

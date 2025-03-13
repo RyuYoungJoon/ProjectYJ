@@ -71,7 +71,7 @@ void ClientManager::Process()
 
 				clientService->BroadCast(packet);
 			}
-			run = false;
+			//run = false;
 			m_RunningState = RunningState::Disconnect;
 		}
 		break;
