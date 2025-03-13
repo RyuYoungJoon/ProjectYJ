@@ -13,10 +13,10 @@ public:
 
 	void HandlePacket(AsioSessionPtr& session, const Packet* packet);
 	
-	void HandledefEchoString(AsioSessionPtr& session, const Packet& packet);
-	void HandleJH(AsioSessionPtr& session, const Packet& packet);
-	void HandleYJ(AsioSessionPtr& session, const Packet& packet);
-	void HandleES(AsioSessionPtr& session, const Packet& packet);
+	void HandledefEchoString(AsioSessionPtr& session, Packet* packet);
+	void HandleJH(AsioSessionPtr& session, Packet* packet);
+	void HandleYJ(AsioSessionPtr& session, Packet* packet);
+	void HandleES(AsioSessionPtr& session, Packet* packet);
 
 	void ProcessPendingPacket(AsioSessionPtr& session, int32 sessionUID);
 	void Reset(int32 sessionUID);

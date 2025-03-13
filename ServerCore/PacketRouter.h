@@ -2,15 +2,15 @@
 
 struct PacketQueueItem {
     int32 sessionId;
-    Packet packet;
+    Packet* packet;
 
     PacketQueueItem() = default;
-    PacketQueueItem(int32 id, const Packet& p) : sessionId(id), packet(p) {}
+    PacketQueueItem(int32 id, Packet* p) : sessionId(id), packet(p) {}
 };
 
 // PacketRouter에서 큐 벡터 선언 변경
 
-using PacketHandlerFunc = std::function<void(AsioSessionPtr&, const Packet&)>;
+using PacketHandlerFunc = std::function<void(AsioSessionPtr&, Packet*)>;
 
 class PacketRouter
 {
@@ -23,13 +23,14 @@ public:
 
 	void Init(int32 numThread = 0);
 	void Shutdown();
-	void Dispatch(AsioSessionPtr session, const Packet& packet);
+	void Dispatch(AsioSessionPtr session, BYTE* buffer);
 	void RegisterHandler(PacketType type, PacketHandlerFunc handler);
 
 private:
     PacketRouter()
         : m_IsRunning(false)
     {
+        m_NumWorkers = 0;
     }
     ~PacketRouter() { Shutdown(); };
 
@@ -53,7 +54,7 @@ public:
     ~WorkerThread() = default;
 
     void Run();
-    void ProcessPacket(AsioSessionPtr session, const Packet& packet);
+    void ProcessPacket(AsioSessionPtr session, Packet* packet);
 
 private:
     int32 m_Id;

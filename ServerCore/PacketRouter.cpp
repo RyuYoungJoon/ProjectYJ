@@ -106,7 +106,7 @@ void WorkerThread::Run()
         if (m_Queue->try_pop(item)) {
             hasWork = true;
             int32 sessionId = item.sessionId;
-            const Packet& packet = item.packet;
+            Packet* packet = item.packet;
 
             // 세션 찾기
             AsioSessionPtr session = SessionManager::GetInstance().GetSession(sessionId);
@@ -125,9 +125,9 @@ void WorkerThread::Run()
     LOGE << "Worker thread " << m_Id << " stopped";
 }
 
-void WorkerThread::ProcessPacket(AsioSessionPtr session, const Packet& packet)
+void WorkerThread::ProcessPacket(AsioSessionPtr session, Packet* packet)
 {
-    PacketType type = packet.header.type;
+    PacketType type = packet->header.type;
     //LOGD << "packet payload -> " << packet.payload;
     // 핸들러 찾기
     auto it = m_Handlers->find(type);

@@ -118,9 +118,9 @@ void PacketHandler::Reset(int32 sessionUID)
     m_NextSeq.erase(sessionUID);
 }
 
-void PacketHandler::HandledefEchoString(AsioSessionPtr& session, const Packet& packet)
+void PacketHandler::HandledefEchoString(AsioSessionPtr& session, Packet* packet)
 {
-	if (packet.header.type != PacketType::defEchoString)
+	if (packet->header.type != PacketType::defEchoString)
 		return;
 
 	GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
@@ -133,9 +133,9 @@ void PacketHandler::HandledefEchoString(AsioSessionPtr& session, const Packet& p
 	//LOGD << "SessionUID : "<<gameSession->GetSessionUID()<<", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
 }
 
-void PacketHandler::HandleJH(AsioSessionPtr& session, const Packet& packet)
+void PacketHandler::HandleJH(AsioSessionPtr& session, Packet* packet)
 {
-	if (packet.header.type != PacketType::JH)
+	if (packet->header.type != PacketType::JH)
 		return;
 
 	GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
@@ -150,9 +150,9 @@ void PacketHandler::HandleJH(AsioSessionPtr& session, const Packet& packet)
 
 }
 
-void PacketHandler::HandleYJ(AsioSessionPtr& session, const Packet& packet)
+void PacketHandler::HandleYJ(AsioSessionPtr& session, Packet* packet)
 {
-	if (packet.header.type != PacketType::YJ)
+	if (packet->header.type != PacketType::YJ)
 		return;
     a.fetch_add(1);
 	GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
@@ -162,12 +162,12 @@ void PacketHandler::HandleYJ(AsioSessionPtr& session, const Packet& packet)
 		return;
 	}
 
-    //LOGD << "[" << a << "]SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
+    LOGD << "[" << a << "]SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload;
 }
 
-void PacketHandler::HandleES(AsioSessionPtr& session, const Packet& packet)
+void PacketHandler::HandleES(AsioSessionPtr& session, Packet* packet)
 {
-	if (packet.header.type != PacketType::ES)
+	if (packet->header.type != PacketType::ES)
 		return;
 
 	GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
