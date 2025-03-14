@@ -1,17 +1,28 @@
 #pragma once
 #include "Protocol.h"
+#include "PacketRouter.h"
 
 class AsioSession;
 
-class PacketHandler
+class PacketHandler : public PacketProcessor
 {
 public:
 	using HandlerFunc = std::function<void(AsioSessionPtr&, const Packet*)>;
+	
+	static PacketHandler& GetInstance()
+	{
+		static PacketHandler instance;
+		return instance;
+	}
+	
+	PacketHandler();
+	~PacketHandler();
+
 	void Init();
 
 	void RegisterHandler(PacketType packetType, HandlerFunc handler);
 
-	void HandlePacket(AsioSessionPtr& session, const Packet* packet);
+	virtual void HandlePacket(AsioSessionPtr session, const Packet* packet) override;
 	
 	void HandledefEchoString(AsioSessionPtr& session, const Packet* packet);
 	void HandleJH(AsioSessionPtr& session, const Packet* packet);

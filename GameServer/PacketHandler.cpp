@@ -2,9 +2,15 @@
 #include "PacketHandler.h"
 #include "GameSession.h"
 #include "Logger.h"
-#include "PacketRouter.h"
 
 atomic<int> a;
+PacketHandler::PacketHandler()
+{
+    LOGD << "PacketHandler";
+}
+PacketHandler::~PacketHandler()
+{
+}
 void PacketHandler::Init()
 {
 	RegisterHandler(PacketType::defEchoString, std::bind(&PacketHandler::HandledefEchoString, this, std::placeholders::_1, std::placeholders::_2));
@@ -20,7 +26,7 @@ void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
 		m_Handlers.emplace(packetType, handler);
 }
 
-void PacketHandler::HandlePacket(AsioSessionPtr& session, const Packet* packet)
+void PacketHandler::HandlePacket(AsioSessionPtr session, const Packet* packet)
 {
     if (!packet || !session)
         return;
