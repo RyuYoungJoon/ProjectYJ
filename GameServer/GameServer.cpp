@@ -92,6 +92,7 @@ int main()
 		long threadCnt = reader.GetInteger("server", "ThreadCnt", 4);
 
 		// 패킷 라우터 Init
+		PacketHandler* handler;
 		PacketRouter::GetInstance().Init();
 
 		serverService = std::make_shared<AsioServerService>(

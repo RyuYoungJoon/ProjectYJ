@@ -7,10 +7,10 @@
 atomic<int> a;
 void PacketHandler::Init()
 {
-	PacketRouter::GetInstance().RegisterHandler(PacketType::defEchoString, std::bind(&PacketHandler::HandledefEchoString, this, std::placeholders::_1, std::placeholders::_2));
-	PacketRouter::GetInstance().RegisterHandler(PacketType::JH, std::bind(&PacketHandler::HandleJH, this, std::placeholders::_1, std::placeholders::_2));
-	PacketRouter::GetInstance().RegisterHandler(PacketType::YJ, std::bind(&PacketHandler::HandleYJ, this, std::placeholders::_1, std::placeholders::_2));
-	PacketRouter::GetInstance().RegisterHandler(PacketType::ES, std::bind(&PacketHandler::HandleES, this, std::placeholders::_1, std::placeholders::_2));
+	RegisterHandler(PacketType::defEchoString, std::bind(&PacketHandler::HandledefEchoString, this, std::placeholders::_1, std::placeholders::_2));
+	RegisterHandler(PacketType::JH, std::bind(&PacketHandler::HandleJH, this, std::placeholders::_1, std::placeholders::_2));
+	RegisterHandler(PacketType::YJ, std::bind(&PacketHandler::HandleYJ, this, std::placeholders::_1, std::placeholders::_2));
+	RegisterHandler(PacketType::ES, std::bind(&PacketHandler::HandleES, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
@@ -26,7 +26,7 @@ void PacketHandler::HandlePacket(AsioSessionPtr& session, const Packet* packet)
         return;
 
     int32 sessionUID = session->GetSessionUID();
-    const Packet& packetRef = *packet;
+    const Packet* packetRef = packet;
 
     std::lock_guard<std::mutex> lock(m_Mutex);
 
@@ -65,7 +65,7 @@ void PacketHandler::HandlePacket(AsioSessionPtr& session, const Packet* packet)
         LOGE << "시퀀스 처리 에러! Expected: " << expectedSeqNum
             << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
 
-        m_PendingPacket[sessionUID].push(*packet);
+        m_PendingPacket[sessionUID].push(packet);
     }
     else
     {
@@ -83,14 +83,14 @@ void PacketHandler::ProcessPendingPacket(AsioSessionPtr& session, int32 sessionU
 
     while (!queue.empty())
     {
-        Packet frontPacket = queue.front();
+        const Packet* frontPacket = queue.front();
 
-        if (frontPacket.header.seqNum == expectedSeqNum)
+        if (frontPacket->header.seqNum == expectedSeqNum)
         {
             queue.pop();
 
             // 패킷 처리
-            auto it = m_Handlers.find(frontPacket.header.type);
+            auto it = m_Handlers.find(frontPacket->header.type);
             if (it != m_Handlers.end())
             {
                 it->second(session, frontPacket);
@@ -118,7 +118,7 @@ void PacketHandler::Reset(int32 sessionUID)
     m_NextSeq.erase(sessionUID);
 }
 
-void PacketHandler::HandledefEchoString(AsioSessionPtr& session, Packet* packet)
+void PacketHandler::HandledefEchoString(AsioSessionPtr& session, const Packet* packet)
 {
 	if (packet->header.type != PacketType::defEchoString)
 		return;
@@ -133,7 +133,7 @@ void PacketHandler::HandledefEchoString(AsioSessionPtr& session, Packet* packet)
 	//LOGD << "SessionUID : "<<gameSession->GetSessionUID()<<", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
 }
 
-void PacketHandler::HandleJH(AsioSessionPtr& session, Packet* packet)
+void PacketHandler::HandleJH(AsioSessionPtr& session, const Packet* packet)
 {
 	if (packet->header.type != PacketType::JH)
 		return;
@@ -150,7 +150,7 @@ void PacketHandler::HandleJH(AsioSessionPtr& session, Packet* packet)
 
 }
 
-void PacketHandler::HandleYJ(AsioSessionPtr& session, Packet* packet)
+void PacketHandler::HandleYJ(AsioSessionPtr& session, const Packet* packet)
 {
 	if (packet->header.type != PacketType::YJ)
 		return;
@@ -165,7 +165,7 @@ void PacketHandler::HandleYJ(AsioSessionPtr& session, Packet* packet)
     LOGD << "[" << a << "]SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload;
 }
 
-void PacketHandler::HandleES(AsioSessionPtr& session, Packet* packet)
+void PacketHandler::HandleES(AsioSessionPtr& session, const Packet* packet)
 {
 	if (packet->header.type != PacketType::ES)
 		return;
@@ -180,7 +180,7 @@ void PacketHandler::HandleES(AsioSessionPtr& session, Packet* packet)
 	//LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
 }
 
-void PacketHandler::HandleInvalid(AsioSessionPtr& session, const Packet& packet)
+void PacketHandler::HandleInvalid(AsioSessionPtr& session, const Packet* packet)
 {
-	LOGE << "Unknown Packet Type : " << static_cast<int16>(packet.header.type);
+	LOGE << "Unknown Packet Type : " << static_cast<int16>(packet->header.type);
 }
