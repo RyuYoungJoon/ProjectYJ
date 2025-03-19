@@ -10,7 +10,7 @@ SessionManager::~SessionManager()
 {
 }
 
-void SessionManager::RegisterSession(AsioSessionPtr session)
+void SessionManager::AddSession(AsioSessionPtr session)
 {
 	if (!session)
 		return;
@@ -23,7 +23,7 @@ void SessionManager::RegisterSession(AsioSessionPtr session)
 		m_Sessions.insert(std::make_pair(sessionUID, session));
 }
 
-void SessionManager::UnregisterSession(AsioSessionPtr session)
+void SessionManager::RemoveSession(AsioSessionPtr session)
 {
 	if (!session)
 		return;

@@ -29,7 +29,7 @@ void GameSession::OnDisconnected()
 {
 	//m_SessionPool.Push(shared_from_this());
 	//m_PacketHandler.Reset(GetSessionUID());
-	SessionManager::GetInstance().UnregisterSession(GetSession());
+	SessionManager::GetInstance().RemoveSession(GetSession());
 }
 
 int32 GameSession::OnRecv(BYTE* buffer, int32 len)
@@ -47,7 +47,7 @@ int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 
 void GameSession::OnConnected()
 {
-	SessionManager::GetInstance().RegisterSession(GetSession());
+	SessionManager::GetInstance().AddSession(GetSession());
 }
 
 void GameSession::Reset()

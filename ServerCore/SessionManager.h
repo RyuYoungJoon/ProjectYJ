@@ -8,8 +8,8 @@ public:
         return instance;
     }
 
-    void RegisterSession(AsioSessionPtr session);
-    void UnregisterSession(AsioSessionPtr session);
+    void AddSession(AsioSessionPtr session);
+    void RemoveSession(AsioSessionPtr session);
     AsioSessionPtr GetSession(int32 sessionId);
 
 private:
