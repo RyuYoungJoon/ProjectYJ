@@ -3,6 +3,7 @@
 #include "AsioSession.h"
 #include "SessionManager.h"
 #include "ServerAnalyzer.h"
+#include "MemoryPoolManager.h"
 
 void PacketRouter::Init(int32 numThread, PacketHandlerFuncTest initfunc)
 {
@@ -69,11 +70,14 @@ void PacketRouter::Dispatch(AsioSessionPtr session, BYTE* buffer)
 
     Packet* packet = reinterpret_cast<Packet*>(buffer);
 
+    Packet* packetCopy = static_cast<Packet*>(MemoryPoolManager::GetMemoryPool(packet->header.size).Allocate());
+    memcpy(packetCopy, packet, packet->header.size);
+
     int32 sessionId = session->GetSessionUID();
     int32 workerIdx = GetWorkerIndex(sessionId);
 
     // 큐에 패킷 항목 추가
-    PacketQueueItem item(sessionId, packet);
+    PacketQueueItem item(sessionId, packetCopy);
     m_WorkerQueues[workerIdx]->push(item);
 }
 
@@ -143,6 +147,8 @@ void PacketProcessor::Run()
             if (session) {
                 HandlePacket(session, packet);
                 LOGI << "Packet Queue Size : " << m_Queue->unsafe_size();
+
+                MemoryPoolManager::GetMemoryPool(packet->header.size).Deallocate(packet);
             }
         }
 
