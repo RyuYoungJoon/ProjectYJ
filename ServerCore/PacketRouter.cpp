@@ -145,28 +145,5 @@ void PacketProcessor::Run()
 
 void PacketProcessor::HandlePacket(AsioSessionPtr session, const Packet* packet)
 {
-    //PacketType type = packet->header.type;
-    ////LOGD << "packet payload -> " << packet.payload;
-    //// 핸들러 찾기
-    //auto it = m_Handlers->find(type);
-    //if (it != m_Handlers->end())
-    //{
-    //    try
-    //    {
-    //        // 패킷 처리 핸들러 호출
-    //        it->second(session, packet);
-    //    }
-    //    catch (const std::exception& e)
-    //    {
-    //        LOGE << "Exception in packet handler: " << e.what();
-    //    }
-    //    catch (...)
-    //    {
-    //        LOGE << "Unknown exception in packet handler";
-    //    }
-    //}
-    //else
-    //{
-    //    LOGE << "No handler registered for packet type " << static_cast<int>(type);
-    //}
+    LOGD << "HandlePacket";
 }
