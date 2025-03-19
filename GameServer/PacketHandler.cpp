@@ -5,8 +5,9 @@
 
 atomic<int> a;
 PacketHandler::PacketHandler()
+    : PacketProcessor()
 {
-    LOGD << "PacketHandler";
+    Init();
 }
 PacketHandler::~PacketHandler()
 {
@@ -61,17 +62,12 @@ void PacketHandler::HandlePacket(AsioSessionPtr session, const Packet* packet)
 
         // 다음 시퀀스 번호 업데이트
         m_NextSeq[sessionUID]++;
-
-        // 대기 중인 패킷 처리
-        ProcessPendingPacket(session, sessionUID);
     }
     else if (receivedSeqNum > expectedSeqNum)
     {
         // 기대한 것보다 높은 시퀀스 번호를 받았으면, 대기 큐에 저장
         LOGE << "시퀀스 처리 에러! Expected: " << expectedSeqNum
             << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
-
-        m_PendingPacket[sessionUID].push(packet);
     }
     else
     {
@@ -122,6 +118,11 @@ void PacketHandler::Reset(int32 sessionUID)
     std::lock_guard<std::mutex> lock(m_Mutex);
     m_PendingPacket.erase(sessionUID);
     m_NextSeq.erase(sessionUID);
+}
+
+void PacketHandler::Test()
+{
+    LOGD << "PacketHandler";
 }
 
 void PacketHandler::HandledefEchoString(AsioSessionPtr& session, const Packet* packet)

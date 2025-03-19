@@ -12,7 +12,7 @@ struct PacketQueueItem {
 
 using PacketHandlerFunc = std::function<void(AsioSessionPtr&, Packet*)>;
 
-class PacketProcessor
+class PacketProcessor : public enable_shared_from_this<PacketProcessor>
 {
 public:
     PacketProcessor();
@@ -22,12 +22,15 @@ public:
         std::unordered_map<PacketType, PacketHandlerFunc>* handlers);
 
     virtual ~PacketProcessor();
+
+    //void SetThreadID(atomic<int32> id)
     void SetProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue,
         bool isRunning,
         std::unordered_map<PacketType, PacketHandlerFunc>* handlers);
     void Run();
     virtual void HandlePacket(AsioSessionPtr session, const Packet* packet);
 
+    virtual void Test();
 
 private:
     int32 m_Id;
@@ -35,6 +38,8 @@ private:
     bool m_IsRunning;
     std::unordered_map<PacketType, PacketHandlerFunc>* m_Handlers;
 };
+
+using PacketHandlerFuncTest = std::function<shared_ptr<PacketProcessor>()>;
 
 class PacketRouter
 {
@@ -45,10 +50,14 @@ public:
 		return instance;
 	}
 
-	void Init(int32 numThread, PacketProcessor* processor);
+	void Init(int32 numThread, PacketHandlerFuncTest initfunc);
 	void Shutdown();
 	void Dispatch(AsioSessionPtr session, BYTE* buffer);
 	void RegisterHandler(PacketType type, PacketHandlerFunc handler);
+
+    shared_ptr<PacketProcessor> CreatePacketHandler(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue,
+        bool isRunning,
+        std::unordered_map<PacketType, PacketHandlerFunc>* handlers);
 
 private:
     PacketRouter()
@@ -67,4 +76,6 @@ private:
     std::unordered_map<PacketType, PacketHandlerFunc> m_Handlers;
     std::mutex m_HandlerMutex;
     PacketProcessor* m_PacketProcessor = nullptr;
+
+    PacketHandlerFuncTest m_CreateFunc = nullptr;
 };

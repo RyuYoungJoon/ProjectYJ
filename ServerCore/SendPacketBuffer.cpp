@@ -64,5 +64,4 @@ void SendPacketBuffer::ProcessSessionBuffer(AsioSessionPtr session, size_t lengt
     }
 
     buffer->Clear();
-
 }

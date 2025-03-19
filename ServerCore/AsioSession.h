@@ -45,8 +45,8 @@ public:
 
     boost::asio::io_context* GetIocontext() { return m_IoContext; }
 
+    virtual void OnSend(int32 len) { LOGD << "AsioSession"; }
 protected:
-    virtual void OnSend(int32 len) {}
     virtual int32 OnRecv(BYTE* buffer, int32 len) { return len; }
     virtual void OnConnected() {}
     virtual void OnDisconnected() {}

@@ -6,13 +6,13 @@
 
 GameSession::GameSession()
 {
-	m_PacketHandler.Init();
+	//m_PacketHandler.Init();
 }
 
 GameSession::GameSession(boost::asio::io_context* iocontext, tcp::socket* socket)
 	: AsioSession(iocontext, socket)
 {
-	m_PacketHandler.Init();
+	//m_PacketHandler.Init();
 }
 
 GameSession::~GameSession()
@@ -28,7 +28,7 @@ void GameSession::OnSend(int32 len)
 void GameSession::OnDisconnected()
 {
 	//m_SessionPool.Push(shared_from_this());
-	m_PacketHandler.Reset(GetSessionUID());
+	//m_PacketHandler.Reset(GetSessionUID());
 	SessionManager::GetInstance().UnregisterSession(GetSession());
 }
 
@@ -40,7 +40,7 @@ int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 	AsioSessionPtr gameSession = GetSession();
 	ServerAnalyzer::GetInstance().IncrementRecvCnt();
 
-	m_PacketHandler.HandlePacket(gameSession, packet);
+	//m_PacketHandler.HandlePacket(gameSession, packet);
 	
 	return int32();
 }

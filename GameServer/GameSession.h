@@ -17,7 +17,7 @@ public:
 
 	void Reset();  
 private:  
-	PacketHandler m_PacketHandler;  
+	//PacketHandler m_PacketHandler;  
 
 	ObjectPool<AsioSession> m_SessionPool;
 };

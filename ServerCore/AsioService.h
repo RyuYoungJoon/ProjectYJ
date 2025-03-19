@@ -42,6 +42,7 @@ protected:
     std::set<std::shared_ptr<class AsioSession>> m_Sessions;
     int32 m_SessionCount = 0;
     int32 m_MaxSessionCount = 0;
+    std::atomic<int32> m_SessionUID = 0;
     std::mutex m_Mutex;
 
     std::string m_Host;

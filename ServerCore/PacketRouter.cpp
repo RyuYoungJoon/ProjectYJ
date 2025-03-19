@@ -4,14 +4,16 @@
 #include "SessionManager.h"
 #include "ServerAnalyzer.h"
 
-void PacketRouter::Init(int32 numThread, PacketProcessor* processor)
+void PacketRouter::Init(int32 numThread, PacketHandlerFuncTest initfunc)
 {
     if (m_IsRunning)
         return;
 
     m_IsRunning = true;
 
-    m_PacketProcessor = processor;
+    m_CreateFunc = initfunc;
+
+    //m_PacketProcessor = processor.get();
     // 워커 수 설정 (기본값: CPU 코어 수 / 2)
     if (numThread <= 0)
     {
@@ -30,10 +32,9 @@ void PacketRouter::Init(int32 numThread, PacketProcessor* processor)
     // 워커 스레드 생성
     for (int32 i = 0; i < m_NumWorkers; ++i)
     {
-        m_WorkerThreads.emplace_back([this, i, processor]() {
-            PacketProcessor worker = *processor;
-            worker.SetProcessor(i, m_WorkerQueues[i].get(), m_IsRunning, &m_Handlers);
-            worker.Run();
+        m_WorkerThreads.emplace_back([this, i]() {
+            auto processor = CreatePacketHandler(i, m_WorkerQueues[i].get(), m_IsRunning, &m_Handlers);
+            processor->Run();
             });
     }
 
@@ -85,6 +86,16 @@ void PacketRouter::RegisterHandler(PacketType type, PacketHandlerFunc handler)
         m_Handlers.insert(std::make_pair(type, handler));
 }
 
+shared_ptr<PacketProcessor> PacketRouter::CreatePacketHandler(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool isRunning, std::unordered_map<PacketType, PacketHandlerFunc>* handlers)
+{
+    std::lock_guard<std::mutex> lock(m_HandlerMutex);
+
+    shared_ptr<PacketProcessor> processor = m_CreateFunc();
+    processor->SetProcessor(id, m_WorkerQueues[id].get(), m_IsRunning, &m_Handlers);
+
+    return processor;
+}
+
 int32 PacketRouter::GetWorkerIndex(int32 sessionUID) const
 {
     return sessionUID % m_NumWorkers;
@@ -92,6 +103,7 @@ int32 PacketRouter::GetWorkerIndex(int32 sessionUID) const
 
 PacketProcessor::PacketProcessor()
 {
+    LOGD << "PacketProcessor Init";
 }
 
 PacketProcessor::PacketProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool isRunning, std::unordered_map<PacketType, PacketHandlerFunc>* handlers)
@@ -146,4 +158,9 @@ void PacketProcessor::Run()
 void PacketProcessor::HandlePacket(AsioSessionPtr session, const Packet* packet)
 {
     LOGD << "HandlePacket";
+}
+
+void PacketProcessor::Test()
+{
+    LOGD << "PacketProcessor";
 }
