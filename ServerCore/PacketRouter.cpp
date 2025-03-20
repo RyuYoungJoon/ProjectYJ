@@ -146,7 +146,7 @@ void PacketProcessor::Run()
             AsioSessionPtr session = SessionManager::GetInstance().GetSession(sessionId);
             if (session) {
                 HandlePacket(session, packet);
-                LOGI << "Packet Queue Size : " << m_Queue->unsafe_size();
+                //LOGI << "Packet Queue Size : " << m_Queue->unsafe_size();
 
                 MemoryPoolManager::GetMemoryPool(packet->header.size).Deallocate(packet);
             }

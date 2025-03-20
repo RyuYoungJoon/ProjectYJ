@@ -34,6 +34,8 @@ private:
 	shared_ptr<AsioService> m_Service;
 	std::map<int32, AsioSessionPtr> m_Sessions;
 
+	std::map<int32, int32> m_SessionSeqNum;
+
 	std::mutex m_Mutex;
 	bool run = false;
 	int32 targetRandomCnt = 0;

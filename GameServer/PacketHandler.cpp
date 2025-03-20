@@ -169,7 +169,7 @@ void PacketHandler::HandleYJ(AsioSessionPtr& session, const Packet* packet)
 		return;
 	}
 
-    LOGD << "[" << a << "]SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload;
+    //LOGD << "[" << a << "]SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload;
 }
 
 void PacketHandler::HandleES(AsioSessionPtr& session, const Packet* packet)

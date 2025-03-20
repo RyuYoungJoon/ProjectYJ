@@ -153,7 +153,8 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 			LOGE << "CloseSession";
 		else
 			LOGE << "Read error : " << ec.message() << " (code : " << ec.value() << ")";
-
+		
+		//CloseSession(__FUNCTION__);
 		return;
 	}
 }
@@ -197,6 +198,9 @@ int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
 
 void AsioSession::CloseSession(const char* pCallFunc)
 {
+	if (m_Socket == nullptr)
+		return;
+
 	LOGD << "CloseSession Called! " << pCallFunc << ", socket handle : " << m_Socket->native_handle();
 	std::lock_guard<std::mutex> lock(m_Mutex);
 

@@ -26,7 +26,7 @@ public:
     AsioSessionPtr CreateSession(boost::asio::io_context* iocontext, tcp::socket* socket);
     void AddSession(AsioSessionPtr session);
     void ReleaseSession(AsioSessionPtr session);
-    void BroadCast(const Packet& packet);
+    void BroadCast(Packet& packet);
 
     int32 GetMaxSessionCount() { return m_MaxSessionCount; }
     

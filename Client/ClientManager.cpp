@@ -53,25 +53,41 @@ void ClientManager::Process()
 		switch (m_RunningState)
 		{
 		case RunningState::Connect:
+		{
+			std::lock_guard<std::mutex> lock(m_Mutex);
+			for (auto& session : m_Sessions)
+			{
+				m_SessionSeqNum[session.first] = 0;
+			}
+			m_RunningState = RunningState::Send;
+		}
+			break;
 		case RunningState::Send:
 		{
 			std::lock_guard<std::mutex> lock(m_Mutex);
 
-			for (int i = 0; i < 100; ++i)
+			string message("In multithreaded programming, it is crucial to use mutexes and condition variables");
+			
+			for (auto& session : m_Sessions)
 			{
-				string message("In multithreaded programming, it is crucial to use mutexes and condition variables");
-				Packet packet;
-				packet.header.seqNum = i;
-				std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
-				std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
-				packet.header.type = PacketType::YJ;
-				packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + sizeof(packet.payload) + sizeof(PacketTail));
-				std::memcpy(packet.payload, message.c_str(), message.size());
-				packet.tail.value = 255;
+				int32 sessionId = session.first;
 
-				clientService->BroadCast(packet);
+				for (int i = 0; i < 100; ++i)
+				{
+					Packet packet;
+					packet.header.seqNum = m_SessionSeqNum[sessionId]++;
+					std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
+					std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
+					packet.header.type = PacketType::YJ;
+					packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + sizeof(packet.payload) + sizeof(PacketTail));
+					std::memcpy(packet.payload, message.c_str(), message.size());
+					packet.tail.value = 255;
+
+					session.second->Send(packet);
+				}
 			}
-			run = false;
+			
+			//run = false;
 			m_RunningState = RunningState::Disconnect;
 		}
 		break;
@@ -112,6 +128,8 @@ void ClientManager::StopClient()
 	{
 		session.second->Disconnect();
 		session.second->Reset();
+
+		m_SessionSeqNum.erase(session.first);
 	}
 	m_Sessions.clear();
 }

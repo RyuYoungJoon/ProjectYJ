@@ -64,7 +64,7 @@ void AsioService::ReleaseSession(AsioSessionPtr session)
 	m_SessionCount--;
 }
 
-void AsioService::BroadCast(const Packet& packet)
+void AsioService::BroadCast(Packet& packet)
 {
 	for (auto session : m_Sessions)
 	{
