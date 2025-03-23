@@ -6,6 +6,7 @@
 #include "NetworkHandler.h"
 #include "ServerAnalyzer.h"
 #include "PacketRouter.h"
+#include "ObjectPool.h"
 
 atomic<int32> SessionUID = 0;
 
@@ -45,22 +46,15 @@ void AsioSession::InitSession(boost::asio::io_context* ioContext, tcp::socket* s
 void AsioSession::Send(const Packet& message)
 {
 	ServerAnalyzer::GetInstance().IncrementSendCnt();
-	// 메모리풀 매니저에서 메모리를 가져오자.
-	size_t bufferSize = message.header.size;
 
-	// 메모리풀에 버퍼 사이즈만큼 메모리를 가져와서 buffer 생성
-	BYTE* buffer = static_cast<BYTE*>(MemoryPoolManager::GetMemoryPool(bufferSize).Allocate());
+	// PacketPool에서 패킷 가져오기.
+	Packet* sendPacket = PacketPool::GetInstance().Pop();
 
-	std::memcpy(buffer, &message.header, sizeof(PacketHeader));
-	std::memcpy(buffer + sizeof(PacketHeader), message.payload, message.header.size - sizeof(PacketHeader));
+	std::memcpy(sendPacket, &message, message.header.size);
 
-	// TODO : 메모리 DeAllocate 구조잡기
-	//auto self = shared_from_this();
-	m_Socket->async_write_some(boost::asio::mutable_buffer(buffer, bufferSize),
-		std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+	m_Socket->async_write_some(boost::asio::mutable_buffer(reinterpret_cast<BYTE*>(sendPacket), sendPacket->header.size),
+		std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2, sendPacket));
 
-	//LOGD << "Send Socket Handle : " << m_Socket.lowest_layer().native_handle();
-	//MemoryPoolManager::GetMemoryPool(bufferSize).Deallocate(buffer);
 }
 
 bool AsioSession::Connect(const string& host, const string& port)
@@ -171,6 +165,8 @@ void AsioSession::HandleWrite(boost::system::error_code ec, int32 length)
 	{
 		OnSend(length);
 	}
+
+	PacketPool::GetInstance().Push(packet);
 }
 
 int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
@@ -187,7 +183,6 @@ int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
 		if (dataSize < header.size)
 			break;
 
-		//OnRecv(&buffer[processLen], header.size);
 		PacketRouter::GetInstance().Dispatch(shared_from_this(), &buffer[processLen]);
 		processLen += header.size;
 	}

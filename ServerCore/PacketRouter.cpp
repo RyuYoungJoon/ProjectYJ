@@ -4,6 +4,7 @@
 #include "SessionManager.h"
 #include "ServerAnalyzer.h"
 #include "MemoryPoolManager.h"
+#include "ObjectPool.h"
 
 void PacketRouter::Init(int32 numThread, PacketHandlerFuncTest initfunc)
 {
@@ -70,7 +71,7 @@ void PacketRouter::Dispatch(AsioSessionPtr session, BYTE* buffer)
 
     Packet* packet = reinterpret_cast<Packet*>(buffer);
 
-    Packet* packetCopy = static_cast<Packet*>(MemoryPoolManager::GetMemoryPool(packet->header.size).Allocate());
+    Packet* packetCopy = PacketPool::GetInstance().Pop();
     memcpy(packetCopy, packet, packet->header.size);
 
     int32 sessionId = session->GetSessionUID();
@@ -110,8 +111,8 @@ PacketProcessor::PacketProcessor()
     LOGD << "PacketProcessor Init";
 }
 
-PacketProcessor::PacketProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool isRunning, std::unordered_map<PacketType, PacketHandlerFunc>* handlers)
-    :m_Id(id), m_Queue(queue), m_IsRunning(isRunning), m_Handlers(handlers)
+PacketProcessor::PacketProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool& isRunning, std::unordered_map<PacketType, PacketHandlerFunc>* handlers)
+    :m_Id(id), m_Queue(queue), m_IsRunning(&isRunning), m_Handlers(handlers)
 {
 }
 
@@ -148,7 +149,7 @@ void PacketProcessor::Run()
                 HandlePacket(session, packet);
                 //LOGI << "Packet Queue Size : " << m_Queue->unsafe_size();
 
-                MemoryPoolManager::GetMemoryPool(packet->header.size).Deallocate(packet);
+                PacketPool::GetInstance().Push(packet);
             }
         }
 

@@ -6,6 +6,7 @@
 #include "TaskQueue.h"
 #include "ServerAnalyzer.h"
 #include "PacketRouter.h"
+#include "ObjectPool.h"
 
 #include <..\include\INIReader\ini.h>
 #include <..\include\INIReader\ini.c>
@@ -87,9 +88,10 @@ int main()
 	{
 		boost::asio::io_context* IoContext = new boost::asio::io_context();
 		
-		string serverPort = reader.Get("server", "port", "7777");
-		string serverIP = reader.Get("server", "address", "127.0.0.1");
+		string serverPort = reader.Get("server", "Port", "7777");
+		string serverIP = reader.Get("server", "Address", "127.0.0.1");
 		long threadCnt = reader.GetInteger("server", "ThreadCnt", 4);
+		long packetPoolSize = reader.GetInteger("server", "PacketPoolSize", 10000);
 
 		// 패킷 라우터 Init
 		//PacketHandler* handler = &PacketHandler::GetInstance();
@@ -98,6 +100,10 @@ int main()
 			{
 				return std::make_shared<PacketHandler>();
 			});
+
+		// 패킷 풀 Init
+		PacketPool::GetInstance().Init(packetPoolSize);
+		LOGI << "PacketPool initialized with " << PacketPool::GetInstance().GetTotalCount() << "size";
 
 		serverService = std::make_shared<AsioServerService>(
 			IoContext, 

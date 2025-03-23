@@ -59,7 +59,7 @@ protected:
 private:
     void DoRead();
     void HandleRead(boost::system::error_code ec, int32 length);
-    void HandleWrite(boost::system::error_code ec, int32 length);
+    void HandleWrite(boost::system::error_code ec, int32 length, Packet* packet);
 
 private:
     std::mutex m_Mutex;

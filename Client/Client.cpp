@@ -4,6 +4,7 @@
 #include "ServerAnalyzer.h"
 #include "ClientManager.h"
 #include <filesystem>
+#include "ObjectPool.h"
 
 #include <..\include\INIReader\ini.h>
 #include <..\include\INIReader\ini.c>
@@ -48,6 +49,7 @@ int main()
 	serverIP = reader.Get("client", "Address", "127.0.0.1");
 	threadCnt = reader.GetInteger("client", "threadCnt", 10);
 	maxSessionCnt = reader.GetInteger("client", "maxSessionCnt", 10);
+	long packetPoolSize = reader.GetInteger("client", "PacketPoolSize", 10000);
 
 	// 로그 폴더 설정
 	string logPath = filePath;
@@ -71,6 +73,10 @@ int main()
 	{
 		boost::asio::io_context* ioContext = new boost::asio::io_context();
 		work_guard_type work_guard(ioContext->get_executor());
+	
+		// 패킷 풀 Init
+		PacketPool::GetInstance().Init(packetPoolSize);
+
 		clientService = std::make_shared<AsioClientService>(
 			ioContext,
 			serverIP,
