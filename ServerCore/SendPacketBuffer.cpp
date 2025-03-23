@@ -6,7 +6,7 @@
 
 SendPacketBuffer::SendPacketBuffer()
 {
-    m_PacketPool.InitPool(10000);
+    //m_PacketPool.InitPool(10000);
 }
 
 SendPacketBuffer::~SendPacketBuffer()

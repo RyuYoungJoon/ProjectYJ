@@ -14,6 +14,11 @@ PacketBuffer::PacketBuffer(int32 bufferSize)
     m_Buffer.resize(m_Capacity);
 }
 
+PacketBuffer::~PacketBuffer()
+{
+    m_Buffer.clear();
+}
+
 void PacketBuffer::Init(int32 bufferSize)
 {
     m_BufferSize = bufferSize;

@@ -120,11 +120,11 @@ PacketProcessor::~PacketProcessor()
 {
 }
 
-void PacketProcessor::SetProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool isRunning, std::unordered_map<PacketType, PacketHandlerFunc>* handlers)
+void PacketProcessor::SetProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool& isRunning, std::unordered_map<PacketType, PacketHandlerFunc>* handlers)
 {
     m_Id = id;
     m_Queue = queue;
-    m_IsRunning = isRunning;
+    m_IsRunning = &isRunning;
     m_Handlers = handlers;
 }
 
@@ -134,7 +134,7 @@ void PacketProcessor::Run()
 
     PacketQueueItem item;
 
-    while (m_IsRunning) {
+    while (*m_IsRunning) {
         // 큐에서 패킷 가져오기
         bool hasWork = false;
 

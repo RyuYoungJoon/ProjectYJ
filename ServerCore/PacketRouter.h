@@ -18,14 +18,14 @@ public:
     PacketProcessor();
 
     PacketProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue,
-        bool isRunning,
+        bool& isRunning,
         std::unordered_map<PacketType, PacketHandlerFunc>* handlers);
 
     virtual ~PacketProcessor();
 
     //void SetThreadID(atomic<int32> id)
     void SetProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue,
-        bool isRunning,
+        bool& isRunning,
         std::unordered_map<PacketType, PacketHandlerFunc>* handlers);
     void Run();
     virtual void HandlePacket(AsioSessionPtr session, const Packet* packet);
@@ -35,7 +35,7 @@ public:
 private:
     int32 m_Id;
     Concurrency::concurrent_queue<PacketQueueItem>* m_Queue;
-    bool m_IsRunning;
+    bool* m_IsRunning;
     std::unordered_map<PacketType, PacketHandlerFunc>* m_Handlers;
 };
 

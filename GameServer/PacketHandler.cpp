@@ -66,14 +66,14 @@ void PacketHandler::HandlePacket(AsioSessionPtr session, const Packet* packet)
     else if (receivedSeqNum > expectedSeqNum)
     {
         // 기대한 것보다 높은 시퀀스 번호를 받았으면, 대기 큐에 저장
-        LOGE << "시퀀스 처리 에러! Expected: " << expectedSeqNum
-            << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
+        //LOGE << "시퀀스 처리 에러! Expected: " << expectedSeqNum
+           // << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
     }
     else
     {
         // 이미 처리한 패킷인 경우 (receivedSeqNum < expectedSeqNum)
-        LOGD << "이미 처리한 패킷! Expected: " << expectedSeqNum
-            << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
+       // LOGD << "이미 처리한 패킷! Expected: " << expectedSeqNum
+           // << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
     }
 }
 
@@ -122,7 +122,7 @@ void PacketHandler::Reset(int32 sessionUID)
 
 void PacketHandler::Test()
 {
-    LOGD << "PacketHandler";
+    //LOGD << "PacketHandler";
 }
 
 void PacketHandler::HandledefEchoString(AsioSessionPtr& session, const Packet* packet)

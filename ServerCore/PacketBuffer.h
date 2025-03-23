@@ -6,7 +6,7 @@ class PacketBuffer
 public:
     PacketBuffer();
     PacketBuffer(int32 bufferSize);
-    ~PacketBuffer() = default;
+    ~PacketBuffer();
 
     void Init(int32 bufferSize);
 

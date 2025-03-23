@@ -22,7 +22,7 @@ GameSession::~GameSession()
 
 void GameSession::OnSend(int32 len)
 {
-	cout << "OnSend 호출" << endl;
+	//cout << "OnSend 호출" << endl;
 }
 
 void GameSession::OnDisconnected()
@@ -52,5 +52,5 @@ void GameSession::OnConnected()
 
 void GameSession::Reset()
 {
-	LOGD << "Delete Session";
+	//LOGD << "Delete Session";
 }

@@ -29,9 +29,16 @@ void InputThread(boost::asio::io_context* ioContext)
 		case 0:
 			g_IsRunning = false;
 			LOGI << "Server Release";
-
 			serverService->CloseService();
+
+			PacketQueue::GetInstance().Shutdown();
+			LOGI << "Task queue shutdown complete";
+
+			PacketPool::GetInstance().Clean();
+			LOGI << "PacketPool Clean complete";
+
 			ioContext->stop();
+
 			break;
 		case 1:
 			LOGD << "TotalPacketRecvCount : " << ServerAnalyzer::GetInstance().GetTotalRecvCount();
@@ -49,7 +56,7 @@ int main()
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
 	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_DEBUG);
-	//_CrtSetBreakAlloc(4339);
+	//_CrtSetBreakAlloc(106292);
 
 	char filePath[MAX_PATH] = { 0 };
 	::GetModuleFileNameA(nullptr, filePath, MAX_PATH);
@@ -142,8 +149,8 @@ int main()
 				thread.join();
 		}
 
-		PacketQueue::GetInstance().Shutdown();
-		LOGI << "Task queue shutdown complete";
+		//plog::get()->flush();
+		
 
 		ioThread.join();
 
