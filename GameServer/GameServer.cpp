@@ -99,6 +99,7 @@ int main()
 		string serverIP = reader.Get("server", "Address", "127.0.0.1");
 		long threadCnt = reader.GetInteger("server", "ThreadCnt", 4);
 		long packetPoolSize = reader.GetInteger("server", "PacketPoolSize", 10000);
+		long sessionPoolSize = reader.GetInteger("server", "SessionPoolSize", 10000);
 
 		// 패킷 라우터 Init
 		//PacketHandler* handler = &PacketHandler::GetInstance();
@@ -112,12 +113,18 @@ int main()
 		PacketPool::GetInstance().Init(packetPoolSize);
 		LOGI << "PacketPool initialized with " << PacketPool::GetInstance().GetTotalCount() << "size";
 
+		// 세션 풀 Init
+		auto gameSessionPool = std::make_shared<ObjectPool<GameSession>>();
+		gameSessionPool->InitPool(10000);
+
 		serverService = std::make_shared<AsioServerService>(
 			IoContext, 
 			serverIP,
 			serverPort,
-			[](boost::asio::io_context* ioContext ,tcp::socket* socket) -> std::shared_ptr<AsioSession> {
-				return std::make_shared<GameSession>(ioContext, socket);
+			[gameSessionPool](boost::asio::io_context* ioContext ,tcp::socket* socket) -> std::shared_ptr<AsioSession> {
+				shared_ptr<GameSession> session = gameSessionPool->Pop();
+				session->InitSession(ioContext, socket);
+				return session;
 			});
 
 		if (serverService->Start())

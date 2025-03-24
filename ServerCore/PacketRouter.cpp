@@ -155,7 +155,7 @@ void PacketProcessor::Run()
 
         // 작업이 없으면 잠시 대기
         if (!hasWork) {
-            std::this_thread::yield();
+            std::this_thread::sleep_for(100ms);
         }
     }
 
