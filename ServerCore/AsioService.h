@@ -33,7 +33,6 @@ public:
     size_t GetSessionSize() { return m_Sessions.size(); }
 
     boost::asio::io_context* iocontext;
-    tcp::endpoint GetServiceEndpoint() { return m_ServiceEndpoint; }
 public:
     ServiceType GetServiceType() { return m_type; }
 
@@ -48,10 +47,8 @@ protected:
     std::string m_Host;
     std::string m_Port;
 
-    tcp::endpoint m_ServiceEndpoint;
     SessionMaker m_SessionMaker;
     bool m_checkRunning = false;
-    ObjectPool<AsioSession> m_SessionPool;
 };
 
 

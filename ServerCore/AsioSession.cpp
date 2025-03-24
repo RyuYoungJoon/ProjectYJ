@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "AsioSession.h"
 #include "AsioService.h"
-#include "MemoryPoolManager.h"
 #include "TaskQueue.h"
 #include "NetworkHandler.h"
 #include "ServerAnalyzer.h"
@@ -77,7 +76,7 @@ bool AsioSession::Connect(const string& host, const string& port)
 			}
 			else
 			{
-				//LOGE << "Connection Failed : " <<ec.value()<< ", " << ec.message();
+				LOGE << "Connection Failed : " <<ec.value()<< ", " << ec.message();
 			}
 		});
 
@@ -88,7 +87,7 @@ void AsioSession::Disconnect()
 {
 	boost::system::error_code ec;
 
-	//LOGI << "SessionUID : " << GetSessionUID() << ", Disconnecting";
+	LOGI << "SessionUID : " << GetSessionUID() << ", Disconnecting";
 
 	OnDisconnected();
 	CloseSession(__FUNCTION__);
@@ -114,7 +113,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 	{
 		if (m_PacketBuffer.OnWrite(length) == false)
 		{
-			//LOGE << "OnWrite OverFlow";
+			LOGE << "OnWrite OverFlow";
 			CloseSession(__FUNCTION__);
 			return;
 		}
@@ -133,24 +132,19 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 	}
 	else if (ec == boost::asio::error::eof)
 	{
-		//LOGE << "Connection closed by peer";
+		LOGE << "Connection closed by peer";
 		CloseSession(__FUNCTION__);
 		return;
 	}
-	else if (ec == boost::asio::error::operation_aborted)
+	else if (ec == boost::asio::error::operation_aborted || ec == boost::asio::error::connection_reset)
 	{
-		//LOGI << "Operation Aboreted!";
 		return;
 	}
 	else
-	{
-		if (ec.value() == boost::asio::error::connection_reset)
-			int a;
-			//LOGE << "CloseSession";
-		else
-			//LOGE << "Read error : " << ec.message() << " (code : " << ec.value() << ")";
+	{	
+		LOGE << "Read error : " << ec.message() << " (code : " << ec.value() << ")";
 		
-		//CloseSession(__FUNCTION__);
+		CloseSession(__FUNCTION__);
 		return;
 	}
 }
@@ -159,7 +153,7 @@ void AsioSession::HandleWrite(boost::system::error_code ec, int32 length, Packet
 {
 	if (ec)
 	{
-		//LOGE << "Session Close : " << ec.value() << ", Message : " << ec.message();
+		LOGE << "Session Close : " << ec.value() << ", Message : " << ec.message();
 
 		CloseSession(__FUNCTION__);
 	}   
@@ -198,13 +192,13 @@ void AsioSession::CloseSession(const char* pCallFunc)
 	if (m_Socket == nullptr)
 		return;
 
-	//LOGD << "CloseSession Called! " << pCallFunc << ", socket handle : " << m_Socket->native_handle();
+	LOGD << "CloseSession Called! " << pCallFunc << ", socket handle : " << m_Socket->native_handle();
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
 	boost::system::error_code ec;
 	m_Socket->cancel(ec);
 	if (ec) {
-		//LOGE << "Cancel error: " << ec.value() << ", " << ec.message();
+		LOGE << "Cancel error: " << ec.value() << ", " << ec.message();
 	}
 
 	if (m_Socket->is_open())
@@ -212,12 +206,12 @@ void AsioSession::CloseSession(const char* pCallFunc)
 		m_Socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
 		if (ec)
 		{
-			//LOGE << "ShutDown Error : " << ec.value() << ", " << ec.message();
+			LOGE << "ShutDown Error : " << ec.value() << ", " << ec.message();
 		}
 		m_Socket->close(ec);
 		if (ec)
 		{
-			//LOGE << "Close Error : " << ec.value() << ", " << ec.message();
+			LOGE << "Close Error : " << ec.value() << ", " << ec.message();
 		}
 	}
 
@@ -226,13 +220,10 @@ void AsioSession::CloseSession(const char* pCallFunc)
 		service->ReleaseSession(shared_from_this());
 	}
 
-	//Reset();
 }
 
 void AsioSession::Reset()
 {
-	//LOGD << "Destroy AsioSession";
-
 	delete m_Socket;
 	m_Socket = nullptr;
 

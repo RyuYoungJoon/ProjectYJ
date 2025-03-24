@@ -65,7 +65,6 @@ void AsioAcceptor::HandleAccept(tcp::socket* newSocket, boost::system::error_cod
         // 세션 만들고 세션 스타트
         auto session = m_Service->CreateSession(m_IoContext, newSocket);
         
-        // 세션 마다 내가 보내는 카운트를 저장하는 변수를 만들자.
         session->ProcessRecv();
         LOGI << "New Client Connected [" << session->GetSessionUID() << "]";
 

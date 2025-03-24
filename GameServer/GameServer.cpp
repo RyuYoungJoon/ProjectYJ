@@ -51,7 +51,6 @@ void InputThread(boost::asio::io_context* ioContext)
 
 int main()
 {
-	// TODO : 로그 설정하기, Config 설정하기 함수로 나누기.
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
@@ -84,22 +83,32 @@ int main()
 		::CreateDirectoryA(logPath.c_str(), nullptr);
 	}
 
+	string serverPort = reader.Get("server", "Port", "7777");
+	string serverIP = reader.Get("server", "Address", "127.0.0.1");
+	long threadCnt = reader.GetInteger("server", "ThreadCnt", 4);
+	long packetPoolSize = reader.GetInteger("server", "PacketPoolSize", 10000);
+	long sessionPoolSize = reader.GetInteger("server", "SessionPoolSize", 10000);
+	long IsConsoleLog = reader.GetInteger("server", "IsConsoleLog", 1);
+
 	char strInfoPathTemp[MAX_PATH] = { 0 };
 	sprintf_s(strInfoPathTemp, sizeof(strInfoPathTemp), "%sserver.log", logPath.c_str());
 
 	static plog::RollingFileAppender<plog::TxtFormatter> fileAppender(strInfoPathTemp);
-	static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
-	plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
 	
+	if (IsConsoleLog == true)
+	{
+		static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
+		plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
+	}
+	else
+	{
+		plog::init(plog::debug, &fileAppender);
+	}
+
 	try
 	{
 		boost::asio::io_context* IoContext = new boost::asio::io_context();
 		
-		string serverPort = reader.Get("server", "Port", "7777");
-		string serverIP = reader.Get("server", "Address", "127.0.0.1");
-		long threadCnt = reader.GetInteger("server", "ThreadCnt", 4);
-		long packetPoolSize = reader.GetInteger("server", "PacketPoolSize", 10000);
-		long sessionPoolSize = reader.GetInteger("server", "SessionPoolSize", 10000);
 
 		// 패킷 라우터 Init
 		//PacketHandler* handler = &PacketHandler::GetInstance();
@@ -155,9 +164,6 @@ int main()
 			if (thread.joinable())
 				thread.join();
 		}
-
-		//plog::get()->flush();
-		
 
 		ioThread.join();
 
