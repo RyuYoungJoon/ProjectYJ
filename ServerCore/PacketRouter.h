@@ -30,8 +30,6 @@ public:
     void Run();
     virtual void HandlePacket(AsioSessionPtr session, const Packet* packet);
 
-    virtual void Test();
-
 private:
     int32 m_Id;
     Concurrency::concurrent_queue<PacketQueueItem>* m_Queue;

@@ -65,7 +65,6 @@ public:
 private:
     boost::asio::io_context* m_IoContext;
     std::shared_ptr<AsioAcceptor> m_Acceptor;
-
 };
 
 

@@ -3,7 +3,6 @@
 #include "AsioSession.h"
 #include "SessionManager.h"
 #include "ServerAnalyzer.h"
-#include "MemoryPoolManager.h"
 #include "ObjectPool.h"
 
 void PacketRouter::Init(int32 numThread, PacketHandlerFuncTest initfunc)
@@ -15,7 +14,6 @@ void PacketRouter::Init(int32 numThread, PacketHandlerFuncTest initfunc)
 
     m_CreateFunc = initfunc;
 
-    //m_PacketProcessor = processor.get();
     // 워커 수 설정 (기본값: CPU 코어 수 / 2)
     if (numThread <= 0)
     {
@@ -165,9 +163,4 @@ void PacketProcessor::Run()
 void PacketProcessor::HandlePacket(AsioSessionPtr session, const Packet* packet)
 {
     LOGD << "HandlePacket";
-}
-
-void PacketProcessor::Test()
-{
-    LOGD << "PacketProcessor";
 }
