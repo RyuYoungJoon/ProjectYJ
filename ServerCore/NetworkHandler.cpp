@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "NetworkHandler.h"
 #include "ServerAnalyzer.h"
-#include "SendPacketBuffer.h"
+#include "SessionPacketBuffer.h"
 #include "AsioSession.h"
 
 NetworkHandler::NetworkHandler()
@@ -21,10 +21,10 @@ void NetworkHandler::RecvData(AsioSessionPtr session, BYTE* buffer, size_t lengt
 	ServerAnalyzer::GetInstance().IncrementRecvCnt();
 
 	// send버퍼에 데이터 add
-	SendPacketBuffer::GetInstance().AddData(session, buffer, length);
+	SessionPacketBuffer::GetInstance().AddData(session, buffer, length);
 
 	// 버퍼 처리.
-	SendPacketBuffer::GetInstance().ProcessSessionBuffer(session, length);
+	SessionPacketBuffer::GetInstance().ProcessSessionBuffer(session, length);
 }
 
 void NetworkHandler::SendPacket(AsioSessionPtr session, const Packet& packet)

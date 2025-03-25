@@ -24,7 +24,7 @@ ServerCore, GameServer, Client
 #### 메모리 관리 컴포넌트
 - ObjectPool: 객체 풀 관리
 - PacketBuffer: 패킷 버퍼링
-- SendPacketBuffer: 송신 패킷 버퍼 관리
+- SessionPacketBuffer: 송신 패킷 버퍼 관리
 
 #### 유틸리티 컴포넌트
 - TaskQueue: 작업 큐 관리
