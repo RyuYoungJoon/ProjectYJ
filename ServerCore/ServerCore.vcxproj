@@ -193,8 +193,6 @@
     <ClInclude Include="AsioSession.h" />
     <ClInclude Include="CorePch.h" />
     <ClInclude Include="MyLogger.h" />
-    <ClInclude Include="MemoryPool.h" />
-    <ClInclude Include="MemoryPoolManager.h" />
     <ClInclude Include="NetworkHandler.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="PacketBuffer.h" />
@@ -214,8 +212,6 @@
     <ClCompile Include="AsioSession.cpp" />
     <ClCompile Include="CorePch.cpp" />
     <ClCompile Include="MyLogger.cpp" />
-    <ClCompile Include="MemoryPool.cpp" />
-    <ClCompile Include="MemoryPoolManager.cpp" />
     <ClCompile Include="NetworkHandler.cpp" />
     <ClCompile Include="ObjectPool.cpp" />
     <ClCompile Include="PacketBuffer.cpp" />

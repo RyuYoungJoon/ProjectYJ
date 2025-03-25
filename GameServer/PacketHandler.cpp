@@ -66,50 +66,14 @@ void PacketHandler::HandlePacket(AsioSessionPtr session, const Packet* packet)
     else if (receivedSeqNum > expectedSeqNum)
     {
         // 기대한 것보다 높은 시퀀스 번호를 받았으면
-        //LOGE << "시퀀스 처리 에러! Expected: " << expectedSeqNum
+        LOGE << "시퀀스 처리 에러! Expected: " << expectedSeqNum
            // << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
     }
     else
     {
         // 이미 처리한 패킷인 경우 (receivedSeqNum < expectedSeqNum)
-       // LOGD << "이미 처리한 패킷! Expected: " << expectedSeqNum
-           // << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
-    }
-}
-
-void PacketHandler::ProcessPendingPacket(AsioSessionPtr& session, int32 sessionUID)
-{
-    // 재귀적으로 대기 중인 패킷 처리
-    auto& queue = m_PendingPacket[sessionUID];
-    int32& expectedSeqNum = m_NextSeq[sessionUID];
-
-    while (!queue.empty())
-    {
-        const Packet* frontPacket = queue.front();
-
-        if (frontPacket->header.seqNum == expectedSeqNum)
-        {
-            queue.pop();
-
-            // 패킷 처리
-            auto it = m_Handlers.find(frontPacket->header.type);
-            if (it != m_Handlers.end())
-            {
-                it->second(session, frontPacket);
-            }
-            else
-            {
-                HandleInvalid(session, frontPacket);
-            }
-
-            // 다음 기대 시퀀스 번호 업데이트
-            expectedSeqNum++;
-        }
-        else
-        {
-            // 아직 순서가 맞지 않는 패킷이면 종료
-            break;
-        }
+        LOGD << "이미 처리한 패킷! Expected: " << expectedSeqNum
+            << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
     }
 }
 
@@ -137,7 +101,7 @@ void PacketHandler::HandledefEchoString(AsioSessionPtr& session, const Packet* p
 		return;
 	}
 
-	//LOGD << "SessionUID : "<<gameSession->GetSessionUID()<<", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
+	LOGD << "SessionUID : "<<gameSession->GetSessionUID()<<", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload;
 }
 
 void PacketHandler::HandleJH(AsioSessionPtr& session, const Packet* packet)
@@ -152,7 +116,7 @@ void PacketHandler::HandleJH(AsioSessionPtr& session, const Packet* packet)
 		return;
 	}
 
-	//LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
+	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload;
 	// 추가 처리 로직
 
 }
@@ -169,7 +133,7 @@ void PacketHandler::HandleYJ(AsioSessionPtr& session, const Packet* packet)
 		return;
 	}
 
-    //LOGD << "[" << a << "]SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload;
+    LOGD << "[" << a << "]SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload;
 }
 
 void PacketHandler::HandleES(AsioSessionPtr& session, const Packet* packet)
@@ -184,7 +148,7 @@ void PacketHandler::HandleES(AsioSessionPtr& session, const Packet* packet)
 		return;
 	}
 
-	//LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet.header.seqNum << "] -> Payload : " << packet.payload;
+	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload;
 }
 
 void PacketHandler::HandleInvalid(AsioSessionPtr& session, const Packet* packet)

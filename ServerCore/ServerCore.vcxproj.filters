@@ -36,12 +36,6 @@
     <ClInclude Include="PacketBuffer.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="MemoryPool.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryPoolManager.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
     <ClInclude Include="MyLogger.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -60,13 +54,13 @@
     <ClInclude Include="NetworkHandler.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="SessionManager.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="SendPacketBuffer.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="PacketRouter.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionManager.h">
       <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
@@ -92,12 +86,6 @@
     <ClCompile Include="PacketBuffer.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="MemoryPool.cpp">
-      <Filter>Memory</Filter>
-    </ClCompile>
-    <ClCompile Include="MemoryPoolManager.cpp">
-      <Filter>Memory</Filter>
-    </ClCompile>
     <ClCompile Include="MyLogger.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -116,13 +104,13 @@
     <ClCompile Include="NetworkHandler.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="SessionManager.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
     <ClCompile Include="SendPacketBuffer.cpp">
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="PacketRouter.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionManager.cpp">
       <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>

@@ -20,5 +20,4 @@ private:
 
     std::mutex m_Mutex;
     std::unordered_map<int32, std::unique_ptr<PacketBuffer>> m_SessionBuffers;
-    ObjectPool<Packet> m_PacketPool;
 };
