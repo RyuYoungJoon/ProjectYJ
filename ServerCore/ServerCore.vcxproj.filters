@@ -54,7 +54,7 @@
     <ClInclude Include="NetworkHandler.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="SendPacketBuffer.h">
+    <ClInclude Include="SessionPacketBuffer.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="PacketRouter.h">
@@ -104,7 +104,7 @@
     <ClCompile Include="NetworkHandler.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="SendPacketBuffer.cpp">
+    <ClCompile Include="SessionPacketBuffer.cpp">
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="PacketRouter.cpp">

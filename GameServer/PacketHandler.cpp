@@ -67,7 +67,7 @@ void PacketHandler::HandlePacket(AsioSessionPtr session, const Packet* packet)
     {
         // 기대한 것보다 높은 시퀀스 번호를 받았으면
         LOGE << "시퀀스 처리 에러! Expected: " << expectedSeqNum
-           // << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
+            << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
     }
     else
     {
@@ -82,11 +82,6 @@ void PacketHandler::Reset(int32 sessionUID)
     std::lock_guard<std::mutex> lock(m_Mutex);
     m_PendingPacket.erase(sessionUID);
     m_NextSeq.erase(sessionUID);
-}
-
-void PacketHandler::Test()
-{
-    //LOGD << "PacketHandler";
 }
 
 void PacketHandler::HandledefEchoString(AsioSessionPtr& session, const Packet* packet)

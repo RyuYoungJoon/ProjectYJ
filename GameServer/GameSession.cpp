@@ -44,5 +44,4 @@ void GameSession::OnConnected()
 
 void GameSession::Reset()
 {
-	//LOGD << "Delete Session";
 }
