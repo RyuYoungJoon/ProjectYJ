@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "AsioSession.h"
 #include "AsioService.h"
-#include "TaskQueue.h"
 #include "NetworkHandler.h"
 #include "ServerAnalyzer.h"
 #include "PacketRouter.h"
@@ -33,6 +32,21 @@ void AsioSession::ProcessRecv()
 	OnConnected();
 
 	DoRead();
+}
+
+void AsioSession::ProcessDisconnect(const char* pCallback)
+{
+	// ¿ÃπÃ Disconnect¿”.
+	if (m_NetState == NetState::Disconnect)
+		return;
+
+	LOGI << "ProcessDisconnect, SessionUID : " << GetSessionUID();
+
+	//OnDisconnected();
+
+	SetNetState(NetState::Disconnect);
+
+	TaskQueue::GetInstance().PushTask(GetSessionUID(), GetNetState());
 }
 
 void AsioSession::InitSession(boost::asio::io_context* ioContext, tcp::socket* socket)
@@ -91,7 +105,6 @@ void AsioSession::Disconnect()
 
 	OnDisconnected();
 	CloseSession(__FUNCTION__);
-
 }
 
 void AsioSession::SetService(std::shared_ptr<AsioService> service)
@@ -133,7 +146,8 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 	else if (ec == boost::asio::error::eof)
 	{
 		LOGE << "Connection closed by peer";
-		CloseSession(__FUNCTION__);
+		//CloseSession(__FUNCTION__);
+		ProcessDisconnect(__FUNCTION__);
 		return;
 	}
 	else if (ec == boost::asio::error::operation_aborted || ec == boost::asio::error::connection_reset)
@@ -144,7 +158,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 	{	
 		LOGE << "Read error : " << ec.message() << " (code : " << ec.value() << ")";
 		
-		CloseSession(__FUNCTION__);
+		ProcessDisconnect(__FUNCTION__);
 		return;
 	}
 }
@@ -189,11 +203,13 @@ int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
 
 void AsioSession::CloseSession(const char* pCallFunc)
 {
+	std::lock_guard<std::mutex> lock(m_Mutex);
 	if (m_Socket == nullptr)
 		return;
 
 	LOGD << "CloseSession Called! " << pCallFunc << ", socket handle : " << m_Socket->native_handle();
-	std::lock_guard<std::mutex> lock(m_Mutex);
+	
+	OnDisconnected();
 
 	boost::system::error_code ec;
 	m_Socket->cancel(ec);

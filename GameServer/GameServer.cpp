@@ -31,9 +31,8 @@ void InputThread(boost::asio::io_context* ioContext)
 			LOGI << "Server Release";
 			serverService->CloseService();
 
-			PacketQueue::GetInstance().Shutdown();
+			TaskQueue::GetInstance().Shutdown();
 			LOGI << "Task queue shutdown complete";
-
 			PacketPool::GetInstance().Clean();
 			LOGI << "PacketPool Clean complete";
 
@@ -148,7 +147,7 @@ int main()
 
 		// TODO : 실제로 쓰는것만 놔두기 OR TaskQueue 추가 개발하기
 		std::thread ioThread(InputThread, std::ref(IoContext));
-		PacketQueue::GetInstance().Initialize();
+		TaskQueue::GetInstance().Initialize();
 		LOGI << "Task queue initialized with " << std::thread::hardware_concurrency() / 2 << " worker threads";
 	
 		std::vector<std::thread> m_asioThread;

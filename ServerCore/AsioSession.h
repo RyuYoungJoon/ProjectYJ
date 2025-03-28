@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "PacketBuffer.h"
+#include "TaskQueue.h"
 
 class AsioService;
 
@@ -14,6 +15,7 @@ public:
     void InitSession(boost::asio::io_context* ioContext, tcp::socket* socket);
 
     void ProcessRecv();
+    void ProcessDisconnect(const char* pCallback);
     void Send(const Packet& message);
     bool Connect(const string& host, const string& port);
     void Disconnect();
@@ -38,15 +40,14 @@ public:
     
     void Reset();
 
-    void ProcessBufferData();
     int32 ProcessPacket(BYTE* buffer, int32 len);
-
-    void UpdateBufferReadPosition(int32 processedLen);
+    NetState GetNetState() const { return m_NetState; }
+    void SetNetState(NetState netState) { m_NetState = netState; }
 
     boost::asio::io_context* GetIocontext() { return m_IoContext; }
 
-    virtual void OnSend(int32 len) { LOGD << "AsioSession"; }
 protected:
+    virtual void OnSend(int32 len) { }
     virtual int32 OnRecv(BYTE* buffer, int32 len) { return len; }
     virtual void OnConnected() {}
     virtual void OnDisconnected() {}
@@ -68,4 +69,5 @@ private:
     PacketBuffer m_PacketBuffer;
     tcp::resolver* m_Resolver;
     shared_ptr<boost::asio::steady_timer> m_Timer;
+    NetState m_NetState = NetState::None;
 };

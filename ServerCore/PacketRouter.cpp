@@ -5,7 +5,7 @@
 #include "ServerAnalyzer.h"
 #include "ObjectPool.h"
 
-void PacketRouter::Init(int32 numThread, PacketHandlerFuncTest initfunc)
+void PacketRouter::Init(int32 numThread, PacketHandlerFunc initfunc)
 {
     if (m_IsRunning)
         return;
@@ -33,7 +33,7 @@ void PacketRouter::Init(int32 numThread, PacketHandlerFuncTest initfunc)
     for (int32 i = 0; i < m_NumWorkers; ++i)
     {
         m_WorkerThreads.emplace_back([this, i]() {
-            auto processor = CreatePacketHandler(i, m_WorkerQueues[i].get(), m_IsRunning, &m_Handlers);
+            auto processor = CreatePacketHandler(i, m_WorkerQueues[i].get(), m_IsRunning);
             processor->Run();
             });
     }
@@ -80,21 +80,12 @@ void PacketRouter::Dispatch(AsioSessionPtr session, BYTE* buffer)
     m_WorkerQueues[workerIdx]->push(item);
 }
 
-void PacketRouter::RegisterHandler(PacketType type, PacketHandlerFunc handler)
-{
-    std::lock_guard<std::mutex> lock(m_HandlerMutex);
-
-    auto it = m_Handlers.find(type);
-    if (it == m_Handlers.end())
-        m_Handlers.insert(std::make_pair(type, handler));
-}
-
-shared_ptr<PacketProcessor> PacketRouter::CreatePacketHandler(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool isRunning, std::unordered_map<PacketType, PacketHandlerFunc>* handlers)
+shared_ptr<PacketProcessor> PacketRouter::CreatePacketHandler(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool isRunning)
 {
     std::lock_guard<std::mutex> lock(m_HandlerMutex);
 
     shared_ptr<PacketProcessor> processor = m_CreateFunc();
-    processor->SetProcessor(id, m_WorkerQueues[id].get(), m_IsRunning, &m_Handlers);
+    processor->SetProcessor(id, m_WorkerQueues[id].get(), m_IsRunning);
 
     return processor;
 }
@@ -109,8 +100,8 @@ PacketProcessor::PacketProcessor()
     LOGD << "PacketProcessor Init";
 }
 
-PacketProcessor::PacketProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool& isRunning, std::unordered_map<PacketType, PacketHandlerFunc>* handlers)
-    :m_Id(id), m_Queue(queue), m_IsRunning(&isRunning), m_Handlers(handlers)
+PacketProcessor::PacketProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool& isRunning)
+    :m_Id(id), m_Queue(queue), m_IsRunning(&isRunning)
 {
 }
 
@@ -118,12 +109,11 @@ PacketProcessor::~PacketProcessor()
 {
 }
 
-void PacketProcessor::SetProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool& isRunning, std::unordered_map<PacketType, PacketHandlerFunc>* handlers)
+void PacketProcessor::SetProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool& isRunning)
 {
     m_Id = id;
     m_Queue = queue;
     m_IsRunning = &isRunning;
-    m_Handlers = handlers;
 }
 
 void PacketProcessor::Run()
