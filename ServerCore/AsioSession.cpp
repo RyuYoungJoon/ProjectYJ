@@ -146,7 +146,6 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 	else if (ec == boost::asio::error::eof)
 	{
 		LOGE << "Connection closed by peer";
-		//CloseSession(__FUNCTION__);
 		ProcessDisconnect(__FUNCTION__);
 		return;
 	}
@@ -169,7 +168,7 @@ void AsioSession::HandleWrite(boost::system::error_code ec, int32 length, Packet
 	{
 		LOGE << "Session Close : " << ec.value() << ", Message : " << ec.message();
 
-		CloseSession(__FUNCTION__);
+		ProcessDisconnect(__FUNCTION__);
 	}   
 	else
 	{

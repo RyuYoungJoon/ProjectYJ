@@ -99,6 +99,8 @@ void ClientManager::Process()
 			StopClient();
 			
 			m_RunningState = RunningState::Reconnect;
+			
+			run = false;
 		}
 		break;
 		case RunningState::Reconnect:
