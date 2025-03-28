@@ -135,7 +135,7 @@ private:
             else
             {
                 // 큐가 비었을 때 CPU 부하 감소를 위한 짧은 대기
-                std::this_thread::yield();
+                std::this_thread::sleep_for(100ms);
             }
         }
     }

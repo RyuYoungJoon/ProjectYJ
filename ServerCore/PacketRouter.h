@@ -10,7 +10,6 @@ struct PacketQueueItem {
 
 // PacketRouter에서 큐 벡터 선언 변경
 
-using PacketHandlerFunc = std::function<void(AsioSessionPtr&, Packet*)>;
 
 class PacketProcessor : public enable_shared_from_this<PacketProcessor>
 {
@@ -18,15 +17,12 @@ public:
     PacketProcessor();
 
     PacketProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue,
-        bool& isRunning,
-        std::unordered_map<PacketType, PacketHandlerFunc>* handlers);
+        bool& isRunning);
 
     virtual ~PacketProcessor();
 
-    //void SetThreadID(atomic<int32> id)
     void SetProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue,
-        bool& isRunning,
-        std::unordered_map<PacketType, PacketHandlerFunc>* handlers);
+        bool& isRunning);
     void Run();
     virtual void HandlePacket(AsioSessionPtr session, const Packet* packet);
 
@@ -34,10 +30,9 @@ private:
     int32 m_Id;
     Concurrency::concurrent_queue<PacketQueueItem>* m_Queue;
     bool* m_IsRunning;
-    std::unordered_map<PacketType, PacketHandlerFunc>* m_Handlers;
 };
 
-using PacketHandlerFuncTest = std::function<shared_ptr<PacketProcessor>()>;
+using PacketHandlerFunc = std::function<shared_ptr<PacketProcessor>()>;
 
 class PacketRouter
 {
@@ -48,14 +43,12 @@ public:
 		return instance;
 	}
 
-	void Init(int32 numThread, PacketHandlerFuncTest initfunc);
+	void Init(int32 numThread, PacketHandlerFunc initfunc);
 	void Shutdown();
 	void Dispatch(AsioSessionPtr session, BYTE* buffer);
-	void RegisterHandler(PacketType type, PacketHandlerFunc handler);
 
     shared_ptr<PacketProcessor> CreatePacketHandler(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue,
-        bool isRunning,
-        std::unordered_map<PacketType, PacketHandlerFunc>* handlers);
+        bool isRunning);
 
 private:
     PacketRouter()
@@ -71,9 +64,8 @@ private:
     int32 m_NumWorkers;
     std::vector<std::thread> m_WorkerThreads;
     std::vector<std::unique_ptr<Concurrency::concurrent_queue<PacketQueueItem>>> m_WorkerQueues;
-    std::unordered_map<PacketType, PacketHandlerFunc> m_Handlers;
     std::mutex m_HandlerMutex;
     PacketProcessor* m_PacketProcessor = nullptr;
 
-    PacketHandlerFuncTest m_CreateFunc = nullptr;
+    PacketHandlerFunc m_CreateFunc = nullptr;
 };
