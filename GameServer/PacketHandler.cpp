@@ -25,6 +25,10 @@ void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
 	auto iter = m_Handlers.find(packetType);
 	if (iter == m_Handlers.end())
 		m_Handlers.emplace(packetType, handler);
+
+    auto iter2 = m_RecvCount.find(packetType);
+    if (iter2 == m_RecvCount.end())
+        m_RecvCount.emplace(packetType, 0);
 }
 
 void PacketHandler::HandlePacket(AsioSessionPtr session, const Packet* packet)
@@ -80,7 +84,6 @@ void PacketHandler::HandlePacket(AsioSessionPtr session, const Packet* packet)
 void PacketHandler::Reset(int32 sessionUID)
 {
     std::lock_guard<std::mutex> lock(m_Mutex);
-    m_PendingPacket.erase(sessionUID);
     m_NextSeq.erase(sessionUID);
 }
 
@@ -96,7 +99,12 @@ void PacketHandler::HandledefEchoString(AsioSessionPtr& session, const Packet* p
 		return;
 	}
 
-	LOGD << "SessionUID : "<<gameSession->GetSessionUID()<<", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload;
+    auto iter = m_RecvCount.find(packet->header.type);
+    if (iter != m_RecvCount.end())
+        iter->second.fetch_add(1);
+
+	LOGD << "SessionUID : "<<gameSession->GetSessionUID()<<", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload
+        << ", RecvCount : " << iter->second;
 }
 
 void PacketHandler::HandleJH(AsioSessionPtr& session, const Packet* packet)
@@ -111,7 +119,12 @@ void PacketHandler::HandleJH(AsioSessionPtr& session, const Packet* packet)
 		return;
 	}
 
-	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload;
+    auto iter = m_RecvCount.find(packet->header.type);
+    if (iter != m_RecvCount.end())
+        iter->second.fetch_add(1);
+
+	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload
+        << ", RecvCount : " << iter->second;
 	// 추가 처리 로직
 
 }
@@ -120,7 +133,7 @@ void PacketHandler::HandleYJ(AsioSessionPtr& session, const Packet* packet)
 {
 	if (packet->header.type != PacketType::YJ)
 		return;
-    a.fetch_add(1);
+    
 	GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
 	if (gameSession == nullptr)
 	{
@@ -128,7 +141,12 @@ void PacketHandler::HandleYJ(AsioSessionPtr& session, const Packet* packet)
 		return;
 	}
 
-    LOGD << "[" << a << "]SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload;
+    auto iter = m_RecvCount.find(packet->header.type);
+    if (iter != m_RecvCount.end())
+        iter->second.fetch_add(1);
+
+    LOGD << "[" << a << "]SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload
+        << ", RecvCount : " << iter->second;
 }
 
 void PacketHandler::HandleES(AsioSessionPtr& session, const Packet* packet)
@@ -143,7 +161,12 @@ void PacketHandler::HandleES(AsioSessionPtr& session, const Packet* packet)
 		return;
 	}
 
-	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload;
+    auto iter = m_RecvCount.find(packet->header.type);
+    if (iter != m_RecvCount.end())
+        iter->second.fetch_add(1);
+
+	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload
+        << ", RecvCount : " << iter->second;
 }
 
 void PacketHandler::HandleInvalid(AsioSessionPtr& session, const Packet* packet)

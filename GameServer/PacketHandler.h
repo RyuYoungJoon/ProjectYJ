@@ -37,5 +37,5 @@ private:
 	std::map<PacketType, HandlerFunc> m_Handlers;
 	std::map<int32, int32> m_NextSeq;
 	std::mutex m_Mutex;
-	std::map<int32, std::queue<const Packet*>> m_PendingPacket;
+	std::map<PacketType, std::atomic<int32>> m_RecvCount;
 };
