@@ -15,10 +15,6 @@ class PacketProcessor : public enable_shared_from_this<PacketProcessor>
 {
 public:
     PacketProcessor();
-
-    PacketProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue,
-        bool& isRunning);
-
     virtual ~PacketProcessor();
 
     void SetProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue,
@@ -28,7 +24,7 @@ public:
 
 private:
     int32 m_Id;
-    Concurrency::concurrent_queue<PacketQueueItem>* m_Queue;
+    Concurrency::concurrent_queue<PacketQueueItem>* m_ProcessQueue;
     bool* m_IsRunning;
 };
 
@@ -63,9 +59,7 @@ private:
     bool m_IsRunning = false;
     int32 m_NumWorkers;
     std::vector<std::thread> m_WorkerThreads;
-    std::vector<std::unique_ptr<Concurrency::concurrent_queue<PacketQueueItem>>> m_WorkerQueues;
+    std::vector<std::unique_ptr<Concurrency::concurrent_queue<PacketQueueItem>>> m_PacketQueue;
     std::mutex m_HandlerMutex;
-    PacketProcessor* m_PacketProcessor = nullptr;
-
     PacketHandlerFunc m_CreateFunc = nullptr;
 };

@@ -1,5 +1,5 @@
 #pragma once
-#include <algorithm>
+#include "SessionManager.h"
 
 // 네트워크 상태 열거형
 enum class NetState : uint8
@@ -112,29 +112,27 @@ private:
         while (m_IsRunning)
         {
             // 작업 가져오기
-            if (m_TaskQueue.try_pop(task))
+            if (!m_TaskQueue.try_pop(task))
             {
-                // 종료 신호용 빈 작업 무시
-                if (task.sessionUID == -1)
-                    continue;
-
-                try
-                {
-                    ProcessIoTask(task);
-                }
-                catch (const std::exception& e)
-                {
-                    LOGE << "Exception in worker thread: " << e.what();
-                }
-                catch (...)
-                {
-                    LOGE << "Unknown exception in worker thread";
-                }
+                std::this_thread::sleep_for(100ms);
+                continue;
             }
-            else
+
+            AsioSessionPtr session = SessionManager::GetInstance().GetSession(task.sessionUID);
+            if (session->GetSessionState() != SessionState::Recv)
+                continue;
+            
+            try
             {
-                // 큐가 비었을 때 짧게 대기
-                std::this_thread::yield();
+                ProcessIoTask(task);
+            }
+            catch (const std::exception& e)
+            {
+                LOGE << "Exception in worker thread: " << e.what();
+            }
+            catch (...)
+            {
+                LOGE << "Unknown exception in worker thread";
             }
         }
     }

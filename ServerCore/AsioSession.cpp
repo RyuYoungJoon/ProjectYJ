@@ -67,7 +67,6 @@ void AsioSession::Send(const Packet& message)
 
 	m_Socket->async_write_some(boost::asio::mutable_buffer(reinterpret_cast<BYTE*>(sendPacket), sendPacket->header.size),
 		std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2, sendPacket));
-
 }
 
 bool AsioSession::Connect(const string& host, const string& port)
@@ -84,7 +83,7 @@ bool AsioSession::Connect(const string& host, const string& port)
 		{
 			if (!ec)
 			{
-				//LOGI << "Successfully connected to " << endpoint;
+				LOGI << "Successfully connected to " << endpoint;
 				m_SessionUID = SessionUID.fetch_add(1);
 				ProcessRecv();
 			}
@@ -127,7 +126,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 		if (m_PacketBuffer.OnWrite(length) == false)
 		{
 			LOGE << "OnWrite OverFlow";
-			CloseSession(__FUNCTION__);
+			ProcessDisconnect(__FUNCTION__);
 			return;
 		}
 

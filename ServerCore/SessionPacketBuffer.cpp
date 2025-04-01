@@ -34,7 +34,7 @@ void SessionPacketBuffer::AddData(AsioSessionPtr session, const BYTE* data, size
     {
         // 버퍼 오버플로우 처리
         LOGE << "Buffer overflow for session " << sessionId;
-        session->CloseSession();
+        session->ProcessDisconnect(__FUNCTION__);
     }
 }
 

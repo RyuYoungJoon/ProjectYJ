@@ -96,6 +96,7 @@ int main()
 	
 	if (IsConsoleLog == true)
 	{
+
 		static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
 		plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
 	}
@@ -119,11 +120,10 @@ int main()
 
 		// 패킷 풀 Init
 		PacketPool::GetInstance().Init(packetPoolSize);
-		LOGI << "PacketPool initialized with " << PacketPool::GetInstance().GetTotalCount() << "size";
 
 		// 세션 풀 Init
 		auto gameSessionPool = std::make_shared<ObjectPool<GameSession>>();
-		gameSessionPool->InitPool(10000);
+		gameSessionPool->InitPool(sessionPoolSize);
 
 		serverService = std::make_shared<AsioServerService>(
 			IoContext, 
@@ -145,11 +145,11 @@ int main()
 			return -1;
 		}
 
-		// TODO : 실제로 쓰는것만 놔두기 OR TaskQueue 추가 개발하기
 		std::thread ioThread(InputThread, std::ref(IoContext));
+
+		// TaskQueue Init.
 		TaskQueue::GetInstance().Initialize();
-		LOGI << "Task queue initialized with " << std::thread::hardware_concurrency() / 2 << " worker threads";
-	
+		
 		std::vector<std::thread> m_asioThread;
 		for (int i = 0; i < threadCnt; ++i)
 		{
@@ -166,7 +166,6 @@ int main()
 
 		ioThread.join();
 
-		IoContext->stop();
 		delete IoContext;
 	}
 	catch (const std::exception& e)

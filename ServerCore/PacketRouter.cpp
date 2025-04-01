@@ -26,14 +26,14 @@ void PacketRouter::Init(int32 numThread, PacketHandlerFunc initfunc)
     // 워커별 큐 생성
     for (int32 i = 0; i < m_NumWorkers; ++i)
     {
-        m_WorkerQueues.push_back(std::make_unique<Concurrency::concurrent_queue<PacketQueueItem>>());
+        m_PacketQueue.push_back(std::make_unique<Concurrency::concurrent_queue<PacketQueueItem>>());
     }
 
     // 워커 스레드 생성
     for (int32 i = 0; i < m_NumWorkers; ++i)
     {
         m_WorkerThreads.emplace_back([this, i]() {
-            auto processor = CreatePacketHandler(i, m_WorkerQueues[i].get(), m_IsRunning);
+            auto processor = CreatePacketHandler(i, m_PacketQueue[i].get(), m_IsRunning);
             processor->Run();
             });
     }
@@ -56,7 +56,7 @@ void PacketRouter::Shutdown()
     }
 
     // 큐 정리
-    m_WorkerQueues.clear();
+    m_PacketQueue.clear();
     m_WorkerThreads.clear();
 
     LOGI << "PacketRouter shutdown complete";
@@ -77,7 +77,7 @@ void PacketRouter::Dispatch(AsioSessionPtr session, BYTE* buffer)
 
     // 큐에 패킷 항목 추가
     PacketQueueItem item(sessionId, packetCopy);
-    m_WorkerQueues[workerIdx]->push(item);
+    m_PacketQueue[workerIdx]->push(item);
 }
 
 shared_ptr<PacketProcessor> PacketRouter::CreatePacketHandler(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool isRunning)
@@ -85,7 +85,7 @@ shared_ptr<PacketProcessor> PacketRouter::CreatePacketHandler(int32 id, Concurre
     std::lock_guard<std::mutex> lock(m_HandlerMutex);
 
     shared_ptr<PacketProcessor> processor = m_CreateFunc();
-    processor->SetProcessor(id, m_WorkerQueues[id].get(), m_IsRunning);
+    processor->SetProcessor(id, m_PacketQueue[id].get(), m_IsRunning);
 
     return processor;
 }
@@ -100,11 +100,6 @@ PacketProcessor::PacketProcessor()
     LOGD << "PacketProcessor Init";
 }
 
-PacketProcessor::PacketProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool& isRunning)
-    :m_Id(id), m_Queue(queue), m_IsRunning(&isRunning)
-{
-}
-
 PacketProcessor::~PacketProcessor()
 {
 }
@@ -112,7 +107,7 @@ PacketProcessor::~PacketProcessor()
 void PacketProcessor::SetProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool& isRunning)
 {
     m_Id = id;
-    m_Queue = queue;
+    m_ProcessQueue = queue;
     m_IsRunning = &isRunning;
 }
 
@@ -124,26 +119,22 @@ void PacketProcessor::Run()
 
     while (*m_IsRunning) {
         // 큐에서 패킷 가져오기
-        bool hasWork = false;
-
-        if (m_Queue->try_pop(item)) {
-            hasWork = true;
-            int32 sessionId = item.sessionId;
-            Packet* packet = item.packet;
-
-            // 세션 찾기
-            AsioSessionPtr session = SessionManager::GetInstance().GetSession(sessionId);
-            if (session) {
-                HandlePacket(session, packet);
-                //LOGI << "Packet Queue Size : " << m_Queue->unsafe_size();
-
-                PacketPool::GetInstance().Push(packet);
-            }
+        if (!m_ProcessQueue->try_pop(item))
+        {
+            std::this_thread::sleep_for(100ms);
+            continue;
         }
 
-        // 작업이 없으면 잠시 대기
-        if (!hasWork) {
-            std::this_thread::sleep_for(100ms);
+        int32 sessionId = item.sessionId;
+        Packet* packet = item.packet;
+
+        // 세션 찾기
+        AsioSessionPtr session = SessionManager::GetInstance().GetSession(sessionId);
+        if (session) {
+            HandlePacket(session, packet);
+            //LOGI << "Packet Queue Size : " << m_Queue->unsafe_size();
+
+            PacketPool::GetInstance().Push(packet);
         }
     }
 
