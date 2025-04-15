@@ -73,7 +73,6 @@ void InitChatWindow(HINSTANCE hInstance, int nCmdShow)
 
 	ShowWindow(g_hWnd, nCmdShow);
 	UpdateWindow(g_hWnd);
-
 }
 
 void RunChatWindow()
@@ -207,7 +206,7 @@ LRESULT WinProc(HWND hwnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
 
     case WM_COMMAND:
 	{
-		if (LOWORD(wParam) == IDC_BUTTON_SEND) {
+		if (LOWORD(wParam) == IDC_BUTTON_SEND | LOWORD(wParam) == VK_RETURN) {
 			SendChatMessage();
 			break;
 		}
@@ -259,11 +258,13 @@ LRESULT WinProc(HWND hwnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
         // 상태바 크기 조정
         SendMessage(g_hStatusBar, WM_SIZE, 0, 0);
     }
-    return 0;
-
+	break;
     case WM_DESTROY:
+	{
+		ClientManager::GetInstance().StopClient();
         PostQuitMessage(0);
-        return 0;
+	}
+	break;
     }
 
     return DefWindowProc(hwnd, uMessage, wParam, lParam);

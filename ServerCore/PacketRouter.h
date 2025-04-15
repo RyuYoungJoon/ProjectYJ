@@ -20,7 +20,7 @@ public:
     void SetProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue,
         bool& isRunning);
     void Run();
-    virtual void HandlePacket(AsioSessionPtr session, const Packet* packet);
+    virtual void HandlePacket(AsioSessionPtr session, Packet* packet);
 
 private:
     int32 m_Id;

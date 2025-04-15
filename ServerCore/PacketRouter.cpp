@@ -141,7 +141,7 @@ void PacketProcessor::Run()
     LOGE << "Worker thread " << m_Id << " stopped";
 }
 
-void PacketProcessor::HandlePacket(AsioSessionPtr session, const Packet* packet)
+void PacketProcessor::HandlePacket(AsioSessionPtr session, Packet* packet)
 {
     LOGD << "HandlePacket";
 }

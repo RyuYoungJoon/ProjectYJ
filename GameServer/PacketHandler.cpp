@@ -35,13 +35,13 @@ void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
         m_RecvCount.emplace(packetType, 0);
 }
 
-void PacketHandler::HandlePacket(AsioSessionPtr session, const Packet* packet)
+void PacketHandler::HandlePacket(AsioSessionPtr session, Packet* packet)
 {
     if (!packet || !session)
         return;
 
     int32 sessionUID = session->GetSessionUID();
-    const Packet* packetRef = packet;
+    Packet* packetRef = packet;
 
     std::lock_guard<std::mutex> lock(m_Mutex);
 
@@ -101,7 +101,7 @@ void PacketHandler::Reset(int32 sessionUID)
     m_NextSeq.erase(sessionUID);
 }
 
-void PacketHandler::HandledefEchoString(AsioSessionPtr& session, const Packet* packet)
+void PacketHandler::HandledefEchoString(AsioSessionPtr& session, Packet* packet)
 {
 	if (packet->header.type != PacketType::defEchoString)
 		return;
@@ -121,7 +121,7 @@ void PacketHandler::HandledefEchoString(AsioSessionPtr& session, const Packet* p
         << ", RecvCount : " << iter->second;
 }
 
-void PacketHandler::HandleJH(AsioSessionPtr& session, const Packet* packet)
+void PacketHandler::HandleJH(AsioSessionPtr& session, Packet* packet)
 {
 	if (packet->header.type != PacketType::JH)
 		return;
@@ -143,7 +143,7 @@ void PacketHandler::HandleJH(AsioSessionPtr& session, const Packet* packet)
 
 }
 
-void PacketHandler::HandleYJ(AsioSessionPtr& session, const Packet* packet)
+void PacketHandler::HandleYJ(AsioSessionPtr& session, Packet* packet)
 {
 	if (packet->header.type != PacketType::YJ)
 		return;
@@ -163,7 +163,7 @@ void PacketHandler::HandleYJ(AsioSessionPtr& session, const Packet* packet)
         << ", RecvCount : " << iter->second;
 }
 
-void PacketHandler::HandleES(AsioSessionPtr& session, const Packet* packet)
+void PacketHandler::HandleES(AsioSessionPtr& session, Packet* packet)
 {
 	if (packet->header.type != PacketType::ES)
 		return;
@@ -183,7 +183,7 @@ void PacketHandler::HandleES(AsioSessionPtr& session, const Packet* packet)
         << ", RecvCount : " << iter->second;
 }
 
-void PacketHandler::HandleChatReq(AsioSessionPtr& session, const Packet* packet)
+void PacketHandler::HandleChatReq(AsioSessionPtr& session, Packet* packet)
 {
     if (packet->header.type != PacketType::ChatReq)
         return;
@@ -196,12 +196,12 @@ void PacketHandler::HandleChatReq(AsioSessionPtr& session, const Packet* packet)
     }
 
     LOGD << "Client [" <<gameSession->GetSessionUID()<<"] -> " << "Send Message : " << packet->payload;
-    std::string message = (string&)(packet->payload);
+    std::string message(reinterpret_cast<char*>(packet->payload), sizeof(packet->payload));
 
     GRoom.BroadCast(message);
 }
 
-void PacketHandler::HandleLoginReq(AsioSessionPtr& session, const Packet* packet)
+void PacketHandler::HandleLoginReq(AsioSessionPtr& session, Packet* packet)
 {
     if (packet->header.type != PacketType::LoginReq)
         return;
@@ -213,6 +213,7 @@ void PacketHandler::HandleLoginReq(AsioSessionPtr& session, const Packet* packet
         return;
     }
 
+    LOGD << "Login Sucess!";
 
     PlayerPtr player = make_shared<Player>();
     player->playerUID = gameSession->GetSessionUID();
@@ -226,7 +227,7 @@ void PacketHandler::HandleLoginReq(AsioSessionPtr& session, const Packet* packet
     gameSession->Send("LoginAck", PacketType::LoginAck);
 }
 
-void PacketHandler::HandleInvalid(AsioSessionPtr& session, const Packet* packet)
+void PacketHandler::HandleInvalid(AsioSessionPtr& session, Packet* packet)
 {
 	LOGE << "Unknown Packet Type : " << static_cast<int16>(packet->header.type);
 }

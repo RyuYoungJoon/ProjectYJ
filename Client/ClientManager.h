@@ -29,7 +29,7 @@ public:
 		return m_Sessions;
 	}
 
-private:
+public:
 	void StopClient();
 
 private:

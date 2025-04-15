@@ -21,7 +21,8 @@ void AsioService::CloseService()
 	{
 		if (session)
 		{
-			session->CloseSession(__FUNCTION__);
+			session->Disconnect();
+			session->Reset();
 		}
 	}
 

@@ -21,6 +21,7 @@ int32 ClientSession::OnRecv(BYTE* buffer, int32 len)
 
 void ClientSession::OnConnected()
 {
+	SessionManager::GetInstance().AddSession(GetSession());
 	AsioSessionPtr clientSession = GetSession();
 	int32 sessionUID = GetSessionUID();
 	clientSession->SetIsRunning(true);
@@ -28,19 +29,19 @@ void ClientSession::OnConnected()
 	ClientManager::GetInstance().Init(sessionUID, clientSession);
 	LOGI << "Conntect FINISH! SessiounUID : " << sessionUID << ", ThreadID : " << GetCurrentThreadId();
 
-	clientSession->Send("hi", PacketType::LoginReq);
 	// 메시지 포스트 하기.
-
 	if (s_hMainWin != NULL)
 	{
 		PostMessage(s_hMainWin, WM_CLIENT_CONNECTED, 0, 0);
+		clientSession->Send("hi", PacketType::LoginReq);
 	}
 }
 
 void ClientSession::OnDisconnected()
 {
 	LOGI << "Disconnected Server!";
-	
+	SessionManager::GetInstance().RemoveSession(GetSession());
+
 	ServerAnalyzer::GetInstance().ResetSendCount();
 	m_IsRunning = false;
 }

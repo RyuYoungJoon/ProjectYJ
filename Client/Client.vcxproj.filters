@@ -24,6 +24,9 @@
     <ClCompile Include="ChatWindow.cpp">
       <Filter>Main</Filter>
     </ClCompile>
+    <ClCompile Include="PacketHandler.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -39,6 +42,9 @@
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="ChatWindow.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketHandler.h">
       <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>

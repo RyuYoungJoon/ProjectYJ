@@ -6,6 +6,7 @@
 #include <filesystem>
 #include "ObjectPool.h"
 #include "ChatWindow.h"
+#include "PacketHandler.h"
 
 #include <..\include\INIReader\ini.h>
 #include <..\include\INIReader\ini.c>
@@ -74,7 +75,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		boost::asio::io_context* ioContext = new boost::asio::io_context();
 		work_guard_type work_guard(ioContext->get_executor());
-	
+
+		// 패킷 라우터 Init
+		PacketRouter::GetInstance().Init(0, []()-> std::shared_ptr<PacketProcessor>
+			{
+				return std::make_shared<PacketHandler>();
+			});
+
 		// 패킷 풀 Init
 		PacketPool::GetInstance().Init(packetPoolSize);
 
@@ -105,7 +112,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 						return -1;
 					}
 
-					ClientManager::GetInstance().Process();
+					//ClientManager::GetInstance().Process();
 				}
 				catch (const std::exception& e) {
 					LOGE << "Thread exception: " << e.what();

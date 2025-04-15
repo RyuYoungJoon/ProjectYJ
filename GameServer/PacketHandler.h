@@ -7,7 +7,7 @@ class AsioSession;
 class PacketHandler : public PacketProcessor
 {
 public:
-	using HandlerFunc = std::function<void(AsioSessionPtr&, const Packet*)>;
+	using HandlerFunc = std::function<void(AsioSessionPtr&, Packet*)>;
 	
 	static PacketHandler& GetInstance()
 	{
@@ -22,18 +22,18 @@ public:
 
 	void RegisterHandler(PacketType packetType, HandlerFunc handler);
 
-	virtual void HandlePacket(AsioSessionPtr session, const Packet* packet) override;
+	virtual void HandlePacket(AsioSessionPtr session, Packet* packet) override;
 	
-	void HandledefEchoString(AsioSessionPtr& session, const Packet* packet);
-	void HandleJH(AsioSessionPtr& session, const Packet* packet);
-	void HandleYJ(AsioSessionPtr& session, const Packet* packet);
-	void HandleES(AsioSessionPtr& session, const Packet* packet);
-	void HandleChatReq(AsioSessionPtr& session, const Packet* packet);
-	void HandleLoginReq(AsioSessionPtr& session, const Packet* packet);
+	void HandledefEchoString(AsioSessionPtr& session, Packet* packet);
+	void HandleJH(AsioSessionPtr& session, Packet* packet);
+	void HandleYJ(AsioSessionPtr& session, Packet* packet);
+	void HandleES(AsioSessionPtr& session, Packet* packet);
+	void HandleChatReq(AsioSessionPtr& session, Packet* packet);
+	void HandleLoginReq(AsioSessionPtr& session, Packet* packet);
 
 	void Reset(int32 sessionUID);
 
-	static void HandleInvalid(AsioSessionPtr& session, const Packet* packet);
+	static void HandleInvalid(AsioSessionPtr& session, Packet* packet);
 
 private:
 	std::map<PacketType, HandlerFunc> m_Handlers;

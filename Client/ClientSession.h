@@ -34,8 +34,8 @@ public:
 	// UI 관련 함수
 	static void SetMainWin(HWND hwnd) { s_hMainWin = hwnd; }
 
-private:
 	static HWND s_hMainWin;
+private:
 };
 
 

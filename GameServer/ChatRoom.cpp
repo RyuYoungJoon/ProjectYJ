@@ -30,5 +30,5 @@ void ChatRoom::BroadCast(const std::string& message)
 	{
 		player.second->ownerSession->Send(message, PacketType::ChatAck);
 	}
-
 }
+
