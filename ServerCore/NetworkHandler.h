@@ -9,7 +9,6 @@ public:
 	}
 
 	void RecvData(AsioSessionPtr session, BYTE* buffer, size_t length);
-	void SendPacket(AsioSessionPtr session, const Packet& packet);
 
 private:
 	NetworkHandler();

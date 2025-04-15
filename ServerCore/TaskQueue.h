@@ -118,9 +118,10 @@ private:
                 continue;
             }
 
-            AsioSessionPtr session = SessionManager::GetInstance().GetSession(task.sessionUID);
-            if (session->GetSessionState() != SessionState::Recv)
-                continue;
+            // 받은 데이터를 다 받고 Disconnect 해야한다.
+            //AsioSessionPtr session = SessionManager::GetInstance().GetSession(task.sessionUID);
+            //if (session->GetSessionState() != SessionState::Recv)
+            //    continue;
             
             try
             {

@@ -12,3 +12,5 @@
 #pragma comment(lib, "Shlwapi.lib")
 
 #include "CorePch.h"
+
+using PlayerPtr = shared_ptr<class Player>;

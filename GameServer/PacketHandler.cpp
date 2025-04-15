@@ -2,6 +2,8 @@
 #include "PacketHandler.h"
 #include "GameSession.h"
 #include "Logger.h"
+#include "Player.h"
+#include "ChatRoom.h"
 
 atomic<int> a;
 PacketHandler::PacketHandler()
@@ -18,6 +20,8 @@ void PacketHandler::Init()
 	RegisterHandler(PacketType::JH, std::bind(&PacketHandler::HandleJH, this, std::placeholders::_1, std::placeholders::_2));
 	RegisterHandler(PacketType::YJ, std::bind(&PacketHandler::HandleYJ, this, std::placeholders::_1, std::placeholders::_2));
 	RegisterHandler(PacketType::ES, std::bind(&PacketHandler::HandleES, this, std::placeholders::_1, std::placeholders::_2));
+    RegisterHandler(PacketType::ChatReq, std::bind(&PacketHandler::HandleChatReq, this, std::placeholders::_1, std::placeholders::_2));
+    RegisterHandler(PacketType::LoginReq, std::bind(&PacketHandler::HandleLoginReq, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
@@ -47,38 +51,48 @@ void PacketHandler::HandlePacket(AsioSessionPtr session, const Packet* packet)
         m_NextSeq[sessionUID] = 0;
     }
 
-    // 현재 받은 패킷의 시퀀스 번호
-    int32 receivedSeqNum = packet->header.seqNum;
-    int32 expectedSeqNum = m_NextSeq[sessionUID];
-
-    if (receivedSeqNum == expectedSeqNum)
+    auto it = m_Handlers.find(packet->header.type);
+    if (it != m_Handlers.end())
     {
-        // 기대한 시퀀스 번호와 일치하면 바로 처리
-        auto it = m_Handlers.find(packet->header.type);
-        if (it != m_Handlers.end())
-        {
-            it->second(session, packetRef);
-        }
-        else
-        {
-            HandleInvalid(session, packetRef);
-        }
-
-        // 다음 시퀀스 번호 업데이트
-        m_NextSeq[sessionUID]++;
-    }
-    else if (receivedSeqNum > expectedSeqNum)
-    {
-        // 기대한 것보다 높은 시퀀스 번호를 받았으면
-        LOGE << "시퀀스 처리 에러! Expected: " << expectedSeqNum
-            << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
+        it->second(session, packetRef);
     }
     else
     {
-        // 이미 처리한 패킷인 경우 (receivedSeqNum < expectedSeqNum)
-        LOGD << "이미 처리한 패킷! Expected: " << expectedSeqNum
-            << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
+        HandleInvalid(session, packetRef);
     }
+
+    // 현재 받은 패킷의 시퀀스 번호
+    //int32 receivedSeqNum = packet->header.seqNum;
+    //int32 expectedSeqNum = m_NextSeq[sessionUID];
+
+    //if (receivedSeqNum == expectedSeqNum)
+    //{
+    //    // 기대한 시퀀스 번호와 일치하면 바로 처리
+    //    auto it = m_Handlers.find(packet->header.type);
+    //    if (it != m_Handlers.end())
+    //    {
+    //        it->second(session, packetRef);
+    //    }
+    //    else
+    //    {
+    //        HandleInvalid(session, packetRef);
+    //    }
+
+    //    // 다음 시퀀스 번호 업데이트
+    //    m_NextSeq[sessionUID]++;
+    //}
+    //else if (receivedSeqNum > expectedSeqNum)
+    //{
+    //    // 기대한 것보다 높은 시퀀스 번호를 받았으면
+    //    LOGE << "시퀀스 처리 에러! Expected: " << expectedSeqNum
+    //        << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
+    //}
+    //else
+    //{
+    //    // 이미 처리한 패킷인 경우 (receivedSeqNum < expectedSeqNum)
+    //    LOGD << "이미 처리한 패킷! Expected: " << expectedSeqNum
+    //        << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
+    //}
 }
 
 void PacketHandler::Reset(int32 sessionUID)
@@ -167,6 +181,49 @@ void PacketHandler::HandleES(AsioSessionPtr& session, const Packet* packet)
 
 	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload
         << ", RecvCount : " << iter->second;
+}
+
+void PacketHandler::HandleChatReq(AsioSessionPtr& session, const Packet* packet)
+{
+    if (packet->header.type != PacketType::ChatReq)
+        return;
+
+    GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
+    if (gameSession == nullptr)
+    {
+        LOGE << "Session Nullptr!";
+        return;
+    }
+
+    LOGD << "Client [" <<gameSession->GetSessionUID()<<"] -> " << "Send Message : " << packet->payload;
+    std::string message = (string&)(packet->payload);
+
+    GRoom.BroadCast(message);
+}
+
+void PacketHandler::HandleLoginReq(AsioSessionPtr& session, const Packet* packet)
+{
+    if (packet->header.type != PacketType::LoginReq)
+        return;
+
+    GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
+    if (gameSession == nullptr)
+    {
+        LOGE << "Session Nullptr!";
+        return;
+    }
+
+
+    PlayerPtr player = make_shared<Player>();
+    player->playerUID = gameSession->GetSessionUID();
+    player->ownerSession = gameSession;
+    player->name = "Player1";
+
+    gameSession->m_Player.push_back(player);
+
+    GRoom.Enter(player);
+
+    gameSession->Send("LoginAck", PacketType::LoginAck);
 }
 
 void PacketHandler::HandleInvalid(AsioSessionPtr& session, const Packet* packet)

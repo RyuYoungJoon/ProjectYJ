@@ -57,14 +57,6 @@ void AsioService::ReleaseSession(AsioSessionPtr session)
 	m_SessionCount--;
 }
 
-void AsioService::BroadCast(Packet& packet)
-{
-	for (auto session : m_Sessions)
-	{
-		session->Send(packet);
-	}
-}
-
 bool AsioService::Start()
 {
 	return true;

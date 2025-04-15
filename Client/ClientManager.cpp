@@ -37,8 +37,8 @@ void ClientManager::Init(int32 sessionUid, AsioSessionPtr session)
 	// TODO : 상수 값 대신 Config값을 읽어오기.
 	if (sessionSize == threadCnt * maxSessionCnt)
 	{
-		run = true;
-		m_cv.notify_all();
+		//run = true;
+		//m_cv.notify_all();
 	}
 }
 
@@ -74,16 +74,7 @@ void ClientManager::Process()
 
 				for (int i = 0; i < 100; ++i)
 				{
-					Packet packet;
-					packet.header.seqNum = m_SessionSeqNum[sessionId]++;
-					std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
-					std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
-					packet.header.type = PacketType::YJ;
-					packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + sizeof(packet.payload) + sizeof(PacketTail));
-					std::memcpy(packet.payload, message.c_str(), message.size());
-					packet.tail.value = 255;
-
-					session.second->Send(packet);
+					session.second->Send(message, PacketType::YJ);
 				}
 			}
 			

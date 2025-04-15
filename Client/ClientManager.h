@@ -25,6 +25,10 @@ public:
 	void Init(int32 sessionUid, AsioSessionPtr service);
 	void Process();
 
+	const std::map<int32, AsioSessionPtr>& GetSessions() const {
+		return m_Sessions;
+	}
+
 private:
 	void StopClient();
 

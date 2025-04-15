@@ -16,7 +16,7 @@ public:
 
     void ProcessRecv();
     void ProcessDisconnect(const char* pCallback);
-    void Send(const Packet& message);
+    void Send(const std::string& message, const PacketType packetType);
     bool Connect(const string& host, const string& port);
     void Disconnect();
 

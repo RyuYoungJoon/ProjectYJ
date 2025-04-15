@@ -4,6 +4,8 @@
 #include "ClientSession.h"
 #include "ServerAnalyzer.h"
 
+HWND ClientSession::s_hMainWin = NULL;
+
 ClientSession::ClientSession()
 {
 }
@@ -25,6 +27,14 @@ void ClientSession::OnConnected()
 	
 	ClientManager::GetInstance().Init(sessionUID, clientSession);
 	LOGI << "Conntect FINISH! SessiounUID : " << sessionUID << ", ThreadID : " << GetCurrentThreadId();
+
+	clientSession->Send("hi", PacketType::LoginReq);
+	// 메시지 포스트 하기.
+
+	if (s_hMainWin != NULL)
+	{
+		PostMessage(s_hMainWin, WM_CLIENT_CONNECTED, 0, 0);
+	}
 }
 
 void ClientSession::OnDisconnected()
@@ -33,17 +43,4 @@ void ClientSession::OnDisconnected()
 	
 	ServerAnalyzer::GetInstance().ResetSendCount();
 	m_IsRunning = false;
-}
-
-void ClientSession::SendPacket(const std::string& message)
-{
-	Packet packet;
-	std::memset(packet.header.checkSum, 0x12, sizeof(packet.header.checkSum));
-	std::memset(packet.header.checkSum + 1, 0x34, sizeof(packet.header.checkSum) - 1);
-	packet.header.type = PacketType::YJ;
-	packet.header.size = static_cast<uint32>(sizeof(PacketHeader) + sizeof(packet.payload) + sizeof(PacketTail));
-	std::memcpy(packet.payload, message.c_str(), message.size());
-	packet.tail.value = 255;
-
-	Send(packet);
 }

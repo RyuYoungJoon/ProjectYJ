@@ -16,6 +16,7 @@ public:
 	virtual void OnConnected() override;  
 
 	void Reset();  
+	vector<PlayerPtr> m_Player;
 private:  
 	//PacketHandler m_PacketHandler;  
 

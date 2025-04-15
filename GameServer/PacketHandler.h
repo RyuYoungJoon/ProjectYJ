@@ -28,6 +28,8 @@ public:
 	void HandleJH(AsioSessionPtr& session, const Packet* packet);
 	void HandleYJ(AsioSessionPtr& session, const Packet* packet);
 	void HandleES(AsioSessionPtr& session, const Packet* packet);
+	void HandleChatReq(AsioSessionPtr& session, const Packet* packet);
+	void HandleLoginReq(AsioSessionPtr& session, const Packet* packet);
 
 	void Reset(int32 sessionUID);
 

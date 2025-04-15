@@ -7,6 +7,10 @@ enum class PacketType : uint8_t
 	JH = 101,
 	YJ = 102,
 	ES = 103,
+	ChatReq = 104,
+	ChatAck = 105,
+	LoginReq = 106,
+	LoginAck = 107,
 };
 
 // 21 bytes

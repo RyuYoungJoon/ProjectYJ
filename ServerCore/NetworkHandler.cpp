@@ -26,14 +26,3 @@ void NetworkHandler::RecvData(AsioSessionPtr session, BYTE* buffer, size_t lengt
 	// 버퍼 처리.
 	SessionPacketBuffer::GetInstance().ProcessSessionBuffer(session, length);
 }
-
-void NetworkHandler::SendPacket(AsioSessionPtr session, const Packet& packet)
-{
-	if (!session)
-		return;
-
-	ServerAnalyzer::GetInstance().IncrementSendCnt();
-
-	// 세션의 send 호출.
-	session->Send(packet);
-}

@@ -56,14 +56,19 @@ void AsioSession::InitSession(boost::asio::io_context* ioContext, tcp::socket* s
 	m_PacketBuffer.Init(65536);
 }
 
-void AsioSession::Send(const Packet& message)
+void AsioSession::Send(const std::string& message, const PacketType packetType)
 {
 	ServerAnalyzer::GetInstance().IncrementSendCnt();
 
 	// PacketPool에서 패킷 가져오기.
 	Packet* sendPacket = PacketPool::GetInstance().Pop();
 
-	std::memcpy(sendPacket, &message, message.header.size);
+	std::memset(sendPacket->header.checkSum, 0x12, sizeof(sendPacket->header.checkSum));
+	std::memset(sendPacket->header.checkSum + 1, 0x34, sizeof(sendPacket->header.checkSum) - 1);
+	sendPacket->header.type = packetType;
+	sendPacket->header.size = static_cast<uint32>(sizeof(PacketHeader) + sizeof(sendPacket->payload) + sizeof(PacketTail));
+	std::memcpy(sendPacket->payload, message.c_str(), message.size());
+	sendPacket->tail.value = 255;
 
 	m_Socket->async_write_some(boost::asio::mutable_buffer(reinterpret_cast<BYTE*>(sendPacket), sendPacket->header.size),
 		std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2, sendPacket));

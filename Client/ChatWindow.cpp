@@ -86,6 +86,119 @@ void RunChatWindow()
 	}
 }
 
+void UpdateUI(bool isConnected)
+{
+	g_isConnect = isConnected;
+
+	std::wstring statusText;
+	if (isConnected) {
+		statusText = L"서버: " + StringToWString(serverIP) + L":" + StringToWString(serverPort) + L" (연결됨)";
+	}
+	else {
+		statusText = L"서버: " + StringToWString(serverIP) + L":" + StringToWString(serverPort) + L" (연결 끊김)";
+	}
+
+	SendMessage(g_hStatusBar, SB_SETTEXT, 0, (LPARAM)statusText.c_str());
+	EnableWindow(g_hSendButton, isConnected);
+}
+
+void OnClientConnect()
+{
+	UpdateUI(true);
+	AddChatMessage(L"서버에 연결되었습니다.");
+}
+
+void OnClientDisconnect()
+{
+	UpdateUI(false);
+	AddChatMessage(L"서버와 연결이 끊어졌습니다.");
+}
+
+void OnMessageRecv(const std::string& sender, const std::string& message)
+{
+	std::wstring displayMessage = StringToWString(sender + ": " + message);
+	AddChatMessage(displayMessage);
+}
+
+void SendChatMessage()
+{
+	if (!g_isConnect)
+	{
+		MessageBoxW(g_hWnd, L"서버에 연결되어있지 않습니다.", L"ERROR", MB_ICONERROR);
+		return;
+	}
+
+
+	// 에딧컨트롤에서 텍스트 가져오기
+	int length = GetWindowTextLengthW(g_hEditMessage);
+	if (length == 0)
+		return;
+
+	std::vector<wchar_t> buffer(length + 1);
+	GetWindowTextW(g_hEditMessage, buffer.data(), length + 1);
+	std::wstring wMessage(buffer.data());
+	std::string message = WStringToString(wMessage);
+
+	// 메시지 전송
+	auto& ClientManager = ClientManager::GetInstance();
+	auto sessions = ClientManager.GetSessions();
+
+	if (!sessions.empty())
+	{
+		auto session = sessions.begin()->second;
+		if (session)
+		{
+			static_cast<ClientSession*>(session.get())->Send(message, PacketType::ChatReq);
+
+			// 내가 보낸 메시지 표시.
+			std::wstring myMessage = L"나 : " + wMessage;
+
+			AddChatMessage(myMessage);
+
+			// 입력창 clear
+			SetWindowTextW(g_hEditMessage, L"");
+		}
+	}
+	
+}
+
+void AddChatMessage(const std::wstring& message)
+{
+	// 채팅 메시지 추가 함수.
+	{
+		std::lock_guard<std::mutex> lock(g_chatMutex);
+		g_chatMessage.push_back(message);
+
+		while (g_chatMessage.size() > 100)
+		{
+			g_chatMessage.erase(g_chatMessage.begin());
+		}
+	}
+
+	// 리스트 박스에 추가하기.
+	SendMessage(g_hListChat, LB_ADDSTRING, 0, (LPARAM)message.c_str());
+
+	// 자동 스크롤.
+	int count = SendMessage(g_hListChat, LB_GETCOUNT, 0, 0);
+	SendMessage(g_hListChat, LB_SETTOPINDEX, count - 1, 0);
+}
+
+std::wstring StringToWString(const std::string& str)
+{
+	int len = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
+	std::vector<wchar_t> buf(len);
+	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, buf.data(), len);
+	return std::wstring(buf.data());
+}
+
+std::string WStringToString(const std::wstring& wstr)
+{
+	int len = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, NULL, 0, NULL, NULL);
+	std::vector<char> buf(len);
+	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, buf.data(), len, NULL, NULL);
+	return std::string(buf.data());
+}
+
 LRESULT WinProc(HWND hwnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
 {
     switch (uMessage){
@@ -95,30 +208,26 @@ LRESULT WinProc(HWND hwnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
 	{
 		if (LOWORD(wParam) == IDC_BUTTON_SEND) {
-			//SendChatMessage();
+			SendChatMessage();
 			break;
 		}
-	
 	}
 	break;
-    case WM_CLIENT_CONNECTED: // 연결됨
+	case WM_CLIENT_CONNECTED: // 연결됨
 	{
-		//OnClientConnect();
-	
+		OnClientConnect();
 	}
 	break;
     case WM_CLIENT_DISCONNECT: // 연결 해제됨
 	{
-       // OnClientDisconnect();
-		
-
+       OnClientDisconnect();
 	}
 	break;
     case WM_CLIENT_RECV: // 메시지 수신
     {
 		ChatMessageData* data = (ChatMessageData*)lParam;
         if (data) {
-            //OnMessageRecv(data->sender, data->message);
+            OnMessageRecv(data->sender, data->message);
             delete data; // 메모리 해제
         }
     }
@@ -190,6 +299,6 @@ void CreateChatControl(HWND hwnd)
 		0, 0, 0, 0, hwnd, (HMENU)IDC_STATUS_BAR, NULL, NULL);
 
 	// 서버 연결 상태 표시
-	//std::wstring statusText = L"서버: " + StringToWString(serverIP) + L":" + StringToWString(serverPort) + L" (연결 중...)";
-	//SendMessage(g_hStatusBar, SB_SETTEXT, 0, (LPARAM)statusText.c_str());
+	std::wstring statusText = L"서버: " + StringToWString(serverIP) + L":" + StringToWString(serverPort) + L" (연결 중...)";
+	SendMessage(g_hStatusBar, SB_SETTEXT, 0, (LPARAM)statusText.c_str());
 }
