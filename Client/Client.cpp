@@ -5,6 +5,7 @@
 #include "ClientManager.h"
 #include <filesystem>
 #include "ObjectPool.h"
+#include "ChatWindow.h"
 
 #include <..\include\INIReader\ini.h>
 #include <..\include\INIReader\ini.c>
@@ -23,7 +24,7 @@ std::vector<std::thread> ConnectThreads;
 std::vector<std::thread> ClientThreads;
 using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_context::executor_type>;
 
-int main()
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	// 파일 경로 뽑기
 	char filePath[MAX_PATH] = { 0 };
@@ -85,6 +86,10 @@ int main()
 				return std::make_shared<ClientSession>(ioContext, socket);
 			},
 			maxSessionCnt);
+
+		// 채팅 UI 초기화
+		InitChatWindow(hInstance, nCmdShow);
+
 		//// 스레드 생성
 		for (int i = 0; i < threadCnt; ++i)
 		{
@@ -121,6 +126,8 @@ int main()
 				ioContext->run();
 				});
 		}
+
+		RunChatWindow();
 
 		for (auto& t : ConnectThreads) {
 			if (t.joinable()) {  // join 가능한지 확인 후 호출 (이미 join()된 스레드에 다시 join()하면 오류 발생)
