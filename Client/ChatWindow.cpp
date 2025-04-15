@@ -10,7 +10,7 @@
 #pragma comment(lib, "comctl32.lib")
 
 // 클래스 이름
-#define WIN_CLASS_NAME L"ChatClientWindow"
+LPCTSTR lpszClass = L"Window Class Name";
 
 // 컨트롤 ID 정의
 #define IDC_EDIT_MESSAGE 1001
@@ -52,7 +52,7 @@ void InitChatWindow(HINSTANCE hInstance, int nCmdShow)
 	wcex.hInstance = hInstance;
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wcex.lpszClassName = WIN_CLASS_NAME;
+	wcex.lpszClassName = lpszClass;
 	wcex.hIcon = LoadIcon(hInstance, IDI_APPLICATION);
 
 	if (!RegisterClassExW(&wcex))
@@ -62,8 +62,8 @@ void InitChatWindow(HINSTANCE hInstance, int nCmdShow)
 	}
 
 	// 윈도우 생성
-	g_hWnd = CreateWindowW(L"STATIC", L"Client", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-		CW_USEDEFAULT, 600, 500, nullptr, nullptr, hInstance, nullptr);
+	g_hWnd = CreateWindowW(lpszClass, L"Client", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
+		CW_USEDEFAULT, 800, 600, nullptr, nullptr, hInstance, nullptr);
 
 	// 이게 되나?
 	ClientSession::SetMainWin(g_hWnd);
@@ -88,9 +88,108 @@ void RunChatWindow()
 
 LRESULT WinProc(HWND hwnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
 {
-	return LRESULT();
+    switch (uMessage){
+    case WM_CREATE:
+		break;
+
+    case WM_COMMAND:
+	{
+		if (LOWORD(wParam) == IDC_BUTTON_SEND) {
+			//SendChatMessage();
+			break;
+		}
+	
+	}
+	break;
+    case WM_CLIENT_CONNECTED: // 연결됨
+	{
+		//OnClientConnect();
+	
+	}
+	break;
+    case WM_CLIENT_DISCONNECT: // 연결 해제됨
+	{
+       // OnClientDisconnect();
+		
+
+	}
+	break;
+    case WM_CLIENT_RECV: // 메시지 수신
+    {
+		ChatMessageData* data = (ChatMessageData*)lParam;
+        if (data) {
+            //OnMessageRecv(data->sender, data->message);
+            delete data; // 메모리 해제
+        }
+    }
+	break;
+    case WM_SIZE:
+    {
+        // 컨트롤 크기 조정
+        RECT rcClient;
+        GetClientRect(hwnd, &rcClient);
+
+        // 리스트박스 크기 조정
+        SetWindowPos(g_hListChat, NULL,
+            10, 10,
+            rcClient.right - 20, rcClient.bottom - 90,
+            SWP_NOZORDER);
+
+        // 입력창 크기 조정
+        SetWindowPos(g_hEditMessage, NULL,
+            10, rcClient.bottom - 70,
+            rcClient.right - 100, 40,
+            SWP_NOZORDER);
+
+        // 전송 버튼 크기 조정
+        SetWindowPos(g_hSendButton, NULL,
+            rcClient.right - 80, rcClient.bottom - 70,
+            70, 40,
+            SWP_NOZORDER);
+
+        // 상태바 크기 조정
+        SendMessage(g_hStatusBar, WM_SIZE, 0, 0);
+    }
+    return 0;
+
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        return 0;
+    }
+
+    return DefWindowProc(hwnd, uMessage, wParam, lParam);
 }
 
 void CreateChatControl(HWND hwnd)
 {
+	HFONT hFont = CreateFont(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+		DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
+		CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"맑은 고딕");
+
+	// 채팅 리스트박스
+	g_hListChat = CreateWindowW(L"LISTBOX", NULL,
+		WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL | LBS_NOINTEGRALHEIGHT,
+		10, 10, 560, 380, hwnd, (HMENU)IDC_LIST_CHAT, NULL, NULL);
+	SendMessage(g_hListChat, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+	// 메시지 입력창
+	g_hEditMessage = CreateWindowW(L"EDIT", L"",
+		WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
+		10, 300, 300, 10, hwnd, (HMENU)IDC_EDIT_MESSAGE, NULL, NULL);
+	SendMessage(g_hEditMessage, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+	// 전송 버튼
+	g_hSendButton = CreateWindowW(L"BUTTON", L"전송",
+		WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+		500, 400, 70, 40, hwnd, (HMENU)IDC_BUTTON_SEND, NULL, NULL);
+	SendMessage(g_hSendButton, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+	// 상태바
+	g_hStatusBar = CreateWindowW(STATUSCLASSNAME, NULL,
+		WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,
+		0, 0, 0, 0, hwnd, (HMENU)IDC_STATUS_BAR, NULL, NULL);
+
+	// 서버 연결 상태 표시
+	//std::wstring statusText = L"서버: " + StringToWString(serverIP) + L":" + StringToWString(serverPort) + L" (연결 중...)";
+	//SendMessage(g_hStatusBar, SB_SETTEXT, 0, (LPARAM)statusText.c_str());
 }
