@@ -72,6 +72,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
 
 	try
+
 	{
 		boost::asio::io_context* ioContext = new boost::asio::io_context();
 		work_guard_type work_guard(ioContext->get_executor());
@@ -90,7 +91,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			serverIP,
 			serverPort,
 			[](boost::asio::io_context* ioContext, tcp::socket* socket) -> std::shared_ptr<AsioSession> {
-				return std::make_shared<ClientSession>(ioContext, socket);
+				return make_shared<ClientSession>(ioContext, socket);
 			},
 			maxSessionCnt);
 
@@ -142,6 +143,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 		}
 
+		PacketPool::GetInstance().Clean();
+
+		work_guard.reset();
+		ioContext->stop();
+
 		for (auto& t : asioThread)
 		{
 			if (t.joinable())
@@ -150,10 +156,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 		}
 
-		ioContext->stop();
-
 		delete ioContext;
-
 		return 0;
 	}
 	catch (const std::exception& e)

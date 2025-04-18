@@ -155,6 +155,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 	}
 	else if (ec == boost::asio::error::operation_aborted || ec == boost::asio::error::connection_reset)
 	{
+		ProcessDisconnect(__FUNCTION__);
 		return;
 	}
 	else

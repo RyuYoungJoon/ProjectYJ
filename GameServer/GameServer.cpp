@@ -96,7 +96,6 @@ int main()
 	
 	if (IsConsoleLog == true)
 	{
-
 		static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
 		plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
 	}
@@ -109,7 +108,6 @@ int main()
 	{
 		boost::asio::io_context* IoContext = new boost::asio::io_context();
 		
-
 		// 패킷 라우터 Init
 		PacketRouter::GetInstance().Init(0, []()-> std::shared_ptr<PacketProcessor>
 			{

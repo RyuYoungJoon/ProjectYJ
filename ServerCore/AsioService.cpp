@@ -16,7 +16,7 @@ void AsioService::CloseService()
 {
 	std::lock_guard<std::mutex> lock(m_Mutex);
 
-	// 葛电 技记 辆丰
+	//// 葛电 技记 辆丰
 	for (auto& session : m_Sessions)
 	{
 		if (session)
@@ -30,6 +30,11 @@ void AsioService::CloseService()
 	m_Sessions.clear();
 	m_SessionCount = 0;
 	LOGI << "Session Clear";
+	
+	m_Sessions.clear();
+	m_SessionCount = 0;
+
+	iocontext->stop();
 }
 
 AsioSessionPtr AsioService::CreateSession(boost::asio::io_context* iocontext, tcp::socket* socket)

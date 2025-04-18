@@ -174,8 +174,26 @@ void AddChatMessage(const std::wstring& message)
 		}
 	}
 
+	auto now = std::chrono::system_clock::now();
+	std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
+	auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+
+	std::tm local_time;
+	localtime_s(&local_time, &now_time_t);
+
+	// 수정된 코드: wstring을 사용하여 시간과 메시지를 결합합니다
+	std::wstringstream wss;
+	wss << L"[" << local_time.tm_year + 1900 << L"-"
+		<< std::setfill(L'0') << std::setw(2) << local_time.tm_mon + 1 << L"-"
+		<< std::setfill(L'0') << std::setw(2) << local_time.tm_mday << L" "
+		<< std::setfill(L'0') << std::setw(2) << local_time.tm_hour << L":"
+		<< std::setfill(L'0') << std::setw(2) << local_time.tm_min << L":"
+		<< std::setfill(L'0') << std::setw(2) << local_time.tm_sec << L"]"
+		<< L"#" << L"#" << message;
+
+	std::wstring chatMessage = wss.str();
 	// 리스트 박스에 추가하기.
-	SendMessage(g_hListChat, LB_ADDSTRING, 0, (LPARAM)message.c_str());
+	SendMessage(g_hListChat, LB_ADDSTRING, 0, (LPARAM)chatMessage.c_str());
 
 	// 자동 스크롤.
 	int count = SendMessage(g_hListChat, LB_GETCOUNT, 0, 0);
@@ -194,6 +212,7 @@ std::string WStringToString(const std::wstring& wstr)
 {
 	int len = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, NULL, 0, NULL, NULL);
 	std::vector<char> buf(len);
+	string buff;
 	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, buf.data(), len, NULL, NULL);
 	return std::string(buf.data());
 }
@@ -262,6 +281,8 @@ LRESULT WinProc(HWND hwnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
 	{
 		ClientManager::GetInstance().StopClient();
+		clientService->CloseService();
+		clientService.reset();
         PostQuitMessage(0);
 	}
 	break;
