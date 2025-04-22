@@ -8,6 +8,11 @@
 #pragma comment(lib, "Release\\ServerCore.lib")
 #endif // _DEBUG
 
+
+#pragma comment(lib, "user32.lib")
+#pragma comment(lib, "gdi32.lib")
+#pragma comment(lib, "comctl32.lib")
+
 #pragma comment(lib, "Shlwapi.lib")
 
 #include "CorePch.h"

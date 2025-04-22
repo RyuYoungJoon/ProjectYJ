@@ -28,13 +28,14 @@ void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
         m_RecvCount.emplace(packetType, 0);
 }
 
-void PacketHandler::HandlePacket(AsioSessionPtr session, Packet* packet)
+void PacketHandler::HandlePacket(AsioSessionPtr session, BYTE* buffer)
 {
-    if (!packet || !session)
+    PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+
+    if (!header || !session)
         return;
 
     int32 sessionUID = session->GetSessionUID();
-    Packet* packetRef = packet;
 
     std::lock_guard<std::mutex> lock(m_Mutex);
 
@@ -44,52 +45,21 @@ void PacketHandler::HandlePacket(AsioSessionPtr session, Packet* packet)
         m_NextSeq[sessionUID] = 0;
     }
 
-    auto it = m_Handlers.find(packet->header.type);
+    auto it = m_Handlers.find(header->type);
     if (it != m_Handlers.end())
     {
-        it->second(session, packetRef);
+        it->second(session, buffer);
     }
     else
     {
-        HandleInvalid(session, packetRef);
+        HandleInvalid(session, buffer);
     }
-
-    // 현재 받은 패킷의 시퀀스 번호
-    //int32 receivedSeqNum = packet->header.seqNum;
-    //int32 expectedSeqNum = m_NextSeq[sessionUID];
-
-    //if (receivedSeqNum == expectedSeqNum)
-    //{
-    //    // 기대한 시퀀스 번호와 일치하면 바로 처리
-    //    auto it = m_Handlers.find(packet->header.type);
-    //    if (it != m_Handlers.end())
-    //    {
-    //        it->second(session, packetRef);
-    //    }
-    //    else
-    //    {
-    //        HandleInvalid(session, packetRef);
-    //    }
-
-    //    // 다음 시퀀스 번호 업데이트
-    //    m_NextSeq[sessionUID]++;
-    //}
-    //else if (receivedSeqNum > expectedSeqNum)
-    //{
-    //    // 기대한 것보다 높은 시퀀스 번호를 받았으면
-    //    LOGE << "시퀀스 처리 에러! Expected: " << expectedSeqNum
-    //        << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
-    //}
-    //else
-    //{
-    //    // 이미 처리한 패킷인 경우 (receivedSeqNum < expectedSeqNum)
-    //    LOGD << "이미 처리한 패킷! Expected: " << expectedSeqNum
-    //        << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
-    //}
 }
 
-void PacketHandler::HandleLoginAck(AsioSessionPtr& session, Packet* packet)
+void PacketHandler::HandleLoginAck(AsioSessionPtr& session, BYTE* buffer)
 {
+    PacketLoginAck* packet = reinterpret_cast<PacketLoginAck*>(buffer);
+
     if (packet->header.type != PacketType::LoginAck)
         return;
 
@@ -100,11 +70,12 @@ void PacketHandler::HandleLoginAck(AsioSessionPtr& session, Packet* packet)
         return;
     }
 
-    
+    //PostMessage(clientSession->s_hMainWin, WM_CLIENT_LOGIN, 0, (LPARAM)chatMessage);
 }
 
-void PacketHandler::HandleChatAck(AsioSessionPtr& session, Packet* packet)
+void PacketHandler::HandleChatAck(AsioSessionPtr& session, BYTE* buffer)
 {
+    PacketChatAck* packet = reinterpret_cast<PacketChatAck*>(buffer);
     if (packet->header.type != PacketType::ChatAck)
         return;
 
@@ -118,8 +89,8 @@ void PacketHandler::HandleChatAck(AsioSessionPtr& session, Packet* packet)
     std::string sender = "Server";
 
     ChatMessageData* chatMessage = new ChatMessageData();
-    chatMessage->sender = sender;
-    chatMessage->message = reinterpret_cast<char*>(packet->payload);
+    chatMessage->sender = packet->payload.sender;
+    chatMessage->message = packet->payload.message;
 
     PostMessage(clientSession->s_hMainWin, WM_CLIENT_RECV, 0, (LPARAM)chatMessage);
 }
@@ -131,7 +102,9 @@ void PacketHandler::Reset(int32 sessionUID)
 }
 
 
-void PacketHandler::HandleInvalid(AsioSessionPtr& session, Packet* packet)
+void PacketHandler::HandleInvalid(AsioSessionPtr& session, BYTE* buffer)
 {
-    LOGE << "Unknown Packet Type : " << static_cast<int16>(packet->header.type);
+    PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+
+    LOGE << "Unknown Packet Type : " << static_cast<int16>(header->type);
 }

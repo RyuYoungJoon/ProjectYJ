@@ -6,7 +6,10 @@
 #include <filesystem>
 #include "ObjectPool.h"
 #include "ChatWindow.h"
+#include "LoginWindow.h"
+#include "LobbyWindow.h"
 #include "PacketHandler.h"
+#include "WinUtils.h"
 
 #include <..\include\INIReader\ini.h>
 #include <..\include\INIReader\ini.c>
@@ -21,9 +24,81 @@ int32 maxSessionCnt;
 
 ClientServicePtr clientService;
 
+// 윈도우 객체들
+std::unique_ptr<LoginWindow> g_loginWindow;
+std::unique_ptr<LobbyWindow> g_lobbyWindow;
+std::unique_ptr<ChatWindow> g_chatWindow;
+
 std::vector<std::thread> ConnectThreads;
 std::vector<std::thread> ClientThreads;
 using work_guard_type = boost::asio::executor_work_guard<boost::asio::io_context::executor_type>;
+
+HWND g_hMainWnd = NULL;
+
+LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+void InitWindow(HINSTANCE hInstance, int nCmdShow)
+{
+	// 메인 윈도우 등록 및 생성
+	WNDCLASSEXW wcex = { 0 };
+	wcex.cbSize = sizeof(WNDCLASSEXW);
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = MainWndProc;
+	wcex.hInstance = hInstance;
+	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wcex.lpszClassName = L"MainWindowClass";
+	wcex.hIcon = LoadIcon(hInstance, IDI_APPLICATION);
+
+	if (!RegisterClassExW(&wcex))
+	{
+		MessageBoxW(NULL, L"메인 윈도우 클래스 등록 실패", L"오류", MB_ICONERROR);
+		return;
+	}
+
+	g_hMainWnd = CreateWindowW(L"MainWindowClass", L"채팅 클라이언트", WS_OVERLAPPEDWINDOW,
+		0, 0, 1, 1, nullptr, nullptr, hInstance, nullptr);
+
+	if (!g_hMainWnd)
+	{
+		MessageBoxW(NULL, L"메인 윈도우 생성 실패", L"오류", MB_ICONERROR);
+		return;
+	}
+
+	// 메인 윈도우는 보이지 않게 함 (메시지 처리용)
+	ShowWindow(g_hMainWnd, SW_HIDE);
+	UpdateWindow(g_hMainWnd);
+
+	// 로그인, 채팅방 목록, 채팅창 초기화
+	g_loginWindow = std::make_unique<LoginWindow>();
+	g_lobbyWindow = std::make_unique<LobbyWindow>();
+	g_chatWindow = std::make_unique<ChatWindow>();
+
+	g_loginWindow->SetMainWnd(g_hMainWnd);
+	g_lobbyWindow->SetMainWnd(g_hMainWnd);
+	g_chatWindow->SetMainWnd(g_hMainWnd);
+
+	if (!g_loginWindow->Init(hInstance) ||
+		!g_lobbyWindow->Init(hInstance) ||
+		!g_chatWindow->Init(hInstance))
+	{
+		MessageBoxW(NULL, L"윈도우 초기화 실패", L"오류", MB_ICONERROR);
+		return;
+	}
+
+	// 로그인 창부터 표시
+	g_loginWindow->Show();
+}
+
+void RunChatWindow()
+{
+	MSG msg = { 0 };
+	while (GetMessage(&msg, nullptr, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -96,7 +171,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			maxSessionCnt);
 
 		// 채팅 UI 초기화
-		InitChatWindow(hInstance, nCmdShow);
+		InitWindow(hInstance, nCmdShow);
 
 		//// 스레드 생성
 		for (int i = 0; i < threadCnt; ++i)
@@ -165,4 +240,47 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	return 0;
+}
+
+LRESULT MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg) {
+	case WM_LOGIN_SUCCESS:
+		// 로그인 성공 시 채팅방 목록 창 표시
+		if (g_loginWindow && g_lobbyWindow)
+		{
+			g_lobbyWindow->Show(g_loginWindow->GetUserID());
+		}
+		return 0;
+
+	case WM_ENTER_CHATROOM:
+		// 채팅방 입장 시 채팅창 표시
+		if (g_chatWindow)
+		{
+			ChatRoomResponseData* data = (ChatRoomResponseData*)lParam;
+			if (data)
+			{
+				// 채팅창 제목 설정
+				g_chatWindow->SetTitle(WinUtils::StringToWString("채팅방: " + data->roomName));
+
+				// 채팅창 표시
+				g_chatWindow->Show();
+
+				// 채팅방 입장 메시지 추가
+				g_chatWindow->AddChatMessage(L"채팅방 '" +
+					WinUtils::StringToWString(data->roomName) +
+					L"'에 입장했습니다.");
+
+				// 메모리 해제
+				delete data;
+			}
+		}
+		return 0;
+
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	}
+
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
