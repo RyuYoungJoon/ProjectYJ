@@ -14,3 +14,4 @@
 #include "CorePch.h"
 
 using PlayerPtr = shared_ptr<class Player>;
+using ChatRoomPtr = shared_ptr<class ChatRoom>;

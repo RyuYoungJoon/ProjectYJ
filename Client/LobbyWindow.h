@@ -8,13 +8,6 @@
 #define IDC_STATIC_ROOM_NAME 3006
 #define IDC_BUTTON_REFRESH 3007
 
-struct ChatRoomInfo
-{
-	uint16 roomID;
-	std::string roomName;
-	uint16 currentUser;
-	uint16 maxUser;
-};
 
 class LobbyWindow
 {
@@ -27,7 +20,7 @@ public:
     void Show(const std::string& userId);
     void Hide();
     bool IsVisible() const;
-    void SetMainWnd(HWND hwnd) { m_hWnd = hwnd; }
+    void SetMainWnd(HWND hwnd) { m_hParentHandle = hwnd; }
 
     // 이벤트 처리
     void RefreshRoomList();
@@ -48,6 +41,8 @@ private:
     HWND m_hCreateButton;          // 생성 버튼
     HWND m_hRoomNameEdit;          // 채팅방 이름 입력 필드
     HWND m_hWelcomeLabel;          // 환영 메시지 라벨
+
+    HWND m_hParentHandle;
 
     std::string m_currentUserId;   // 현재 로그인한 사용자 ID
     std::vector<ChatRoomInfo> m_chatRooms;  // 채팅방 목록 데이터

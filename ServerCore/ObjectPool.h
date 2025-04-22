@@ -1,4 +1,6 @@
 #pragma once
+#include <concurrent_unordered_map.h>
+
 template <typename T>
 class ObjectPool {
 public:
@@ -82,140 +84,103 @@ public:
     // 풀 초기화
     void Init(size_t initialSize = 1000)
     {
-        std::lock_guard<std::mutex> lock(m_Mutex);
+        Clean();
 
-        // 기존 메모리 정리
-        while (!m_FreePackets.empty())
-        {
-            Packet* packet = m_FreePackets.top();
-            m_FreePackets.pop();
-            delete packet;
-        }
-
-        m_AllPackets.clear();
-
-        // 새 패킷 할당
-        for (size_t i = 0; i < initialSize; ++i)
-        {
-            Packet* packet = new Packet();
-            memset(packet, 0, sizeof(Packet));
-
-            m_AllPackets.push_back(packet);
-            m_FreePackets.push(packet);
-        }
-
-        m_ActiveCount = 0;
-        LOGI << "PacketPool initialized with " << initialSize << " packets";
+        m_PoolSize = initialSize;
     }
 
     // 패킷 할당
-    Packet* Pop()
+    template<typename TPacket>
+    TPacket* Pop()
     {
-        std::lock_guard<std::mutex> lock(m_Mutex);
+        auto typeIndex = std::type_index(typeid(TPacket));
 
-        // 사용 가능한 패킷이 없으면 추가 할당
-        if (m_FreePackets.empty())
+        auto& pool = m_PacketPool[typeIndex];
+
+        TPacket* packet = nullptr;
+        void* temp = nullptr;
+
+        // 패킷 꺼내기
+        if (!pool.try_pop(temp))
         {
-            // 현재 풀 크기의 절반만큼 확장
-            size_t expandSize = m_AllPackets.size() / 2;
-
-            for (size_t i = 0; i < expandSize; ++i)
-            {
-                Packet* packet = new Packet();
-                memset(packet, 0, sizeof(Packet));
-
-                m_AllPackets.push_back(packet);
-                m_FreePackets.push(packet);
-            }
-
-            LOGI << "PacketPool expanded with " << expandSize << " additional packets";
+            packet = new TPacket();
+            m_TotalCount.fetch_add(1);
+        }
+        else
+        {
+            packet = static_cast<TPacket*>(temp);
         }
 
-        Packet* packet = m_FreePackets.top();
-        m_FreePackets.pop();
+        memset(packet, 0, sizeof(TPacket));
+        new(packet)TPacket();
 
-        // 패킷 초기화 (필요한 경우)
-        memset(packet, 0, sizeof(Packet));
-
-        m_ActiveCount++;
+        m_ActiveCount.fetch_add(1);
         return packet;
     }
 
     // 패킷 반환
-    void Push(Packet* packet)
+    template<typename TPacket>
+    void Push(TPacket* packet)
     {
-        if (!packet) return;
-
-        std::lock_guard<std::mutex> lock(m_Mutex);
-
-        // 유효한 패킷인지 확인 (선택적)
-        bool validPacket = false;
-        for (auto p : m_AllPackets)
-        {
-            if (p == packet)
-            {
-                validPacket = true;
-                break;
-            }
-        }
-
-        if (!validPacket)
-        {
-            LOGW << "Attempted to return an invalid packet to the pool";
+        if (!packet)
             return;
-        }
 
-        m_FreePackets.push(packet);
-        m_ActiveCount--;
+        auto typeIndex = std::type_index(typeid(TPacket));
+
+        m_PacketPool[typeIndex].push(packet);
+
+        m_ActiveCount.fetch_sub(1);
     }
 
     // 풀 정리 (애플리케이션 종료 시 호출)
     void Clean()
     {
-        std::lock_guard<std::mutex> lock(m_Mutex);
+        std::lock_guard<std::mutex> lock(m_CleanMutex);
 
-        for (auto packet : m_AllPackets)
+        auto tempMap = m_PacketPool;
+
+        for (auto& pair : tempMap)
         {
-            delete packet;
+            auto& packetQueue = pair.second;
+            void* obj = nullptr;
+            while (packetQueue.try_pop(obj))
+            {
+                delete obj;
+            }
         }
 
-        m_AllPackets.clear();
-
-        while (!m_FreePackets.empty())
-        {
-            m_FreePackets.pop();
-        }
-
-        m_ActiveCount = 0;
+        m_PacketPool.clear();
+        m_ActiveCount.store(0);
+        m_TotalCount.store(0);
     }
 
     // 활성 패킷 수 반환
     size_t GetActiveCount() const
     {
-        std::lock_guard<std::mutex> lock(m_Mutex);
-        return m_ActiveCount;
+        return m_ActiveCount.load();
     }
 
     // 총 패킷 수 반환
     size_t GetTotalCount() const
     {
-        std::lock_guard<std::mutex> lock(m_Mutex);
-        return m_AllPackets.size();
+        return m_TotalCount.load();
     }
 
     // 사용 가능한 패킷 수 반환
     size_t GetAvailableCount() const
     {
-        std::lock_guard<std::mutex> lock(m_Mutex);
-        return m_FreePackets.size();
+        return m_TotalCount.load() - m_ActiveCount.load();
     }
 
 private:
-    PacketPool() : m_ActiveCount(0) {}
+    PacketPool() : m_PoolSize(1000) {}
     ~PacketPool() { Clean(); }
 
-    mutable std::mutex m_Mutex;
-    std::vector<Packet*> m_AllPackets;    // 모든 할당된 패킷 추적
-    std::stack<Packet*> m_FreePackets;    // 사용 가능한 패킷 스택
-    size_t m_ActiveCount;                 // 현재 활성화된 패킷 수
+    using PacketQueue = concurrency::concurrent_queue<void*>;
+    concurrency::concurrent_unordered_map<std::type_index, PacketQueue> m_PacketPool;
+
+    std::mutex m_CleanMutex;
+    std::atomic<size_t> m_ActiveCount{ 0 };
+    std::atomic<size_t> m_TotalCount{ 0 };
+    size_t m_PoolSize;
 };

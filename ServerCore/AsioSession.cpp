@@ -4,7 +4,6 @@
 #include "NetworkHandler.h"
 #include "ServerAnalyzer.h"
 #include "PacketRouter.h"
-#include "ObjectPool.h"
 
 atomic<int32> SessionUID = 0;
 
@@ -54,24 +53,6 @@ void AsioSession::InitSession(boost::asio::io_context* ioContext, tcp::socket* s
 	m_IoContext = ioContext;
 	m_Socket = socket;
 	m_PacketBuffer.Init(65536);
-}
-
-void AsioSession::Send(const std::string& message, const PacketType packetType)
-{
-	ServerAnalyzer::GetInstance().IncrementSendCnt();
-
-	// PacketPool에서 패킷 가져오기.
-	Packet* sendPacket = PacketPool::GetInstance().Pop();
-
-	std::memset(sendPacket->header.checkSum, 0x12, sizeof(sendPacket->header.checkSum));
-	std::memset(sendPacket->header.checkSum + 1, 0x34, sizeof(sendPacket->header.checkSum) - 1);
-	sendPacket->header.type = packetType;
-	sendPacket->header.size = static_cast<uint32>(sizeof(PacketHeader) + sizeof(sendPacket->payload) + sizeof(PacketTail));
-	std::memcpy(sendPacket->payload, message.c_str(), message.size());
-	sendPacket->tail.value = 255;
-
-	m_Socket->async_write_some(boost::asio::mutable_buffer(reinterpret_cast<BYTE*>(sendPacket), sendPacket->header.size),
-		std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2, sendPacket));
 }
 
 bool AsioSession::Connect(const string& host, const string& port)
@@ -165,22 +146,6 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 		ProcessDisconnect(__FUNCTION__);
 		return;
 	}
-}
-
-void AsioSession::HandleWrite(boost::system::error_code ec, int32 length, Packet* packet)
-{
-	if (ec)
-	{
-		LOGE << "Session Close : " << ec.value() << ", Message : " << ec.message();
-
-		ProcessDisconnect(__FUNCTION__);
-	}   
-	else
-	{
-		OnSend(length);
-	}
-
-	PacketPool::GetInstance().Push(packet);
 }
 
 int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)

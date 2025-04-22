@@ -43,6 +43,14 @@ enum ChatRoomResult
 #define WM_CLIENT_USER_LIST (WM_USER + 105)     // 사용자 목록 응답
 #define WM_ENTER_CHATROOM (WM_USER + 202)       // 채팅방 입장 (창 전환용)
 
+struct ChatRoomInfo
+{
+	uint16 roomID;
+	std::string roomName;
+	uint16 currentUser;
+	uint16 maxUser;
+};
+
 // 로그인 응답 데이터 구조체
 struct LoginResponseData
 {
@@ -63,7 +71,7 @@ struct ChatRoomData
 // 채팅방 목록 응답 데이터 구조체
 struct ChatRoomListResponseData
 {
-	std::vector<ChatRoomData> rooms;
+	std::vector<ChatRoomInfo> rooms;
 };
 
 // 채팅방 입장/생성 응답 데이터 구조체

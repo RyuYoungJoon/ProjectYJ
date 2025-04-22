@@ -145,10 +145,6 @@ ChatWindow::ChatWindow()
 ChatWindow::~ChatWindow()
 {
 	// 맵 제거
-	if (m_hWnd)
-	{
-		s_mapWindow.erase(m_hWnd);
-	}
 }
 
 bool ChatWindow::Init(HINSTANCE hInstance)
@@ -186,11 +182,12 @@ bool ChatWindow::Init(HINSTANCE hInstance)
         return false;
     }
 
+    ClientSession::SetChatWin(m_hWnd);
     // 객체 연결
     s_mapWindow[m_hWnd] = this;
 
     // 세션에 윈도우 핸들 설정
-    ClientSession::SetMainWin(m_hWnd);
+    //ClientSession::SetMainWin(m_hWnd);
 
     // 컨트롤 생성
     CreateControl();

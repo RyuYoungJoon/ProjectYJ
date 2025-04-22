@@ -15,6 +15,7 @@
 #include <filesystem>
 #include <random>
 #include <concurrent_queue.h>
+#include <typeindex>
 
 #include <..\include\plog\Log.h>
 #include <..\include\plog\Appenders\ColorConsoleAppender.h>
@@ -32,7 +33,7 @@
 #include <boost/pool/object_pool.hpp>
 #include <boost/lockfree/stack.hpp>
 #include "..\GameServer\Protocol.h"
-
+#include "..\GameServer\enum.h"
 using namespace std;
 
 using boost::asio::ip::tcp;

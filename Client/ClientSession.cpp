@@ -5,6 +5,8 @@
 #include "ServerAnalyzer.h"
 
 HWND ClientSession::s_hMainWin = NULL;
+HWND ClientSession::s_hLobbyWin = NULL;
+HWND ClientSession::s_hChatWin = NULL;
 
 ClientSession::ClientSession()
 {
@@ -33,7 +35,7 @@ void ClientSession::OnConnected()
 	if (s_hMainWin != NULL)
 	{
 		PostMessage(s_hMainWin, WM_CLIENT_CONNECTED, 0, 0);
-		clientSession->Send("hi", PacketType::LoginReq);
+		//clientSession->Send("hi", PacketType::LoginReq);
 	}
 }
 

@@ -16,10 +16,10 @@ LobbyWindow::LobbyWindow()
 
 LobbyWindow::~LobbyWindow()
 {
-	if (m_hWnd)
+	/*if (m_hWnd)
 	{
-		s_mapWindow.erase(m_hWnd);
-	}
+        s_mapWindow.clear();
+	}*/
 }
 
 bool LobbyWindow::Init(HINSTANCE hInstance)
@@ -43,7 +43,7 @@ bool LobbyWindow::Init(HINSTANCE hInstance)
 
     // 윈도우 생성
     m_hWnd = CreateWindowW(lpszLobbyClass, L"채팅방 목록", WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, 600, 500, nullptr, nullptr, hInstance, nullptr);
+        CW_USEDEFAULT, CW_USEDEFAULT, 600, 500, m_hParentHandle, nullptr, hInstance, nullptr);
 
     if (!m_hWnd)
     {
@@ -51,6 +51,7 @@ bool LobbyWindow::Init(HINSTANCE hInstance)
         return false;
     }
 
+    ClientSession::SetLobbyWin(m_hWnd);
     // 객체 연결
     s_mapWindow[m_hWnd] = this;
 
@@ -86,7 +87,8 @@ void LobbyWindow::Show(const std::string& userId)
         auto session = sessions.begin()->second;
         if (session)
         {
-            //static_cast<ClientSession*>(session.get())->Send("", PacketType::RoomListReq);
+            PacketRoomListReq packet;
+            static_cast<ClientSession*>(session.get())->Send(packet);
         }
     }
 
@@ -175,19 +177,13 @@ void LobbyWindow::EnterChatRoom(int roomId)
                 //static_cast<ClientSession*>(session.get())->Send(std::to_string(roomId), PacketType::RoomEnterReq);
 
                 // 채팅방 입장 처리는 WM_CLIENT_CHATROOM_ENTER 메시지 핸들러에서 처리
+                PacketRoomEnterReq packet;
+                packet.payload.roomID = selectedRoom.roomID;
+
+                static_cast<ClientSession*>(session.get())->Send(packet);
 
                 // 테스트를 위한 임시 코드 - 실제로는 서버 응답을 기다림
                 Hide();
-
-                // 채팅창으로 전환 메시지 전송
-                // 선택한 채팅방 ID와 이름 정보를 담은 구조체 생성
-                ChatRoomResponseData* data = new ChatRoomResponseData();
-                data->result = CHATROOM_SUCCESS;
-                data->roomId = roomId;
-                data->roomName = selectedRoom.roomName;
-                data->message = "채팅방 입장 성공";
-
-                ::PostMessage(GetParent(m_hWnd), WM_ENTER_CHATROOM, 0, (LPARAM)data);
             }
             else
             {
@@ -314,10 +310,10 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 std::vector<ChatRoomInfo> roomList;
                 for (const auto& roomData : data->rooms) {
                     ChatRoomInfo roomInfo;
-                    roomInfo.roomID = roomData.roomId;
+                    roomInfo.roomID = roomData.roomID;
                     roomInfo.roomName = roomData.roomName;
-                    roomInfo.currentUser = roomData.currentUsers;
-                    roomInfo.maxUser = roomData.maxUsers;
+                    roomInfo.currentUser = roomData.currentUser;
+                    roomInfo.maxUser = roomData.maxUser;
                     roomList.push_back(roomInfo);
                 }
 

@@ -26,6 +26,8 @@ public:
 
 	void HandleLoginAck(AsioSessionPtr& session, BYTE* buffer);
 	void HandleChatAck(AsioSessionPtr& session, BYTE* buffer);
+	void HandleRoomEnterAck(AsioSessionPtr& session, BYTE* buffer);
+	void HandleRoomListAck(AsioSessionPtr& session, BYTE* buffer);
 
 	void Reset(int32 sessionUID);
 

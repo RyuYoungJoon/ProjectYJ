@@ -15,6 +15,8 @@ void PacketHandler::Init()
 {
     RegisterHandler(PacketType::LoginAck, std::bind(&PacketHandler::HandleLoginAck, this, std::placeholders::_1, std::placeholders::_2));
     RegisterHandler(PacketType::ChatAck, std::bind(&PacketHandler::HandleChatAck, this, std::placeholders::_1, std::placeholders::_2));
+    RegisterHandler(PacketType::RoomEnterAck, std::bind(&PacketHandler::HandleRoomEnterAck, this, std::placeholders::_1, std::placeholders::_2));
+    RegisterHandler(PacketType::RoomListAck, std::bind(&PacketHandler::HandleRoomListAck, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
@@ -70,7 +72,14 @@ void PacketHandler::HandleLoginAck(AsioSessionPtr& session, BYTE* buffer)
         return;
     }
 
-    //PostMessage(clientSession->s_hMainWin, WM_CLIENT_LOGIN, 0, (LPARAM)chatMessage);
+    // 서버 응답을 기다림 (WM_CLIENT_LOGIN 메시지로 처리)
+    // 테스트를 위해 임시로 로그인 성공으로 처리
+    LoginResponseData* LoginData = new LoginResponseData();
+    LoginData->result = LOGIN_SUCCESS;
+    LoginData->userId = packet->payload.id;
+    LoginData->message = "로그인 성공";
+
+    PostMessage(clientSession->s_hMainWin, WM_LOGIN_SUCCESS, 0, (LPARAM)LoginData);
 }
 
 void PacketHandler::HandleChatAck(AsioSessionPtr& session, BYTE* buffer)
@@ -92,7 +101,50 @@ void PacketHandler::HandleChatAck(AsioSessionPtr& session, BYTE* buffer)
     chatMessage->sender = packet->payload.sender;
     chatMessage->message = packet->payload.message;
 
-    PostMessage(clientSession->s_hMainWin, WM_CLIENT_RECV, 0, (LPARAM)chatMessage);
+    PostMessage(clientSession->s_hChatWin, WM_CLIENT_RECV, 0, (LPARAM)chatMessage);
+}
+
+void PacketHandler::HandleRoomEnterAck(AsioSessionPtr& session, BYTE* buffer)
+{
+    PacketRoomEnterAck* packet = reinterpret_cast<PacketRoomEnterAck*>(buffer);
+    if (packet->header.type != PacketType::RoomEnterAck)
+        return;
+
+    ClientSessionPtr clientSession = static_pointer_cast<ClientSession>(session);
+    if (clientSession == nullptr)
+    {
+        LOGE << "Session Nullptr!";
+        return;
+    }
+
+    // 채팅창으로 전환 메시지 전송
+    // 선택한 채팅방 ID와 이름 정보를 담은 구조체 생성
+    ChatRoomResponseData* data = new ChatRoomResponseData();
+    data->result = CHATROOM_SUCCESS;
+    data->roomId = packet->payload.roomID;
+    data->roomName = packet->payload.roomName;
+    data->message = packet->payload.message;
+    
+    ::PostMessage(clientSession->s_hChatWin, WM_ENTER_CHATROOM, 0, (LPARAM)data);
+}
+
+void PacketHandler::HandleRoomListAck(AsioSessionPtr& session, BYTE* buffer)
+{
+    PacketRoomListAck* packet = reinterpret_cast<PacketRoomListAck*>(buffer);
+    if (packet->header.type != PacketType::RoomListAck)
+        return;
+
+    ClientSessionPtr clientSession = static_pointer_cast<ClientSession>(session);
+    if (clientSession == nullptr)
+    {
+        LOGE << "Session Nullptr!";
+        return;
+    }
+
+    ChatRoomListResponseData* data = new ChatRoomListResponseData();
+    data->rooms = packet->payload.chatRoomInfo;
+
+    ::PostMessage(clientSession->s_hLobbyWin, WM_CLIENT_CHATROOM_LIST, 0, (LPARAM)data);
 }
 
 void PacketHandler::Reset(int32 sessionUID)

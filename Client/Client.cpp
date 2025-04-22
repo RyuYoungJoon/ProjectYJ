@@ -78,6 +78,8 @@ void InitWindow(HINSTANCE hInstance, int nCmdShow)
 	g_lobbyWindow->SetMainWnd(g_hMainWnd);
 	g_chatWindow->SetMainWnd(g_hMainWnd);
 
+	ClientSession::SetMainWin(g_hMainWnd);
+
 	if (!g_loginWindow->Init(hInstance) ||
 		!g_lobbyWindow->Init(hInstance) ||
 		!g_chatWindow->Init(hInstance))
@@ -262,7 +264,7 @@ LRESULT MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 				// 채팅창 제목 설정
 				g_chatWindow->SetTitle(WinUtils::StringToWString("채팅방: " + data->roomName));
-
+				g_chatWindow->UpdateStatus(true);
 				// 채팅창 표시
 				g_chatWindow->Show();
 

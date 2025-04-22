@@ -14,10 +14,7 @@ LoginWindow::LoginWindow()
 
 LoginWindow::~LoginWindow()
 {
-	if (m_hWnd)
-	{
-		s_mapWindow.erase(m_hWnd);
-	}
+	
 }
 
 bool LoginWindow::Init(HINSTANCE hInstance)
@@ -113,15 +110,6 @@ void LoginWindow::TryLogin()
             packet.payload.id = id; 
             packet.payload.password = password;
             static_cast<ClientSession*>(session.get())->Send(packet);
-
-            // 서버 응답을 기다림 (WM_CLIENT_LOGIN 메시지로 처리)
-            // 테스트를 위해 임시로 로그인 성공으로 처리
-            LoginResponseData* testData = new LoginResponseData();
-            testData->result = LOGIN_SUCCESS;
-            testData->userId = id;
-            testData->message = "로그인 성공";
-
-            ::PostMessage(m_hWnd, WM_CLIENT_LOGIN, 0, (LPARAM)testData);
         }
         else
         {

@@ -28,8 +28,12 @@ public:
 
 	// UI 관련 함수
 	static void SetMainWin(HWND hwnd) { s_hMainWin = hwnd; }
+	static void SetLobbyWin(HWND hwnd) { s_hLobbyWin = hwnd; }
+	static void SetChatWin(HWND hwnd) { s_hChatWin = hwnd; }
 
 	static HWND s_hMainWin;
+	static HWND s_hLobbyWin;
+	static HWND s_hChatWin;
 private:
 };
 

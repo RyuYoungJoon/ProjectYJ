@@ -17,8 +17,5 @@ public:
 
 	void Reset();  
 	vector<PlayerPtr> m_Player;
-private:  
-	//PacketHandler m_PacketHandler;  
-
-	ObjectPool<AsioSession> m_SessionPool;
+private:
 };

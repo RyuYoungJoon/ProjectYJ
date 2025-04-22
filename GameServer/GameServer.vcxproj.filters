@@ -10,6 +10,9 @@
     <Filter Include="Contents">
       <UniqueIdentifier>{3175982d-5d91-47ff-b3d3-97c2b681a9ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Contents\Manager">
+      <UniqueIdentifier>{32ce916f-9b1a-48f8-a9df-f4edbbdba760}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameServer.cpp">
@@ -30,6 +33,9 @@
     <ClCompile Include="Player.cpp">
       <Filter>Contents</Filter>
     </ClCompile>
+    <ClCompile Include="ChatRoomManager.cpp">
+      <Filter>Contents\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -49,5 +55,8 @@
       <Filter>Contents</Filter>
     </ClInclude>
     <ClInclude Include="enum.h" />
+    <ClInclude Include="ChatRoomManager.h">
+      <Filter>Contents\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

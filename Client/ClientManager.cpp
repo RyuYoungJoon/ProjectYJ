@@ -74,7 +74,7 @@ void ClientManager::Process()
 
 				for (int i = 0; i < 100; ++i)
 				{
-					session.second->Send(message, PacketType::YJ);
+					//session.second->Send(message, PacketType::YJ);
 				}
 			}
 			

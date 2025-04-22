@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "PacketBuffer.h"
 #include "TaskQueue.h"
+#include "ObjectPool.h"
 
 class AsioService;
 
@@ -16,7 +17,6 @@ public:
 
     void ProcessRecv();
     void ProcessDisconnect(const char* pCallback);
-    void Send(const std::string& message, const PacketType packetType);
     bool Connect(const string& host, const string& port);
     void Disconnect();
 
@@ -46,6 +46,27 @@ public:
 
     boost::asio::io_context* GetIocontext() { return m_IoContext; }
 
+    template<typename TPacket>
+    void Send(const TPacket& packet)
+    {
+        static std::atomic<uint32> seqNum(0);
+
+        TPacket* sendPacket = PacketPool::GetInstance().Pop<TPacket>();
+        *sendPacket = packet;
+
+        sendPacket->header.seqNum = seqNum.fetch_add(1);
+
+        std::memset(sendPacket->header.checkSum, 0x12, sizeof(sendPacket->header.checkSum));
+        std::memset(sendPacket->header.checkSum + 1, 0x34, sizeof(sendPacket->header.checkSum) - 1);
+
+        sendPacket->header.size = static_cast<uint32>(sizeof(TPacket));
+
+        sendPacket->tail.value = 255;
+
+        m_Socket->async_write_some(boost::asio::buffer(sendPacket, sendPacket->header.size),
+            std::bind(&AsioSession::HandleWrite<TPacket>, shared_from_this(), std::placeholders::_1, std::placeholders::_2, sendPacket));
+    }
+
 protected:
     virtual void OnSend(int32 len) { }
     virtual int32 OnRecv(BYTE* buffer, int32 len) { return len; }
@@ -60,7 +81,24 @@ protected:
 private:
     void DoRead();
     void HandleRead(boost::system::error_code ec, int32 length);
-    void HandleWrite(boost::system::error_code ec, int32 length, Packet* packet);
+
+    template<typename TPacket>
+    void HandleWrite(boost::system::error_code ec, int32 length, TPacket* packet)
+    {
+        if (ec)
+        {
+            LOGE << "Session Close : " << ec.value() << ", Message : " << ec.message();
+
+            ProcessDisconnect(__FUNCTION__);
+        }
+        else
+        {
+            OnSend(length);
+        }
+
+        PacketPool::GetInstance().Push(packet);
+    }
+
 
 private:
     std::mutex m_Mutex;

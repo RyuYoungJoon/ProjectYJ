@@ -4,6 +4,8 @@
 #include "Logger.h"
 #include "Player.h"
 #include "ChatRoom.h"
+#include "ChatRoomManager.h"
+
 
 atomic<int> a;
 PacketHandler::PacketHandler()
@@ -16,12 +18,11 @@ PacketHandler::~PacketHandler()
 }
 void PacketHandler::Init()
 {
-	RegisterHandler(PacketType::defEchoString, std::bind(&PacketHandler::HandledefEchoString, this, std::placeholders::_1, std::placeholders::_2));
-	RegisterHandler(PacketType::JH, std::bind(&PacketHandler::HandleJH, this, std::placeholders::_1, std::placeholders::_2));
-	RegisterHandler(PacketType::YJ, std::bind(&PacketHandler::HandleYJ, this, std::placeholders::_1, std::placeholders::_2));
-	RegisterHandler(PacketType::ES, std::bind(&PacketHandler::HandleES, this, std::placeholders::_1, std::placeholders::_2));
     RegisterHandler(PacketType::ChatReq, std::bind(&PacketHandler::HandleChatReq, this, std::placeholders::_1, std::placeholders::_2));
     RegisterHandler(PacketType::LoginReq, std::bind(&PacketHandler::HandleLoginReq, this, std::placeholders::_1, std::placeholders::_2));
+    RegisterHandler(PacketType::RoomEnterReq, std::bind(&PacketHandler::HandleRoomEnterReq , this, std::placeholders::_1, std::placeholders::_2));
+    RegisterHandler(PacketType::RoomCreateReq, std::bind(&PacketHandler::HandleRoomEnterReq, this, std::placeholders::_1, std::placeholders::_2));
+    RegisterHandler(PacketType::RoomListReq, std::bind(&PacketHandler::HandleRoomEnterReq, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
@@ -35,14 +36,15 @@ void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
         m_RecvCount.emplace(packetType, 0);
 }
 
-void PacketHandler::HandlePacket(AsioSessionPtr session, Packet* packet)
+void PacketHandler::HandlePacket(AsioSessionPtr session, BYTE* buffer)
 {
-    if (!packet || !session)
+    PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+
+    if (!header || !session)
         return;
 
     int32 sessionUID = session->GetSessionUID();
-    Packet* packetRef = packet;
-
+    
     std::lock_guard<std::mutex> lock(m_Mutex);
 
     // 처음 받는 패킷이면 시퀀스 번호 초기화 (0부터 시작)
@@ -51,48 +53,15 @@ void PacketHandler::HandlePacket(AsioSessionPtr session, Packet* packet)
         m_NextSeq[sessionUID] = 0;
     }
 
-    auto it = m_Handlers.find(packet->header.type);
+    auto it = m_Handlers.find(header->type);
     if (it != m_Handlers.end())
     {
-        it->second(session, packetRef);
+        it->second(session, buffer);
     }
     else
     {
-        HandleInvalid(session, packetRef);
+        HandleInvalid(session, buffer);
     }
-
-    // 현재 받은 패킷의 시퀀스 번호
-    //int32 receivedSeqNum = packet->header.seqNum;
-    //int32 expectedSeqNum = m_NextSeq[sessionUID];
-
-    //if (receivedSeqNum == expectedSeqNum)
-    //{
-    //    // 기대한 시퀀스 번호와 일치하면 바로 처리
-    //    auto it = m_Handlers.find(packet->header.type);
-    //    if (it != m_Handlers.end())
-    //    {
-    //        it->second(session, packetRef);
-    //    }
-    //    else
-    //    {
-    //        HandleInvalid(session, packetRef);
-    //    }
-
-    //    // 다음 시퀀스 번호 업데이트
-    //    m_NextSeq[sessionUID]++;
-    //}
-    //else if (receivedSeqNum > expectedSeqNum)
-    //{
-    //    // 기대한 것보다 높은 시퀀스 번호를 받았으면
-    //    LOGE << "시퀀스 처리 에러! Expected: " << expectedSeqNum
-    //        << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
-    //}
-    //else
-    //{
-    //    // 이미 처리한 패킷인 경우 (receivedSeqNum < expectedSeqNum)
-    //    LOGD << "이미 처리한 패킷! Expected: " << expectedSeqNum
-    //        << ", Received: " << receivedSeqNum << ", SessionUID: " << sessionUID;
-    //}
 }
 
 void PacketHandler::Reset(int32 sessionUID)
@@ -101,90 +70,10 @@ void PacketHandler::Reset(int32 sessionUID)
     m_NextSeq.erase(sessionUID);
 }
 
-void PacketHandler::HandledefEchoString(AsioSessionPtr& session, Packet* packet)
+void PacketHandler::HandleChatReq(AsioSessionPtr& session, BYTE* buffer)
 {
-	if (packet->header.type != PacketType::defEchoString)
-		return;
+    PacketChatReq* packet = reinterpret_cast<PacketChatReq*>(buffer);
 
-	GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
-	if (gameSession == nullptr)
-	{
-		LOGE << "Session Nullptr!";
-		return;
-	}
-
-    auto iter = m_RecvCount.find(packet->header.type);
-    if (iter != m_RecvCount.end())
-        iter->second.fetch_add(1);
-
-	LOGD << "SessionUID : "<<gameSession->GetSessionUID()<<", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload
-        << ", RecvCount : " << iter->second;
-}
-
-void PacketHandler::HandleJH(AsioSessionPtr& session, Packet* packet)
-{
-	if (packet->header.type != PacketType::JH)
-		return;
-
-	GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
-	if (gameSession == nullptr)
-	{
-		LOGE << "Session Nullptr!";
-		return;
-	}
-
-    auto iter = m_RecvCount.find(packet->header.type);
-    if (iter != m_RecvCount.end())
-        iter->second.fetch_add(1);
-
-	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload
-        << ", RecvCount : " << iter->second;
-	// 추가 처리 로직
-
-}
-
-void PacketHandler::HandleYJ(AsioSessionPtr& session, Packet* packet)
-{
-	if (packet->header.type != PacketType::YJ)
-		return;
-    
-	GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
-	if (gameSession == nullptr)
-	{
-		LOGE << "Session Nullptr!";
-		return;
-	}
-
-    auto iter = m_RecvCount.find(packet->header.type);
-    if (iter != m_RecvCount.end())
-        iter->second.fetch_add(1);
-
-    LOGD << "[" << a << "]SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload
-        << ", RecvCount : " << iter->second;
-}
-
-void PacketHandler::HandleES(AsioSessionPtr& session, Packet* packet)
-{
-	if (packet->header.type != PacketType::ES)
-		return;
-
-	GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
-	if (gameSession == nullptr)
-	{
-		LOGE << "Session Nullptr!";
-		return;
-	}
-
-    auto iter = m_RecvCount.find(packet->header.type);
-    if (iter != m_RecvCount.end())
-        iter->second.fetch_add(1);
-
-	LOGD << "SessionUID : " << gameSession->GetSessionUID() << ", [Seq : " << packet->header.seqNum << "] -> Payload : " << packet->payload
-        << ", RecvCount : " << iter->second;
-}
-
-void PacketHandler::HandleChatReq(AsioSessionPtr& session, Packet* packet)
-{
     if (packet->header.type != PacketType::ChatReq)
         return;
 
@@ -195,14 +84,18 @@ void PacketHandler::HandleChatReq(AsioSessionPtr& session, Packet* packet)
         return;
     }
 
-    LOGD << "Client [" <<gameSession->GetSessionUID()<<"] -> " << "Send Message : " << packet->payload;
-    std::string message(reinterpret_cast<char*>(packet->payload), sizeof(packet->payload));
+    LOGD << "Client [" <<gameSession->GetSessionUID()<<"] -> " << "Send Message : " << packet->payload.message;
+    
+    PacketChatAck ackPacket;
+    ackPacket.payload.message = packet->payload.message;
 
-    GRoom.BroadCast(message);
+    //GRoom.BroadCast(ackPacket.payload.message);
 }
 
-void PacketHandler::HandleLoginReq(AsioSessionPtr& session, Packet* packet)
+void PacketHandler::HandleLoginReq(AsioSessionPtr& session, BYTE* buffer)
 {
+    PacketLoginReq* packet = reinterpret_cast<PacketLoginReq*>(buffer);
+
     if (packet->header.type != PacketType::LoginReq)
         return;
 
@@ -216,18 +109,86 @@ void PacketHandler::HandleLoginReq(AsioSessionPtr& session, Packet* packet)
     LOGD << "Login Sucess!";
 
     PlayerPtr player = make_shared<Player>();
-    player->playerUID = gameSession->GetSessionUID();
+    player->m_PlayerUID = gameSession->GetSessionUID();
     player->ownerSession = gameSession;
-    player->name = "Player1";
+    player->m_Name = "Player1";
 
     gameSession->m_Player.push_back(player);
 
-    GRoom.Enter(player);
+    //GRoom.Enter(player);
 
-    gameSession->Send("LoginAck", PacketType::LoginAck);
+    PacketLoginAck ackPacket;
+    ackPacket.header.type = PacketType::LoginAck;
+    ackPacket.payload.id = player->m_Name;
+
+    gameSession->Send(ackPacket);
 }
 
-void PacketHandler::HandleInvalid(AsioSessionPtr& session, Packet* packet)
+void PacketHandler::HandleRoomEnterReq(AsioSessionPtr& session, BYTE* buffer)
 {
-	LOGE << "Unknown Packet Type : " << static_cast<int16>(packet->header.type);
+    PacketRoomEnterReq* packet = reinterpret_cast<PacketRoomEnterReq*>(buffer);
+
+    if (packet->header.type != PacketType::RoomEnterReq)
+        return;
+
+    GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
+    if (gameSession == nullptr)
+    {
+        LOGE << "Session Nullptr!";
+        return;
+    }
+
+    ChatRoomPtr chatRoom = make_shared<ChatRoom>();
+
+    PacketRoomEnterAck sendPacket;
+    sendPacket.header.type = PacketType::RoomEnterAck;
+    sendPacket.payload.roomID = 1;
+    sendPacket.payload.roomName = "하이";
+    sendPacket.payload.message = "안녕하세요.";
+
+    gameSession->Send(sendPacket);
+}
+
+void PacketHandler::HandleRoomCreateReq(AsioSessionPtr& session, BYTE* buffer)
+{
+    
+}
+
+void PacketHandler::HandleRoomListReq(AsioSessionPtr& session, BYTE* buffer)
+{
+    PacketRoomListReq* packet = reinterpret_cast<PacketRoomListReq*>(buffer);
+
+    if (packet->header.type != PacketType::RoomListReq)
+        return;
+
+    GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
+    if (gameSession == nullptr)
+    {
+        LOGE << "Session Nullptr!";
+        return;
+    }
+
+    PlayerPtr player = make_shared<Player>();
+    player->m_PlayerUID = gameSession->GetSessionUID();
+    player->m_ChatRoomID;
+
+    auto roomInfo = ChatRoomManager::GetInstance().GetAllRoom();
+
+    PacketRoomListAck sendPacket;
+    sendPacket.header.type = PacketType::RoomListAck;
+
+    for (const auto& tempRoom : roomInfo)
+    {
+        ChatRoomPtr room = tempRoom.second;
+        sendPacket.payload.chatRoomInfo.push_back(room->GetRoomInfo());
+    }
+
+    gameSession->Send(sendPacket);
+}
+
+void PacketHandler::HandleInvalid(AsioSessionPtr& session, BYTE* buffer)
+{
+    PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+
+	LOGE << "Unknown Packet Type : " << static_cast<int16>(header->type);
 }
