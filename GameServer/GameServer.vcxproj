@@ -201,6 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChatRoom.h" />
+    <ClInclude Include="enum.h" />
     <ClInclude Include="GameSession.h" />
     <ClInclude Include="PacketHandler.h" />
     <ClInclude Include="pch.h" />

@@ -7,6 +7,9 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{c88d8cf7-305f-43da-a51e-6f84eabbd922}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Window">
+      <UniqueIdentifier>{422dfce9-13ee-462f-b313-bd2561ed01e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -21,11 +24,20 @@
     <ClCompile Include="ClientSession.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="ChatWindow.cpp">
-      <Filter>Main</Filter>
-    </ClCompile>
     <ClCompile Include="PacketHandler.cpp">
       <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatWindow.cpp">
+      <Filter>Window</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginWindow.cpp">
+      <Filter>Window</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyWindow.cpp">
+      <Filter>Window</Filter>
+    </ClCompile>
+    <ClCompile Include="WinUtils.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -41,11 +53,20 @@
     <ClInclude Include="ClientSession.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="ChatWindow.h">
-      <Filter>Main</Filter>
-    </ClInclude>
     <ClInclude Include="PacketHandler.h">
       <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatWindow.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginWindow.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyWindow.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="WinUtils.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

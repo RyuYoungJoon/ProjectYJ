@@ -48,5 +48,6 @@
     <ClInclude Include="Player.h">
       <Filter>Contents</Filter>
     </ClInclude>
+    <ClInclude Include="enum.h" />
   </ItemGroup>
 </Project>
