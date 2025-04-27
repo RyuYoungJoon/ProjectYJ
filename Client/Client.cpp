@@ -251,6 +251,20 @@ LRESULT MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		// 로그인 성공 시 채팅방 목록 창 표시
 		if (g_loginWindow && g_lobbyWindow)
 		{
+			// 로그인 응답 처리
+			LoginResponseData* data = (LoginResponseData*)lParam;
+			if (data) {
+				if (data->result == LOGIN_SUCCESS) {
+					g_loginWindow->OnLoginSuccess(data->userId);
+				}
+				else {
+					g_loginWindow->OnLoginFail(data->message);
+				}
+
+				// 메모리 해제
+				delete data;
+			}
+
 			g_lobbyWindow->Show(g_loginWindow->GetUserID());
 		}
 		return 0;

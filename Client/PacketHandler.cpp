@@ -17,6 +17,7 @@ void PacketHandler::Init()
     RegisterHandler(PacketType::ChatAck, std::bind(&PacketHandler::HandleChatAck, this, std::placeholders::_1, std::placeholders::_2));
     RegisterHandler(PacketType::RoomEnterAck, std::bind(&PacketHandler::HandleRoomEnterAck, this, std::placeholders::_1, std::placeholders::_2));
     RegisterHandler(PacketType::RoomListAck, std::bind(&PacketHandler::HandleRoomListAck, this, std::placeholders::_1, std::placeholders::_2));
+    RegisterHandler(PacketType::RoomCreateAck, std::bind(&PacketHandler::HandleRoomCreateAck, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
@@ -40,12 +41,6 @@ void PacketHandler::HandlePacket(AsioSessionPtr session, BYTE* buffer)
     int32 sessionUID = session->GetSessionUID();
 
     std::lock_guard<std::mutex> lock(m_Mutex);
-
-    // 처음 받는 패킷이면 시퀀스 번호 초기화 (0부터 시작)
-    if (m_NextSeq.find(sessionUID) == m_NextSeq.end())
-    {
-        m_NextSeq[sessionUID] = 0;
-    }
 
     auto it = m_Handlers.find(header->type);
     if (it != m_Handlers.end())
@@ -120,10 +115,8 @@ void PacketHandler::HandleRoomEnterAck(AsioSessionPtr& session, BYTE* buffer)
     // 채팅창으로 전환 메시지 전송
     // 선택한 채팅방 ID와 이름 정보를 담은 구조체 생성
     ChatRoomResponseData* data = new ChatRoomResponseData();
-    data->result = CHATROOM_SUCCESS;
     data->roomId = packet->payload.roomID;
     data->roomName = packet->payload.roomName;
-    data->message = packet->payload.message;
     
     ::PostMessage(clientSession->s_hChatWin, WM_ENTER_CHATROOM, 0, (LPARAM)data);
 }
@@ -142,9 +135,30 @@ void PacketHandler::HandleRoomListAck(AsioSessionPtr& session, BYTE* buffer)
     }
 
     ChatRoomListResponseData* data = new ChatRoomListResponseData();
-    data->rooms = packet->payload.chatRoomInfo;
+    //data->rooms = packet->payload.chatRoomInfo;
+    data->rooms = std::move(packet->payload.chatRoomInfo);
 
     ::PostMessage(clientSession->s_hLobbyWin, WM_CLIENT_CHATROOM_LIST, 0, (LPARAM)data);
+}
+
+void PacketHandler::HandleRoomCreateAck(AsioSessionPtr& session, BYTE* buffer)
+{
+    PacketRoomCreateAck* packet = reinterpret_cast<PacketRoomCreateAck*>(buffer);
+    if (packet->header.type != PacketType::RoomCreateAck)
+        return;
+    
+    ClientSessionPtr clientSession = static_pointer_cast<ClientSession>(session);
+    if (clientSession == nullptr)
+    {
+        LOGE << "Session Nullptr!";
+        return;
+    }
+
+    ChatRoomResponseData* data = new ChatRoomResponseData();
+    data->roomId = packet->payload.roomID;
+    data->roomName = packet->payload.roomName;
+
+    ::PostMessage(clientSession->s_hLobbyWin, WM_CLIENT_CHATROOM_CREATE, 0, (LPARAM)data);
 }
 
 void PacketHandler::Reset(int32 sessionUID)

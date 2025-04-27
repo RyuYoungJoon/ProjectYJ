@@ -32,6 +32,7 @@ public:
 
     // 창 핸들 얻기
     HWND GetHandle() const { return m_hWnd; }
+    std::vector<ChatRoomInfo> m_chatRooms;  // 채팅방 목록 데이터
 
 private:
     // 윈도우 핸들 및 컨트롤
@@ -45,7 +46,6 @@ private:
     HWND m_hParentHandle;
 
     std::string m_currentUserId;   // 현재 로그인한 사용자 ID
-    std::vector<ChatRoomInfo> m_chatRooms;  // 채팅방 목록 데이터
 
     // 윈도우 프로시저 (static으로 선언해야 Win32 API에서 사용 가능)
     static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

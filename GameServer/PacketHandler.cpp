@@ -21,8 +21,8 @@ void PacketHandler::Init()
     RegisterHandler(PacketType::ChatReq, std::bind(&PacketHandler::HandleChatReq, this, std::placeholders::_1, std::placeholders::_2));
     RegisterHandler(PacketType::LoginReq, std::bind(&PacketHandler::HandleLoginReq, this, std::placeholders::_1, std::placeholders::_2));
     RegisterHandler(PacketType::RoomEnterReq, std::bind(&PacketHandler::HandleRoomEnterReq , this, std::placeholders::_1, std::placeholders::_2));
-    RegisterHandler(PacketType::RoomCreateReq, std::bind(&PacketHandler::HandleRoomEnterReq, this, std::placeholders::_1, std::placeholders::_2));
-    RegisterHandler(PacketType::RoomListReq, std::bind(&PacketHandler::HandleRoomEnterReq, this, std::placeholders::_1, std::placeholders::_2));
+    RegisterHandler(PacketType::RoomCreateReq, std::bind(&PacketHandler::HandleRoomCreateReq, this, std::placeholders::_1, std::placeholders::_2));
+    RegisterHandler(PacketType::RoomListReq, std::bind(&PacketHandler::HandleRoomListReq, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
@@ -151,14 +151,8 @@ void PacketHandler::HandleRoomEnterReq(AsioSessionPtr& session, BYTE* buffer)
 
 void PacketHandler::HandleRoomCreateReq(AsioSessionPtr& session, BYTE* buffer)
 {
-    
-}
-
-void PacketHandler::HandleRoomListReq(AsioSessionPtr& session, BYTE* buffer)
-{
-    PacketRoomListReq* packet = reinterpret_cast<PacketRoomListReq*>(buffer);
-
-    if (packet->header.type != PacketType::RoomListReq)
+    PacketRoomCreateReq* packet = reinterpret_cast<PacketRoomCreateReq*>(buffer);
+    if (packet->header.type != PacketType::RoomCreateReq)
         return;
 
     GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
@@ -168,9 +162,33 @@ void PacketHandler::HandleRoomListReq(AsioSessionPtr& session, BYTE* buffer)
         return;
     }
 
-    PlayerPtr player = make_shared<Player>();
-    player->m_PlayerUID = gameSession->GetSessionUID();
-    player->m_ChatRoomID;
+    ChatRoomPtr newRoom = ChatRoomManager::GetInstance().CreateRoom(packet->payload.roomName, 10);
+
+    LOGI << "CreateRoom : " << packet->payload.roomName << ", ID : " << newRoom->GetRoomID();
+
+    PacketRoomCreateAck ackPacket;
+    ackPacket.header.type = PacketType::RoomCreateAck;
+    ackPacket.payload.roomID = newRoom->GetRoomID();
+    ackPacket.payload.roomName = newRoom->GetRoomName();
+
+    gameSession->Send(ackPacket);
+}
+
+void PacketHandler::HandleRoomListReq(AsioSessionPtr& session, BYTE* buffer)
+{
+    PacketRoomListReq* packet = reinterpret_cast<PacketRoomListReq*>(buffer);
+
+    if (packet->header.type != PacketType::RoomListReq)
+        return;
+
+    LOGI << "RoomListReq!";
+
+    GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
+    if (gameSession == nullptr)
+    {
+        LOGE << "Session Nullptr!";
+        return;
+    }
 
     auto roomInfo = ChatRoomManager::GetInstance().GetAllRoom();
 
@@ -180,8 +198,15 @@ void PacketHandler::HandleRoomListReq(AsioSessionPtr& session, BYTE* buffer)
     for (const auto& tempRoom : roomInfo)
     {
         ChatRoomPtr room = tempRoom.second;
+        auto info = room->GetRoomInfo();
+        LOGI <<"RoomID : " << info.roomID 
+            //<< ", RoomName : " << info.roomName 
+            << ", CurrentUser : " << info.currentUser 
+            << ", MaxUser" << info.maxUser;
         sendPacket.payload.chatRoomInfo.push_back(room->GetRoomInfo());
     }
+
+    LOGD << sizeof(sendPacket.header) + sizeof(sendPacket.payload) + sizeof(sendPacket.tail);
 
     gameSession->Send(sendPacket);
 }

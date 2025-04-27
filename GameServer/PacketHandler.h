@@ -10,6 +10,7 @@ public:
 	using HandlerFunc = std::function<void(AsioSessionPtr&, BYTE*)>;
 	
 	static PacketHandler& GetInstance()
+
 	{
 		static PacketHandler instance;
 		return instance;

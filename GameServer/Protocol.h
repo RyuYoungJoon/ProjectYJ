@@ -88,12 +88,13 @@ struct RoomEnterPayloadAck
 
 struct RoomCreatePayloadReq
 {
-
+	std::string roomName;
 };
 
 struct RoomCreatePayloadAck
 {
-
+	uint16 roomID;
+	std::string roomName;
 };
 
 struct RoomListPayloadReq

@@ -52,7 +52,7 @@ ChatRoomInfo ChatRoom::GetRoomInfo()
 {
 	ChatRoomInfo info;
 	info.roomID = m_RoomID;
-	info.roomName = m_RoomName;
+	//info.roomName = m_RoomName;
 	info.currentUser = GetCurrentUser();
 	info.maxUser = m_MaxUser;
 

@@ -126,13 +126,6 @@ void LoginWindow::OnLoginSuccess(const std::string& userID)
 {
     m_UserID = userID;
     Hide();
-
-    extern HWND g_hMainWnd;
-
-    // 여기서 채팅방 목록 창을 띄우는 로직은 Client.cpp에서 처리할 예정
-    // LoginWindow는 단순히 로그인 성공 이벤트만 발생시킴
-    // WM_LOGIN_SUCCESS 메시지를 메인 윈도우에게 보내 처리하도록 함
-    ::PostMessage(m_hParentHandle, WM_LOGIN_SUCCESS, 0, 0);
 }
 
 void LoginWindow::OnLoginFail(const std::string& error)
@@ -156,23 +149,6 @@ LRESULT LoginWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             pThis->TryLogin();
         }
         break;
-
-    case WM_CLIENT_LOGIN:
-    {
-        // 로그인 응답 처리
-        LoginResponseData* data = (LoginResponseData*)lParam;
-        if (data) {
-            if (data->result == LOGIN_SUCCESS) {
-                pThis->OnLoginSuccess(data->userId);
-            }
-            else {
-                pThis->OnLoginFail(data->message);
-            }
-
-            // 메모리 해제
-            delete data;
-        }
-    }
     break;
 
     case WM_DESTROY:

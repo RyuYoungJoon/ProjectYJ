@@ -71,12 +71,12 @@ void LobbyWindow::Show(const std::string& userId)
 
     // 채팅방 목록 데이터 요청 (테스트 데이터로 대체)
     // 실제로는 서버에 요청을 보내고 응답을 받아야 함
-    std::vector<ChatRoomInfo> testRooms = {
+    /*std::vector<ChatRoomInfo> testRooms = {
         {1, "일반 대화방", 5, 20},
         {2, "게임 토론방", 10, 30},
         {3, "음악 감상방", 3, 10}
     };
-    UpdateLobby(testRooms);
+    UpdateLobby(testRooms);*/
 
     // 채팅방 목록 요청 패킷 전송
     auto& ClientManager = ClientManager::GetInstance();
@@ -118,22 +118,10 @@ void LobbyWindow::RefreshRoomList()
         auto session = sessions.begin()->second;
         if (session)
         {
-            //static_cast<ClientSession*>(session.get())->Send("", PacketType::RoomListReq);
+            PacketRoomListReq packet;
+            static_cast<ClientSession*>(session.get())->Send(packet);
         }
     }
-
-    // 테스트를 위한 임의 데이터 생성
-    std::vector<ChatRoomInfo> updatedRooms = m_chatRooms;
-
-    // 각 방의 사용자 수를 임의로 변경
-    for (auto& room : updatedRooms) {
-        // 1~5명씩 랜덤하게 증감
-        int change = (rand() % 5) - 2;
-        room.currentUser = 3;
-    }
-
-    UpdateLobby(updatedRooms);
-    MessageBoxW(m_hWnd, L"채팅방 목록이 갱신되었습니다.", L"알림", MB_ICONINFORMATION);
 }
 
 void LobbyWindow::EnterChatRoom(int roomId)
@@ -159,10 +147,10 @@ void LobbyWindow::EnterChatRoom(int roomId)
     }
 
     // 채팅방 입장 확인 메시지
-    std::wstring message = L"'" + WinUtils::StringToWString(selectedRoom.roomName) +
-        L"' 채팅방에 입장하시겠습니까?";
+    //std::wstring message = L"'" + WinUtils::StringToWString(selectedRoom.roomName) +
+    //    L"' 채팅방에 입장하시겠습니까?";
 
-    if (MessageBoxW(m_hWnd, message.c_str(), L"채팅방 입장", MB_YESNO | MB_ICONQUESTION) == IDYES)
+    if (MessageBoxW(m_hWnd, L"", L"채팅방 입장", MB_YESNO | MB_ICONQUESTION) == IDYES)
     {
         // 서버에 채팅방 입장 요청 패킷 전송
         auto& ClientManager = ClientManager::GetInstance();
@@ -209,25 +197,27 @@ void LobbyWindow::CreateNewChatRoom(const std::string& roomName)
         if (session)
         {
             // 채팅방 생성 요청 패킷 전송 (format: "roomName|maxUsers")
-            //static_cast<ClientSession*>(session.get())->Send(roomName + "|20", PacketType::RoomCreateReq);
+            PacketRoomCreateReq packet;
+            packet.payload.roomName = roomName;
+            static_cast<ClientSession*>(session.get())->Send(packet);
 
             // 채팅방 생성 처리는 WM_CLIENT_CHATROOM_CREATE 메시지 핸들러에서 처리
         }
     }
 
-    // 테스트를 위한 임시 처리
-    MessageBoxA(m_hWnd, (roomName + " 채팅방이 생성되었습니다.").c_str(), "채팅방 생성", MB_ICONINFORMATION);
+    //// 테스트를 위한 임시 처리
+    //MessageBoxA(m_hWnd, (roomName + " 채팅방이 생성되었습니다.").c_str(), "채팅방 생성", MB_ICONINFORMATION);
 
-    // 새로 생성된 채팅방을 목록에 추가 (실제로는 서버에서 목록을 다시 받아야 함)
-    ChatRoomInfo newRoom = {
-        (int)m_chatRooms.size() + 1,  // 임시 ID
-        roomName,
-        1,  // 자기 자신
-        20  // 기본 최대 인원
-    };
+    //// 새로 생성된 채팅방을 목록에 추가 (실제로는 서버에서 목록을 다시 받아야 함)
+    //ChatRoomInfo newRoom = {
+    //    (int)m_chatRooms.size() + 1,  // 임시 ID
+    //    roomName,
+    //    1,  // 자기 자신
+    //    20  // 기본 최대 인원
+    //};
 
-    m_chatRooms.push_back(newRoom);
-    UpdateLobby(m_chatRooms);
+    //m_chatRooms.push_back(newRoom);
+    //UpdateLobby(m_chatRooms);
 }
 
 void LobbyWindow::UpdateLobby(const std::vector<ChatRoomInfo>& roomList)
@@ -240,8 +230,7 @@ void LobbyWindow::UpdateLobby(const std::vector<ChatRoomInfo>& roomList)
     // 각 채팅방 정보를 리스트박스에 추가
     for (const auto& room : m_chatRooms)
     {
-        std::wstring itemText = L">>" + WinUtils::StringToWString(room.roomName) +
-            L" (" + std::to_wstring(room.currentUser) +
+        std::wstring itemText = /*WinUtils::StringToWString(room.roomID) +*/ L" (" + std::to_wstring(room.currentUser) +
             L"/" + std::to_wstring(room.maxUser) + L")";
         SendMessage(m_hRoomList, LB_ADDSTRING, 0, (LPARAM)itemText.c_str());
     }
@@ -305,13 +294,14 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         if (pThis) {
             // 채팅방 목록 응답 처리
             ChatRoomListResponseData* data = (ChatRoomListResponseData*)lParam;
-            if (data) {
+            if (data) 
+            {
                 // 채팅방 목록 업데이트
                 std::vector<ChatRoomInfo> roomList;
                 for (const auto& roomData : data->rooms) {
                     ChatRoomInfo roomInfo;
                     roomInfo.roomID = roomData.roomID;
-                    roomInfo.roomName = roomData.roomName;
+                    //roomInfo.roomName = roomData.roomName;
                     roomInfo.currentUser = roomData.currentUser;
                     roomInfo.maxUser = roomData.maxUser;
                     roomList.push_back(roomInfo);
@@ -322,7 +312,6 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 // 메모리 해제
                 delete data;
             }
-            return 0;
         }
         break;
 
@@ -330,54 +319,52 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         if (pThis) {
             // 채팅방 입장 응답 처리
             ChatRoomResponseData* data = (ChatRoomResponseData*)lParam;
-            if (data) {
-                if (data->result == CHATROOM_SUCCESS) {
-                    // 채팅방 목록 창 숨기기
-                    pThis->Hide();
+            if (data)
+            {
+                // 채팅방 목록 창 숨기기
+                pThis->Hide();
 
-                    // 채팅창으로 전환 메시지 전송
-                    ::PostMessage(GetParent(hwnd), WM_ENTER_CHATROOM, 0, lParam);
-                    // lParam을 그대로 전달하므로 여기서는 메모리 해제하지 않음
-                }
-                else {
-                    MessageBoxW(hwnd, WinUtils::StringToWString(data->message).c_str(),
-                        L"채팅방 입장 실패", MB_ICONERROR);
-                    // 실패한 경우에만 메모리 해제
-                    delete data;
-                }
+                // 채팅창으로 전환 메시지 전송
+                ::PostMessage(GetParent(hwnd), WM_ENTER_CHATROOM, 0, lParam);
+                // lParam을 그대로 전달하므로 여기서는 메모리 해제하지 않음
             }
-            return 0;
+            else
+            {
+                //MessageBoxW(hwnd, WinUtils::StringToWString(data->message).c_str(), L"채팅방 입장 실패", MB_ICONERROR);
+                // 실패한 경우에만 메모리 해제
+                delete data;
+
+            }
         }
         break;
-
     case WM_CLIENT_CHATROOM_CREATE:
-        if (pThis) {
+        if (pThis)
+        {
             // 채팅방 생성 응답 처리
             ChatRoomResponseData* data = (ChatRoomResponseData*)lParam;
-            if (data) {
-                if (data->result == CHATROOM_SUCCESS) {
-                    MessageBoxW(hwnd, WinUtils::StringToWString("채팅방 '" + data->roomName +
-                        "'이(가) 생성되었습니다.").c_str(),
-                        L"채팅방 생성 성공", MB_ICONINFORMATION);
+            if (data)
+            {
+                MessageBoxW(hwnd, WinUtils::StringToWString("채팅방 '" + data->roomName + "'이(가) 생성되었습니다.").c_str(), L"채팅방 생성 성공", MB_ICONINFORMATION);
 
-                    // 목록 새로고침 요청
-                    pThis->RefreshRoomList();
-                }
-                else {
-                    MessageBoxW(hwnd, WinUtils::StringToWString(data->message).c_str(),
-                        L"채팅방 생성 실패", MB_ICONERROR);
-                }
+                ChatRoomInfo newRoom = { data->roomId, 1, 10 };
 
-                // 메모리 해제
-                delete data;
+                pThis->m_chatRooms.push_back(newRoom);
+                pThis->UpdateLobby(pThis->m_chatRooms);
+                // 목록 새로고침 요청
+                pThis->RefreshRoomList();
             }
-            return 0;
+            else {
+                //MessageBoxW(hwnd, WinUtils::StringToWString(data->message).c_str(), L"채팅방 생성 실패", MB_ICONERROR);
+            }
+
+            // 메모리 해제
+            delete data;
         }
         break;
 
     case WM_DESTROY:
         PostQuitMessage(0);
-        return 0;
+        break;
     }
 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);

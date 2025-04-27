@@ -60,6 +60,5 @@ private:
     int32 m_NumWorkers;
     std::vector<std::thread> m_WorkerThreads;
     std::vector<std::unique_ptr<Concurrency::concurrent_queue<PacketQueueItem>>> m_PacketQueue;
-    std::mutex m_HandlerMutex;
     PacketHandlerFunc m_CreateFunc = nullptr;
 };

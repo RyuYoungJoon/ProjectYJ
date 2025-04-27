@@ -77,8 +77,6 @@ void PacketRouter::Dispatch(AsioSessionPtr session, BYTE* buffer)
 
 shared_ptr<PacketProcessor> PacketRouter::CreatePacketHandler(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue, bool isRunning)
 {
-    std::lock_guard<std::mutex> lock(m_HandlerMutex);
-
     shared_ptr<PacketProcessor> processor = m_CreateFunc();
     processor->SetProcessor(id, m_PacketQueue[id].get(), m_IsRunning);
 
