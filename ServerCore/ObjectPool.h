@@ -82,11 +82,22 @@ public:
     }
 
     // 풀 초기화
+    template<typename TPacket>
     void Init(size_t initialSize = 1000)
     {
         Clean();
 
         m_PoolSize = initialSize;
+
+        auto typeIndex = std::type_index(typeid(TPacket));
+        auto& pool = m_PacketPool[typeIndex];
+
+        for (int i = 0; i < m_PoolSize; ++i)
+        {
+            TPacket* packet = new TPacket();
+            pool.push(packet);
+            m_TotalCount.fetch_add(1);
+        }
     }
 
     // 패킷 할당

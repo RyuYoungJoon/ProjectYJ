@@ -74,6 +74,7 @@ void ClientManager::DummyClientProcess()
 				int32 sessionId = session.first;
 				PacketDummyClientMessage packet;
 				memcpy(packet.payload.message, messages.c_str(), messages.length());
+
 				for (int i = 0; i < 100; ++i)
 				{
 					session.second->Send(packet);

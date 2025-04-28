@@ -25,6 +25,7 @@ public:
 
 	virtual void HandlePacket(AsioSessionPtr session, BYTE* packet) override;
 	
+	void HandleDummyClient(AsioSessionPtr& session, BYTE* buffer);
 	void HandleChatReq(AsioSessionPtr& session, BYTE* buffer);
 	void HandleLoginReq(AsioSessionPtr& session, BYTE* buffer);
 	void HandleRoomEnterReq(AsioSessionPtr& session, BYTE* buffer);
