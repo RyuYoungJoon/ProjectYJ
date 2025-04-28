@@ -2,6 +2,7 @@
 #include "PacketHandler.h"
 #include "GameSession.h"
 #include "Logger.h"
+#include "ServerAnalyzer.h"
 #include "Player.h"
 #include "ChatRoom.h"
 #include "ChatRoomManager.h"
@@ -18,6 +19,7 @@ PacketHandler::~PacketHandler()
 }
 void PacketHandler::Init()
 {
+    RegisterHandler(PacketType::StressTestPacket, std::bind(&PacketHandler::HandleDummyClient, this, std::placeholders::_1, std::placeholders::_2));
     RegisterHandler(PacketType::ChatReq, std::bind(&PacketHandler::HandleChatReq, this, std::placeholders::_1, std::placeholders::_2));
     RegisterHandler(PacketType::LoginReq, std::bind(&PacketHandler::HandleLoginReq, this, std::placeholders::_1, std::placeholders::_2));
     RegisterHandler(PacketType::RoomEnterReq, std::bind(&PacketHandler::HandleRoomEnterReq , this, std::placeholders::_1, std::placeholders::_2));
@@ -70,6 +72,27 @@ void PacketHandler::Reset(int32 sessionUID)
     m_NextSeq.erase(sessionUID);
 }
 
+void PacketHandler::HandleDummyClient(AsioSessionPtr& session, BYTE* buffer)
+{
+    PacketChatReq* packet = reinterpret_cast<PacketChatReq*>(buffer);
+
+    if (packet->header.type != PacketType::ChatReq)
+        return;
+
+    GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
+    if (gameSession == nullptr)
+    {
+        LOGE << "Session Nullptr!";
+        return;
+    }
+
+    ServerAnalyzer::GetInstance().IncrementRecvCnt();
+
+    // 받은 횟수 카운트
+    LOGD << "RecvCount : " << ServerAnalyzer::GetInstance().GetRecvCount() 
+        << ", TotalRecvCount : " << ServerAnalyzer::GetInstance().GetTotalRecvCount();
+}
+
 void PacketHandler::HandleChatReq(AsioSessionPtr& session, BYTE* buffer)
 {
     PacketChatReq* packet = reinterpret_cast<PacketChatReq*>(buffer);
@@ -89,7 +112,7 @@ void PacketHandler::HandleChatReq(AsioSessionPtr& session, BYTE* buffer)
     PacketChatAck ackPacket;
     ackPacket.payload.message = packet->payload.message;
 
-    //GRoom.BroadCast(ackPacket.payload.message);
+    GRoom.BroadCast(ackPacket.payload.message);
 }
 
 void PacketHandler::HandleLoginReq(AsioSessionPtr& session, BYTE* buffer)

@@ -3,10 +3,7 @@
 
 enum class PacketType : uint8_t
 {
-	defEchoString = 100,
-	JH = 101,
-	YJ = 102,
-	ES = 103,
+	StressTestPacket = 100,
 	ChatReq = 104,
 	ChatAck = 105,
 	LoginReq = 106,
@@ -52,6 +49,12 @@ struct Packet
 	}
 };
 // ÆÐÅ¶
+
+struct DummyClientMessage
+{
+	unsigned char message[128];
+};
+
 struct LoginPayloadReq
 {
 	std::string id;
@@ -107,6 +110,8 @@ struct RoomListPayloadAck
 	std::vector<ChatRoomInfo> chatRoomInfo;
 };
 
+
+using PacketDummyClientMessage = Packet<PacketType::StressTestPacket, DummyClientMessage>;
 using PacketLoginReq = Packet<PacketType::LoginReq, LoginPayloadReq>;
 using PacketLoginAck = Packet<PacketType::LoginAck, LoginPayloadAck>;
 using PacketChatReq = Packet<PacketType::ChatReq, ChatPayloadReq>;

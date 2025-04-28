@@ -129,6 +129,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	threadCnt = reader.GetInteger("client", "threadCnt", 10);
 	maxSessionCnt = reader.GetInteger("client", "maxSessionCnt", 10);
 	long packetPoolSize = reader.GetInteger("client", "PacketPoolSize", 10000);
+	long isStreesTest = reader.GetInteger("client", "IsStressTest", 0);
 
 	// 로그 폴더 설정
 	string logPath = filePath;
@@ -163,6 +164,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// 패킷 풀 Init
 		PacketPool::GetInstance().Init(packetPoolSize);
 
+		ClientManager::GetInstance().SetIsStressTest(isStreesTest);
+
 		clientService = std::make_shared<AsioClientService>(
 			ioContext,
 			serverIP,
@@ -190,7 +193,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 						return -1;
 					}
 
-					//ClientManager::GetInstance().Process();
+					if(ClientManager::GetInstance().GetIsStressTest())
+						ClientManager::GetInstance().DummyClientProcess();
 				}
 				catch (const std::exception& e) {
 					LOGE << "Thread exception: " << e.what();

@@ -23,7 +23,10 @@ public:
 	}
 
 	void Init(int32 sessionUid, AsioSessionPtr service);
-	void Process();
+	void DummyClientProcess();
+	
+	bool GetIsStressTest() { return m_IsStressTest; }
+	void SetIsStressTest(bool isStressTest) { m_IsStressTest = isStressTest; }
 
 	const std::map<int32, AsioSessionPtr>& GetSessions() const {
 		return m_Sessions;
@@ -44,6 +47,7 @@ private:
 	bool run = false;
 	int32 targetRandomCnt = 0;
 
+	bool m_IsStressTest;
 	std::condition_variable m_cv;
 };
 

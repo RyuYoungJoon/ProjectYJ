@@ -34,15 +34,18 @@ void ClientManager::Init(int32 sessionUid, AsioSessionPtr session)
 	int32 sessionSize = m_Sessions.size();
 	LOGD << "Session Size : " << sessionSize;
 
-	// TODO : 상수 값 대신 Config값을 읽어오기.
-	if (sessionSize == threadCnt * maxSessionCnt)
+	// 스트레스 테스트 플래그
+	if (m_IsStressTest == true)
 	{
-		//run = true;
-		//m_cv.notify_all();
+		if (sessionSize == threadCnt * maxSessionCnt)
+		{
+			run = true;
+			m_cv.notify_all();
+		}
 	}
 }
 
-void ClientManager::Process()
+void ClientManager::DummyClientProcess()
 {
 	std::unique_lock<std::mutex> lock(m_Mutex);
 	m_cv.wait(lock, [this]() { return run; });
@@ -61,24 +64,25 @@ void ClientManager::Process()
 			}
 			m_RunningState = RunningState::Send;
 		}
-			break;
+		break;
 		case RunningState::Send:
 		{
 			std::lock_guard<std::mutex> lock(m_Mutex);
 
-			string message("In multithreaded programming, it is crucial to use mutexes and condition variables");
+			string messages("In multithreaded programming, it is crucial to use mutexes and condition variables");
 			
 			for (auto& session : m_Sessions)
 			{
 				int32 sessionId = session.first;
+				PacketDummyClientMessage packet;
+                packet.payload.message = messages.c_str();
 
 				for (int i = 0; i < 100; ++i)
 				{
-					//session.second->Send(message, PacketType::YJ);
+					session.second->Send(packet);
 				}
 			}
 			
-			//run = false;
 			m_RunningState = RunningState::Disconnect;
 		}
 		break;
