@@ -8,8 +8,6 @@ extern ClientServicePtr clientService;
 extern int32 maxSessionCnt;
 extern int32 threadCnt;
 
-atomic<int> seqNumber;
-
 ClientManager::ClientManager()
 {
 	std::random_device rd;
@@ -75,8 +73,7 @@ void ClientManager::DummyClientProcess()
 			{
 				int32 sessionId = session.first;
 				PacketDummyClientMessage packet;
-                packet.payload.message = messages.c_str();
-
+				memcpy(packet.payload.message, messages.c_str(), messages.length());
 				for (int i = 0; i < 100; ++i)
 				{
 					session.second->Send(packet);
