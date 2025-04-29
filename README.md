@@ -1,93 +1,98 @@
-# Boost.Asio 네트워크 프로젝트
 
-## 프로젝트 소개
+# ProjectYJ - C++ 기반 채팅 서버 프로젝트
 
-Boost.Asio 라이브러리를 활용한 C++ 네트워크 통신 프레임워크입니다. 
-비동기 서버-클라이언트 구조를 기반으로 하며 메모리 풀 및 객체 풀을 통한 메모리 관리 시스템을 구현하였습니다.
-멀티스레드를 사용하여 Recv 이후의 로직 구현하였습니다.
+**ProjectYJ**는 C++17과 Boost.Asio를 기반으로 개발된 고성능 멀티스레드 채팅 서버입니다.  
+패킷 라우팅, 세션 관리, 채팅방 기능을 구조화하여 확장성과 안정성을 고려하여 설계되었습니다.
 
-## 프로젝트 흐름
+---
 
-Client에서 스레드 10개, 스레드당 100개의 소켓을 생성해서 Server에 Connect.
-Server에 Packet을 Send 후 Disconnect.
-다시 Server에 Connect 후 로직 반복.
+## ✨ 주요 기능
 
-## 프로젝트 구조
+- **비동기 네트워크 통신**: Boost.Asio를 이용한 비동기 소켓 처리
+- **로그인 및 세션 관리**: 고유 세션 UID 관리
+- **로비 시스템**: 채팅방 리스트 조회 및 채팅방 생성
+- **채팅방 시스템**: 다수 유저의 입장, 퇴장, 메시지 브로드캐스트
+- **멀티스레드 최적화**: concurrent_queue를 활용한 패킷 병렬 처리
+- **구조화된 패킷 라우팅**: PacketRouter를 통한 명확한 패킷 분기 처리
 
-ServerCore, GameServer, Client
+---
 
-### ServerCore
+## 🛠 사용 기술
 
-공통 기능을 제공하는 라이브러리 프로젝트입니다.
+- **C++17**
+- **Boost.Asio (비동기 IO 처리)**
+- **Concurrent Queue (멀티스레드 큐)**
+- **Multi-threading (패킷 처리 최적화)**
 
-#### 네트워크 핵심 컴포넌트
-- AsioSession: 네트워크 세션 관리
-- AsioService: 네트워크 서비스 기능
-- AsioIoContext: I/O 컨텍스트 관리
-- AsioAcceptor: 클라이언트 연결 수락
-- NetworkHandler: 네트워크 데이터 처리
-- PacketRouter: 패킷 라우팅
+---
 
-#### 메모리 관리 컴포넌트
-- ObjectPool: 객체 풀 관리
-- PacketBuffer: 패킷 버퍼링
-- SessionPacketBuffer: 송신 패킷 버퍼 관리
+## 🖥️ 프로젝트 구조
 
-#### 유틸리티 컴포넌트
-- TaskQueue: 작업 큐 관리
-- ServerAnalyzer: 서버 성능 분석
-- SessionManager: 세션 관리 및 추적
-- MyLogger: 로깅 기능
-
-### GameServer
-
-게임 서버 프로젝트.
-
-- GameServer.cpp: 서버 메인 진입점
-- GameSession: 게임 세션 관리
-- PacketHandler: 패킷 처리 로직
-
-### Client
-
-클라이언트 프로젝트.
-
-- Client.cpp: 클라이언트 메인 진입점
-- ClientSession: 클라이언트 세션 관리
-- ClientManager: 클라이언트 연결 관리
-
-## 데이터 흐름
-
-1. 클라이언트가 서버에 연결 요청을 보냅니다.
-2. AsioAcceptor가 연결을 수락하고 GameSession을 생성합니다.
-3. 클라이언트가 서버로 패킷을 전송합니다.
-4. 서버의 NetworkHandler가 패킷을 수신합니다.
-5. PacketRouter가 패킷 유형에 따라 적절한 PacketHandler로 전달합니다.
-6. PacketHandler가 패킷을 처리하고 응답을 생성합니다.
-7. 서버가 응답 패킷을 클라이언트로 전송합니다.
-
-## 설정 파일
-
-서버와 클라이언트는 각각 `ServerConfig.ini`와 `ClientConfig.ini` 파일을 통해 구성됩니다.
-
-### 서버 설정 예시
-
-```ini
-[server]
-address=127.0.0.1
-port=7777
-ThreadCnt=4
-PacketPoolSize = 10000
-SessionPoolSize = 10000
+```plaintext
+ProjectYJ/
+├── ServerCore/         # 네트워크 및 세션 핵심 모듈
+├── GameServer/         # 로비 및 채팅방 로직
+├── Protocol/           # 패킷 정의 및 직렬화/역직렬화
+├── Client/             # 테스트용 클라이언트
+└── README.md
 ```
 
-### 클라이언트 설정 예시
+---
 
-```ini
-[client]
-Address=127.0.0.1
-Port=7777
-threadCnt=10
-maxSessionCnt=100
-PacketPoolSize = 10000
-SessionPoolSize = 10000
+## 🚀 빌드 및 실행 방법
+
+### 1. 빌드 환경
+
+- Visual Studio 2022 이상
+- C++17 지원
+- Boost 1.78.0 이상 설치
+
+### 2. 빌드 방법
+
+- 솔루션 파일 열기
+- ServerCore, GameServer, Client 빌드
+
+### 3. 실행 순서
+
+1. `GameServer.exe` 실행 → 서버 시작
+2. `Client.exe` 실행 → 서버 접속 후 채팅 테스트
+
+---
+
+## 🏗️ 아키텍처 구조
+
+```mermaid
+flowchart LR
+    A[Client] -- TCP 통신 --> B[ServerCore - 네트워크]
+    B -- 세션 연결 관리 --> C[Session Manager]
+    B -- 수신 패킷 --> D[Packet Router]
+    D -- 명령 분기 --> E[GameServer - 로비 및 채팅방]
+    E -- 메시지 처리 --> D
+    D -- 응답 패킷 --> B
+    B -- 송신 --> A
 ```
+
+> 🔹 **ServerCore**는 저수준 네트워크 및 세션 관리를 담당하고,  
+> 🔹 **PacketRouter**는 패킷 종류에 따라 GameServer 로직으로 분기합니다.  
+> 🔹 **GameServer**는 로비/채팅방 로직을 처리하여 최종 응답을 생성합니다.
+
+---
+
+## 🎯 프로젝트 핵심 강조 포인트
+
+| 포인트            | 설명 |
+|:-------------------|:-----|
+| **모듈화된 구조**    | 네트워크, 패킷, 게임 로직이 명확히 분리되어 유지보수 및 확장 용이 |
+| **비동기 + 멀티스레드 최적화** | IO 처리와 패킷 처리를 분리하여 고부하 상황에도 안정적인 처리 |
+| **확장성 고려** | 새로운 기능 추가(예: 친구 추가, 귓속말 기능) 시 최소한의 수정으로 대응 가능 |
+
+---
+
+## 📈 개발 예정 사항
+
+- 클라이언트 재접속 처리
+- 채팅방 최대 인원 제한
+- 관리용 콘솔 커맨드 기능 추가
+- 서버 부하 분산 처리 (Worker Thread Pool 개선)
+
+---
