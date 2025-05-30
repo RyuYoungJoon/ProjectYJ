@@ -95,7 +95,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/IC:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>26495</DisableSpecificWarnings>
     </ClCompile>
@@ -120,7 +120,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/IC:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>26495</DisableSpecificWarnings>
     </ClCompile>
@@ -145,7 +145,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/IC:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>26495</DisableSpecificWarnings>
     </ClCompile>
@@ -170,7 +170,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDIr)boost_1_85_0;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/IC:\Users\ojoon02\Documents\GitHub\ProjectYJ\ThirdParty\plog %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>26495</DisableSpecificWarnings>
     </ClCompile>

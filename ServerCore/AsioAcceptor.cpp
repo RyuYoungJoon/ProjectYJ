@@ -2,6 +2,7 @@
 #include "AsioSession.h"
 #include "AsioService.h"
 #include "AsioAcceptor.h"
+#include "SocketUtil.h"
 
 void AsioAcceptor::Start()
 {
@@ -9,29 +10,6 @@ void AsioAcceptor::Start()
     {
         m_Acceptor.close();
     }
-
-    // Acceptor 열기
-    m_Acceptor.open(tcp::v4());
-    
-    // TODO 소켓 옵션 설정하는 클래스 만들기
-    // 소켓 옵션에 대해 공부해서 진짜 해야하는 옵션만 설정
-    // 소켓 옵션 설정
-    boost::asio::socket_base::reuse_address reuseAddrOpt(true);
-    boost::asio::socket_base::linger lingerOpt(true, 0);
-    boost::asio::ip::tcp::no_delay noDelayOpt(true);
-    boost::asio::socket_base::receive_buffer_size recvBufferSizeOpt(65536);
-    boost::asio::socket_base::send_buffer_size sendBufferSizeOpt(65536);
-    boost::asio::socket_base::keep_alive keepAliveOpt(true);
-    
-    m_Acceptor.set_option(reuseAddrOpt);
-    m_Acceptor.set_option(lingerOpt);
-    m_Acceptor.set_option(noDelayOpt);
-    m_Acceptor.set_option(recvBufferSizeOpt);
-    m_Acceptor.set_option(sendBufferSizeOpt);
-    m_Acceptor.set_option(keepAliveOpt);
-    
-    m_Acceptor.bind(tcp::endpoint(tcp::v4(), 7777));
-    m_Acceptor.listen(65536);
 
     DoAccept();
 }
@@ -53,7 +31,15 @@ void AsioAcceptor::Stop()
 void AsioAcceptor::DoAccept()
 {
     // 새로운 소켓 생성
+    // 소켓 풀 생성할까.
     auto newSocket = new tcp::socket(*m_IoContext);
+
+    SocketUtil<tcp> socketOption(newSocket);
+    socketOption.SetReuseAddress(true);
+    socketOption.SetLinger(false, 0);
+    socketOption.SetKeepAlive(true);
+    socketOption.SetNodelay(true);
+
     // 새 연결 받기
     m_Acceptor.async_accept(*newSocket, std::bind(&AsioAcceptor::HandleAccept, this, newSocket, std::placeholders::_1));
 }
