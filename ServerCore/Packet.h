@@ -16,14 +16,15 @@ enum class PacketType : uint8
 	UserListReq = 114,
 	UserListAck = 115,
 };
-
-enum class NetState : uint8
-{
-	None = 0,
-	Connecting = 1,
-	Connected = 2,
-	Disconnected = 3,
-};
+//
+//enum class NetState : uint8
+//{
+//	None = 0,
+//	Connecting = 1,
+//	Connected = 2,
+//	Disconnect = 3,
+//	Reconnect = 4,
+//};
 
 struct PacketHeader
 {
@@ -57,6 +58,13 @@ public:
 	Packet()
 	{
 		Reset();
+	}
+
+	Packet(const Packet& packet)
+	{
+		m_Header = packet.GetHeader();
+		memcpy(m_Payload, packet.GetPayload(), packet.GetPayloadSize());
+		m_PayloadSize = packet.GetPayloadSize();
 	}
 
 	void Reset()

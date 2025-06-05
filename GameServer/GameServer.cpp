@@ -33,7 +33,7 @@ void InputThread(boost::asio::io_context* ioContext)
 
 			TaskQueue::GetInstance().Shutdown();
 			LOGI << "Task queue shutdown complete";
-			PacketPool::GetInstance().Clean();
+			PacketPool::GetInstance().Clear();
 			LOGI << "PacketPool Clean complete";
 
 			ioContext->stop();
@@ -115,6 +115,7 @@ int main()
 			});
 
 		// 패킷 풀 Init
+		// TODO 수정
 		PacketPool::GetInstance().Init(packetPoolSize);
 
 		// 세션 풀 Init

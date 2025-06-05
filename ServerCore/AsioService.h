@@ -1,6 +1,4 @@
 #pragma once
-#include "ObjectPool.h"
-
 enum class ServiceType : uint8
 {
     Server,

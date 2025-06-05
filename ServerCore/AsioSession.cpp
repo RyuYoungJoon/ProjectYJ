@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Packet.h"
 #include "AsioSession.h"
 #include "AsioService.h"
 #include "NetworkHandler.h"
@@ -148,13 +149,51 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 	}
 }
 
+void AsioSession::Send(const Packet& packet)
+{
+	std::atomic<uint32> seqNum(0);
+
+	// PacketPool에서 Packet을 가져옴.
+	auto packetPtr = PacketPool::GetInstance().Pop();
+
+	*packetPtr = packet;
+
+	packetPtr->GetHeader().seqNum = seqNum.fetch_add(1);
+
+	packetPtr->SetCheckSum(0x12, 0x34);
+
+	uint32 totalSize = packetPtr->GetTotalSize();
+	std::vector<uint8> buffer(totalSize);
+
+	packetPtr->Serialize(buffer.data());
+
+	m_Socket->async_write_some(boost::asio::buffer(buffer.data(), totalSize),
+		std::bind(&AsioSession::HandleWrite, shared_from_this(), placeholders::_1, placeholders::_2, packetPtr));
+}
+
+void AsioSession::HandleWrite(boost::system::error_code ec, int32 length, shared_ptr<Packet> packet)
+{
+	if (ec)
+	{
+		LOGE << "Session Close : " << ec.value() << ", Message : " << ec.message();
+
+		ProcessDisconnect(__FUNCTION__);
+	}
+	else
+	{
+		OnSend(length);
+	}
+
+	PacketPool::GetInstance().Push(packet);
+}
+
 int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
 {
 	int32 processLen = 0;
 
 	while (true)
 	{
-		int32 dataSize = len - processLen;
+		uint32 dataSize = len - processLen;
 		if (dataSize < sizeof(PacketHeader))
 			break;
 

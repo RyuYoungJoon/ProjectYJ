@@ -4,7 +4,7 @@
 #include "ServerAnalyzer.h"
 #include "ClientManager.h"
 #include <filesystem>
-#include "ObjectPool.h"
+#include "Pool.h"
 #include "ChatWindow.h"
 #include "LoginWindow.h"
 #include "LobbyWindow.h"
@@ -224,7 +224,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 		}
 
-		PacketPool::GetInstance().Clean();
+		PacketPool::GetInstance().Clear();
 
 		work_guard.reset();
 		ioContext->stop();

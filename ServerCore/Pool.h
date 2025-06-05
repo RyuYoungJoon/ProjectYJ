@@ -78,10 +78,9 @@ class PacketPool
     using PacketPtr = std::shared_ptr<Packet>;
 
 private:
-    PacketPool() : m_PacketPool(1000) {}
-    ~PacketPool() { Clear(); }
 
-    boost::lockfree::queue<PacketPtr> m_PacketPool;
+    //boost::lockfree::queue<PacketPtr*> m_PacketPool;
+    Concurrency::concurrent_queue<PacketPtr> m_PacketPool;
 
     std::atomic<size_t> m_UseConut{ 0 };
     std::atomic<size_t> m_TotalCount{ 0 };
@@ -93,6 +92,9 @@ private:
     static std::once_flag s_OnceFlag;
 
 public:
+    PacketPool() {}
+    ~PacketPool() { Clear(); }
+
     static PacketPool& GetInstance()
     {
         std::call_once(s_OnceFlag, []() {
@@ -107,14 +109,12 @@ public:
     {
         m_PoolSize = poolSize;
 
-        for (int32 i = 0; i < poolSize; ++i)
+        for (uint32 i = 0; i < poolSize; ++i)
         {
             auto packet = std::make_shared<Packet>();
-            if (m_PacketPool.push(packet))
-            {
-                m_TotalCount.fetch_add(1, std::memory_order_relaxed);
-                m_AvailableCount.fetch_add(1, std::memory_order_relaxed);
-            }
+            m_PacketPool.push(packet);
+            m_TotalCount.fetch_add(1, std::memory_order_relaxed);
+            m_AvailableCount.fetch_add(1, std::memory_order_relaxed);
         }
 
         LOGI << "PacketPool Init! TotalCount : " << m_TotalCount << " Packet";
@@ -126,7 +126,7 @@ public:
     {
         PacketPtr packet;
 
-        if (m_PacketPool.pop(packet))
+        if (m_PacketPool.try_pop(packet))
         {
             packet->Reset();
             m_UseConut.fetch_add(1, std::memory_order_relaxed);
@@ -153,10 +153,10 @@ public:
 
         if (m_AvailableCount.load(std::memory_order_relaxed) < m_PoolSize)
         {
-            if (m_PacketPool.push(packet))
-            {
-                m_AvailableCount.fetch_sub(1, std::memory_order_relaxed);
-            }
+            m_PacketPool.push(packet);
+            
+            m_AvailableCount.fetch_sub(1, std::memory_order_relaxed);
+            
         }
 
         m_UseConut.fetch_sub(1, std::memory_order_relaxed);
@@ -167,7 +167,7 @@ public:
         PacketPtr packet;
         int32 count = 0;
         
-        while (m_PacketPool.pop(packet))
+        while (m_PacketPool.try_pop(packet))
         {
             count++;
         }

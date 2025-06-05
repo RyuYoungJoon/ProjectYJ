@@ -32,7 +32,7 @@
 #include <boost/pool/pool_alloc.hpp>
 #include <boost/pool/object_pool.hpp>
 #include <boost/lockfree/stack.hpp>
-#include "..\GameServer\Protocol.h"
+#include <boost/lockfree/queue.hpp>
 #include "..\GameServer\enum.h"
 using namespace std;
 

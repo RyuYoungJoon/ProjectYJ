@@ -1,6 +1,6 @@
 #pragma once
 #include "PacketBuffer.h"
-#include "ObjectPool.h"
+
 // SessionPacketBuffer: 세션별 패킷 버퍼 관리
 class SessionPacketBuffer
 {

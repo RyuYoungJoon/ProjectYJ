@@ -40,9 +40,9 @@ public:
 
 	bool GetReuseAddress() const
 	{
-		//boost::asio::socket_base::reuse_address option;
+		boost::asio::socket_base::reuse_address option;
 		boost::system::error_code ec;
-		//m_socket->get_option(option, ec);
+		m_Socket->get_option(option, ec);
 
 		if (ec)
 		{
@@ -50,14 +50,14 @@ public:
 			return false;
 		}
 
-		//return option.value();
+		return option.value();
 	}
 
 	// SO_KEEPALIVE ¼³Á¤
 	bool SetKeepAlive(bool enable)
 	{
 		boost::system::error_code ec;
-		//m_Socket->set_option(boost::asio::socket_base::keep_alive(enable), ec);
+		m_Socket->set_option(boost::asio::socket_base::keep_alive(enable), ec);
 
 		if (ec)
 		{
@@ -70,10 +70,10 @@ public:
 
 	bool GetKeepAlive() const
 	{
-		//boost::asio::socket_base::keep_alive option;
+		boost::asio::socket_base::keep_alive option;
 		boost::system::error_code ec;
 		
-		//m_Socket->get_option(option, ec);
+		m_Socket->get_option(option, ec);
 
 		if (ec)
 		{
@@ -87,11 +87,11 @@ public:
 	// TCP_NODELAY (Only TCP)
 	bool SetNodelay(bool enable)
 	{
-		/*if constexpr (!is_same_v<Protocol, tcp>)
-			return false;*/
+		if constexpr (!is_same_v<Protocol, tcp>)
+			return false;
 
 		boost::system::error_code ec;
-		//m_Socket->set_option(tcp::no_delay(enable), ec);
+		m_Socket->set_option(tcp::no_delay(enable), ec);
 
 		if (ec)
 		{
@@ -104,13 +104,13 @@ public:
 
 	bool GetNodelay() const
 	{
-		/*if constexpr (!is_same_v<Protocol, tcp>)
-			return false;*/
+		if constexpr (!is_same_v<Protocol, tcp>)
+			return false;
 
-		//tcp::no_delay option;
+		tcp::no_delay option;
 		boost::system::error_code ec;
 
-		//m_Socket->get_option(option, ec);
+		m_Socket->get_option(option, ec);
 
 		if (ec)
 		{
@@ -125,7 +125,7 @@ public:
 	bool SetLinger(bool enable, uint32 timeout)
 	{
 		boost::system::error_code ec;
-		//m_Socket->set_option(boost::asio::socket_base::linger(enable, timeout), ec);
+		m_Socket->set_option(boost::asio::socket_base::linger(enable, timeout), ec);
 
 		if (ec)
 		{
@@ -136,27 +136,27 @@ public:
 		return true;
 	}
 
-	//std::pair<bool, uint32> GetLigner() const
-	//{
-	//	boost::asio::socket_base::linger option;
-	//	boost::system::error_code ec;
+	std::pair<bool, uint32> GetLigner() const
+	{
+		boost::asio::socket_base::linger option;
+		boost::system::error_code ec;
 
-	//	//m_Socket->get_option(option, ec);
+		//m_Socket->get_option(option, ec);
 
-	//	if (ec)
-	//	{
-	//		LOGE << "Linger Get Fail!";
-	//		return { false,0 };
-	//	}
+		if (ec)
+		{
+			LOGE << "Linger Get Fail!";
+			return { false,0 };
+		}
 
-	//	return { option.enabled(), option.timeout() };
-	//}
+		return { option.enabled(), option.timeout() };
+	}
 
 	// SO_SNDBUF
 	bool SetSendBufferSizeOpt(uint32 size)
 	{
 		boost::system::error_code ec;
-		//m_Socket->set_option(boost::asio::socket_base::send_buffer_size(size), ec);
+		m_Socket->set_option(boost::asio::socket_base::send_buffer_size(size), ec);
 
 		if (ec)
 		{
@@ -169,9 +169,9 @@ public:
 
 	uint32 GetSendBufferSizeOpt() const 
 	{
-		//boost::asio::socket_base::send_buffer_size option;
+		boost::asio::socket_base::send_buffer_size option;
 		boost::system::error_code ec;
-		//m_Socket->set_option(option, ec);
+		m_Socket->set_option(option, ec);
 		
 		if (ec)
 		{
@@ -179,14 +179,14 @@ public:
 			return false;
 		}
 
-		//return option.value();
+		return option.value();
 	}
 
 	// SO_RCVBUF
 	bool SetReceiveBufferSize(int size) 
 	{
 		boost::system::error_code ec;
-		//m_Socket->set_option(boost::asio::socket_base::receive_buffer_size(size), ec);
+		m_Socket->set_option(boost::asio::socket_base::receive_buffer_size(size), ec);
 
 		if (ec) {
 			std::cerr << "Failed to set SO_RCVBUF: " << ec.message() << std::endl;
@@ -198,15 +198,15 @@ public:
 
 	int GetReceiveBufferSize() const 
 	{
-		//boost::asio::socket_base::receive_buffer_size option;
+		boost::asio::socket_base::receive_buffer_size option;
 		boost::system::error_code ec;
-		//m_Socket->get_option(option, ec);
+		m_Socket->get_option(option, ec);
 		
 		if (ec) {
 			std::cerr << "Failed to get SO_RCVBUF: " << ec.message() << std::endl;
 			return -1;
 		}
 		
-		//return option.value();
+		return option.value();
 	}
 };

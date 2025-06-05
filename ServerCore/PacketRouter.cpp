@@ -3,7 +3,6 @@
 #include "AsioSession.h"
 #include "SessionManager.h"
 #include "ServerAnalyzer.h"
-#include "ObjectPool.h"
 
 void PacketRouter::Init(int32 numThread, PacketHandlerFunc initfunc)
 {

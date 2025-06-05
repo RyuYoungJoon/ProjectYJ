@@ -2,7 +2,6 @@
 #include "SessionPacketBuffer.h"
 #include "AsioSession.h"
 #include "PacketRouter.h"
-#include "ObjectPool.h"
 
 SessionPacketBuffer::SessionPacketBuffer()
 {
