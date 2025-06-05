@@ -48,7 +48,7 @@
     <ClInclude Include="SocketUtil.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectPool.h">
+    <ClInclude Include="Pool.h">
       <Filter>Memory</Filter>
     </ClInclude>
     <ClInclude Include="NetworkHandler.h">
@@ -62,6 +62,12 @@
     </ClInclude>
     <ClInclude Include="SessionManager.h">
       <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Protocol.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -98,7 +104,7 @@
     <ClCompile Include="SocketUtil.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectPool.cpp">
+    <ClCompile Include="Pool.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
     <ClCompile Include="NetworkHandler.cpp">
@@ -112,6 +118,9 @@
     </ClCompile>
     <ClCompile Include="SessionManager.cpp">
       <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

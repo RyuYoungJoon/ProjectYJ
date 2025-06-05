@@ -194,10 +194,12 @@
     <ClInclude Include="CorePch.h" />
     <ClInclude Include="MyLogger.h" />
     <ClInclude Include="NetworkHandler.h" />
-    <ClInclude Include="ObjectPool.h" />
+    <ClInclude Include="Pool.h" />
+    <ClInclude Include="Packet.h" />
     <ClInclude Include="PacketBuffer.h" />
     <ClInclude Include="PacketRouter.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Protocol.h" />
     <ClInclude Include="SessionPacketBuffer.h" />
     <ClInclude Include="ServerAnalyzer.h" />
     <ClInclude Include="SessionManager.h" />
@@ -213,7 +215,8 @@
     <ClCompile Include="CorePch.cpp" />
     <ClCompile Include="MyLogger.cpp" />
     <ClCompile Include="NetworkHandler.cpp" />
-    <ClCompile Include="ObjectPool.cpp" />
+    <ClCompile Include="Pool.cpp" />
+    <ClCompile Include="Packet.cpp" />
     <ClCompile Include="PacketBuffer.cpp" />
     <ClCompile Include="PacketRouter.cpp" />
     <ClCompile Include="pch.cpp">

@@ -3,6 +3,7 @@
 
 enum class PacketType : uint8_t
 {
+	None = 0,
 	StressTestPacket = 100,
 	ChatReq = 104,
 	ChatAck = 105,
@@ -32,22 +33,22 @@ struct PacketTail {
 	uint8 value;
 };
 
-template<PacketType Type, typename TPayload>
-struct Packet
-{
-	PacketHeader header;
-	TPayload payload;
-	PacketTail tail;
-
-	Packet()
-	{
-		memset(&header, 0, sizeof(header));
-		memset(&payload, 0, sizeof(payload));
-		header.type = Type;
-		header.size = sizeof(TPayload);
-		tail.value = 255;
-	}
-};
+//template<PacketType Type, typename TPayload>
+//struct Packet
+//{
+//	PacketHeader header;
+//	TPayload payload;
+//	PacketTail tail;
+//
+//	Packet()
+//	{
+//		memset(&header, 0, sizeof(header));
+//		memset(&payload, 0, sizeof(payload));
+//		header.type = Type;
+//		header.size = sizeof(TPayload);
+//		tail.value = 255;
+//	}
+//};
 // ÆÐÅ¶
 
 struct DummyClientMessage

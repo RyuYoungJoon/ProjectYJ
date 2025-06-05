@@ -41,7 +41,6 @@
     <ClInclude Include="pch.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Protocol.h" />
     <ClInclude Include="GameSession.h">
       <Filter>Main</Filter>
     </ClInclude>

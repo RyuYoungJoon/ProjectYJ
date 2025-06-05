@@ -85,7 +85,6 @@ public:
 	uint32 GetTotalSize() const { return HEADER_SIZE + m_PayloadSize; }
 
 	void Serialize(uint8* buffer);
-
 	bool Deserialize(const uint8* buffer, uint32 totalSize);
 
 	void SetCheckSum(uint8 byte1, uint8 byte2);
