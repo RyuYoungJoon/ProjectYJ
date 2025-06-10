@@ -3,7 +3,7 @@
 #include "SessionManager.h"
 #include "AsioSession.h"
 
-void TaskQueue::ProcessIoTask(const IoTask& task)
+void TaskQueue::ProcessIoTask(IoTask task)
 {
     // SessionManager에서 세션 찾기
     AsioSessionPtr session = SessionManager::GetInstance().GetSession(task.sessionUID);

@@ -71,26 +71,26 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libraries\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Libraries\include;$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libraries\Libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binaries\GameServer\</OutDir>
     <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libraries\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Libraries\include;$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libraries\Libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binaries\GameServer\</OutDir>
     <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libraries\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Libraries\include;$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libraries\Libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binaries\GameServer\</OutDir>
     <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libraries\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Libraries\include;$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libraries\Libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binaries\GameServer\</OutDir>
     <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
@@ -199,6 +199,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Protocol.pb.cc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChatRoom.h" />
@@ -208,6 +218,10 @@
     <ClInclude Include="PacketHandler.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Protocol.pb.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\protoc-3.17.1-win64\bin\Protocol.proto" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

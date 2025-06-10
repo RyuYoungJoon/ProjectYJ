@@ -13,6 +13,9 @@
     <Filter Include="Contents\Manager">
       <UniqueIdentifier>{32ce916f-9b1a-48f8-a9df-f4edbbdba760}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Protocol">
+      <UniqueIdentifier>{31f748a3-b281-423b-8629-65377c43f98f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameServer.cpp">
@@ -36,6 +39,9 @@
     <ClCompile Include="ChatRoomManager.cpp">
       <Filter>Contents\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="Protocol.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -57,5 +63,13 @@
     <ClInclude Include="ChatRoomManager.h">
       <Filter>Contents\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Protocol.pb.h">
+      <Filter>Protocol</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\protoc-3.17.1-win64\bin\Protocol.proto">
+      <Filter>Protocol</Filter>
+    </None>
   </ItemGroup>
 </Project>

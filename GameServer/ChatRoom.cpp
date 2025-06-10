@@ -26,13 +26,13 @@ void ChatRoom::BroadCast(const std::string& message)
 {
 	lock_guard<std::mutex> lock(m_ChatRoomMutex);
 
-	PacketChatAck chatPacket;
-	chatPacket.payload.sender = "Server";
-	chatPacket.payload.message = message;
+	//PacketChatAck chatPacket;
+	//chatPacket.payload.sender = "Server";
+	//chatPacket.payload.message = message;
 
 	for (auto& player : m_ChatRoom)
 	{
-		player.second->ownerSession->Send(chatPacket);
+		//player.second->ownerSession->Send(chatPacket);
 	}
 }
 

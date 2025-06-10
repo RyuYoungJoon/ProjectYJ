@@ -66,9 +66,6 @@
     <ClInclude Include="Packet.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Protocol.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

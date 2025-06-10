@@ -2,8 +2,9 @@
 #include "pch.h"
 #include "PacketBuffer.h"
 #include "TaskQueue.h"
-#include "Pool.h"
+#include "..\GameServer\Protocol.pb.h"
 
+class Packet;
 class AsioService;
 
 class AsioSession : public std::enable_shared_from_this<AsioSession>
@@ -22,7 +23,7 @@ public:
 
     void SetService(std::shared_ptr<AsioService> service);
     shared_ptr<AsioService> GetService() { return m_Service.lock(); }
-
+    
     tcp::socket& GetSocket() { return *m_Socket; }
 
     AsioSessionPtr GetSession()
@@ -46,7 +47,7 @@ public:
 
     boost::asio::io_context* GetIocontext() { return m_IoContext; }
 
-    void Send(const Packet& packet);
+    void Send(Protocol::PacketType packetType);
 
 protected:
     virtual void OnSend(int32 len) { }
@@ -73,4 +74,6 @@ private:
     tcp::resolver* m_Resolver;
     shared_ptr<boost::asio::steady_timer> m_Timer;
     NetState m_NetState = NetState::None;
+
+    std::atomic<uint32> m_SeqNum;
 };

@@ -40,7 +40,7 @@ void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
 
 void PacketHandler::HandlePacket(AsioSessionPtr session, BYTE* buffer)
 {
-    PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+    Protocol::PacketHeader* header = reinterpret_cast<Protocol::PacketHeader*>(buffer);
 
     if (!header || !session)
         return;
@@ -55,15 +55,6 @@ void PacketHandler::HandlePacket(AsioSessionPtr session, BYTE* buffer)
         m_NextSeq[sessionUID] = 0;
     }
 
-    auto it = m_Handlers.find(header->type);
-    if (it != m_Handlers.end())
-    {
-        it->second(session, buffer);
-    }
-    else
-    {
-        HandleInvalid(session, buffer);
-    }
 }
 
 void PacketHandler::Reset(int32 sessionUID)
@@ -74,10 +65,11 @@ void PacketHandler::Reset(int32 sessionUID)
 
 void PacketHandler::HandleDummyClient(AsioSessionPtr& session, BYTE* buffer)
 {
-    PacketChatReq* packet = reinterpret_cast<PacketChatReq*>(buffer);
+    //PacketChatReq* packet = reinterpret_cast<PacketChatReq*>(buffer);
 
-    if (packet->header.type != PacketType::ChatReq)
-        return;
+    //if (packet->header.type != PacketType::ChatReq)
+       // return;
+
 
     GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
     if (gameSession == nullptr)
@@ -95,10 +87,10 @@ void PacketHandler::HandleDummyClient(AsioSessionPtr& session, BYTE* buffer)
 
 void PacketHandler::HandleChatReq(AsioSessionPtr& session, BYTE* buffer)
 {
-    PacketChatReq* packet = reinterpret_cast<PacketChatReq*>(buffer);
+    //PacketChatReq* packet = reinterpret_cast<PacketChatReq*>(buffer);
 
-    if (packet->header.type != PacketType::ChatReq)
-        return;
+    //if (packet->header.type != PacketType::ChatReq)
+        //return;
 
     GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
     if (gameSession == nullptr)
@@ -107,20 +99,20 @@ void PacketHandler::HandleChatReq(AsioSessionPtr& session, BYTE* buffer)
         return;
     }
 
-    LOGD << "Client [" <<gameSession->GetSessionUID()<<"] -> " << "Send Message : " << packet->payload.message;
+    //LOGD << "Client [" <<gameSession->GetSessionUID()<<"] -> " << "Send Message : " << packet->payload.message;
     
-    PacketChatAck ackPacket;
-    ackPacket.payload.message = packet->payload.message;
+    //PacketChatAck ackPacket;
+    //ackPacket.payload.message = packet->payload.message;
 
-    GRoom.BroadCast(ackPacket.payload.message);
+    //GRoom.BroadCast(ackPacket.payload.message);
 }
 
 void PacketHandler::HandleLoginReq(AsioSessionPtr& session, BYTE* buffer)
 {
-    PacketLoginReq* packet = reinterpret_cast<PacketLoginReq*>(buffer);
+   // PacketLoginReq* packet = reinterpret_cast<PacketLoginReq*>(buffer);
 
-    if (packet->header.type != PacketType::LoginReq)
-        return;
+    //if (packet->header.type != PacketType::LoginReq)
+        //return;
 
     GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
     if (gameSession == nullptr)
@@ -140,19 +132,19 @@ void PacketHandler::HandleLoginReq(AsioSessionPtr& session, BYTE* buffer)
 
     //GRoom.Enter(player);
 
-    PacketLoginAck ackPacket;
-    ackPacket.header.type = PacketType::LoginAck;
-    ackPacket.payload.id = player->m_Name;
+   // PacketLoginAck ackPacket;
+    //ackPacket.header.type = PacketType::LoginAck;
+    //ackPacket.payload.id = player->m_Name;
 
-    gameSession->Send(ackPacket);
+    //gameSession->Send(ackPacket);
 }
 
 void PacketHandler::HandleRoomEnterReq(AsioSessionPtr& session, BYTE* buffer)
 {
-    PacketRoomEnterReq* packet = reinterpret_cast<PacketRoomEnterReq*>(buffer);
+    //PacketRoomEnterReq* packet = reinterpret_cast<PacketRoomEnterReq*>(buffer);
 
-    if (packet->header.type != PacketType::RoomEnterReq)
-        return;
+    //if (packet->header.type != PacketType::RoomEnterReq)
+        //r/eturn;
 
     GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
     if (gameSession == nullptr)
@@ -163,20 +155,20 @@ void PacketHandler::HandleRoomEnterReq(AsioSessionPtr& session, BYTE* buffer)
 
     ChatRoomPtr chatRoom = make_shared<ChatRoom>();
 
-    PacketRoomEnterAck sendPacket;
-    sendPacket.header.type = PacketType::RoomEnterAck;
-    sendPacket.payload.roomID = 1;
-    sendPacket.payload.roomName = "하이";
-    sendPacket.payload.message = "안녕하세요.";
-
-    gameSession->Send(sendPacket);
+    //PacketRoomEnterAck sendPacket;
+    //sendPacket.header.type = PacketType::RoomEnterAck;
+    //sendPacket.payload.roomID = 1;
+    //sendPacket.payload.roomName = "하이";
+    //sendPacket.payload.message = "안녕하세요.";
+    //
+    //gameSession->Send(sendPacket);
 }
 
 void PacketHandler::HandleRoomCreateReq(AsioSessionPtr& session, BYTE* buffer)
 {
-    PacketRoomCreateReq* packet = reinterpret_cast<PacketRoomCreateReq*>(buffer);
-    if (packet->header.type != PacketType::RoomCreateReq)
-        return;
+    //PacketRoomCreateReq* packet = reinterpret_cast<PacketRoomCreateReq*>(buffer);
+    //if (packet->header.type != PacketType::RoomCreateReq)
+    //    return;
 
     GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
     if (gameSession == nullptr)
@@ -185,24 +177,24 @@ void PacketHandler::HandleRoomCreateReq(AsioSessionPtr& session, BYTE* buffer)
         return;
     }
 
-    ChatRoomPtr newRoom = ChatRoomManager::GetInstance().CreateRoom(packet->payload.roomName, 10);
+    //ChatRoomPtr newRoom = ChatRoomManager::GetInstance().CreateRoom(packet->payload.roomName, 10);
 
-    LOGI << "CreateRoom : " << packet->payload.roomName << ", ID : " << newRoom->GetRoomID();
+    //LOGI << "CreateRoom : " << packet->payload.roomName << ", ID : " << newRoom->GetRoomID();
 
-    PacketRoomCreateAck ackPacket;
-    ackPacket.header.type = PacketType::RoomCreateAck;
-    ackPacket.payload.roomID = newRoom->GetRoomID();
-    ackPacket.payload.roomName = newRoom->GetRoomName();
-
-    gameSession->Send(ackPacket);
+    //PacketRoomCreateAck ackPacket;
+    //ackPacket.header.type = PacketType::RoomCreateAck;
+    //ackPacket.payload.roomID = newRoom->GetRoomID();
+    //ackPacket.payload.roomName = newRoom->GetRoomName();
+    //
+    //gameSession->Send(ackPacket);
 }
 
 void PacketHandler::HandleRoomListReq(AsioSessionPtr& session, BYTE* buffer)
 {
-    PacketRoomListReq* packet = reinterpret_cast<PacketRoomListReq*>(buffer);
+    //PacketRoomListReq* packet = reinterpret_cast<PacketRoomListReq*>(buffer);
 
-    if (packet->header.type != PacketType::RoomListReq)
-        return;
+    //if (packet->header.type != PacketType::RoomListReq)
+        //return;
 
     LOGI << "RoomListReq!";
 
@@ -215,8 +207,8 @@ void PacketHandler::HandleRoomListReq(AsioSessionPtr& session, BYTE* buffer)
 
     auto roomInfo = ChatRoomManager::GetInstance().GetAllRoom();
 
-    PacketRoomListAck sendPacket;
-    sendPacket.header.type = PacketType::RoomListAck;
+    //PacketRoomListAck sendPacket;
+    //sendPacket.header.type = PacketType::RoomListAck;
 
     for (const auto& tempRoom : roomInfo)
     {
@@ -226,17 +218,10 @@ void PacketHandler::HandleRoomListReq(AsioSessionPtr& session, BYTE* buffer)
             //<< ", RoomName : " << info.roomName 
             << ", CurrentUser : " << info.currentUser 
             << ", MaxUser" << info.maxUser;
-        sendPacket.payload.chatRoomInfo.push_back(room->GetRoomInfo());
+        //sendPacket.payload.chatRoomInfo.push_back(room->GetRoomInfo());
     }
 
-    LOGD << sizeof(sendPacket.header) + sizeof(sendPacket.payload) + sizeof(sendPacket.tail);
+    //LOGD << sizeof(sendPacket.header) + sizeof(sendPacket.payload) + sizeof(sendPacket.tail);
 
-    gameSession->Send(sendPacket);
-}
-
-void PacketHandler::HandleInvalid(AsioSessionPtr& session, BYTE* buffer)
-{
-    PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
-
-	LOGE << "Unknown Packet Type : " << static_cast<int16>(header->type);
+    //gameSession->Send(sendPacket);
 }

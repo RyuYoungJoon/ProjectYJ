@@ -75,6 +75,7 @@ private:
 // MemoryPool을 활용한 Packet 객체 풀
 class PacketPool
 {
+public:
     using PacketPtr = std::shared_ptr<Packet>;
 
 private:
@@ -88,20 +89,14 @@ private:
 
     uint32 m_PoolSize;
 
-    static std::unique_ptr<PacketPool> s_Instance;
-    static std::once_flag s_OnceFlag;
-
 public:
     PacketPool() {}
     ~PacketPool() { Clear(); }
 
     static PacketPool& GetInstance()
     {
-        std::call_once(s_OnceFlag, []() {
-            s_Instance = std::make_unique<PacketPool>();
-            });
-
-        return *s_Instance;
+        static PacketPool instance;
+        return instance;
     }
 
     // 풀 초기화
@@ -128,7 +123,7 @@ public:
 
         if (m_PacketPool.try_pop(packet))
         {
-            packet->Reset();
+            //packet->Reset();
             m_UseConut.fetch_add(1, std::memory_order_relaxed);
             m_AvailableCount.fetch_sub(1, std::memory_order_relaxed);
             return packet;
@@ -149,7 +144,7 @@ public:
     {
         if (!packet)
             return;
-        packet->Reset();
+       // packet->Reset();
 
         if (m_AvailableCount.load(std::memory_order_relaxed) < m_PoolSize)
         {

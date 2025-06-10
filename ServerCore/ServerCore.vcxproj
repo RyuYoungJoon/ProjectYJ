@@ -71,20 +71,28 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)Libraries\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Libraries\Libs\ServerCore\$(Configuration)\</OutDir>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
+    <IncludePath>$(SolutionDir)Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libraries\Libs\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)Libraries\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Libraries\Libs\ServerCore\$(Configuration)\</OutDir>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
+    <IncludePath>$(SolutionDir)Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libraries\Libs\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)Libraries\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Libraries\Libs\ServerCore\$(Configuration)\</OutDir>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
+    <IncludePath>$(SolutionDir)Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libraries\Libs\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)Libraries\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Libraries\Libs\ServerCore\$(Configuration)\</OutDir>
     <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
+    <IncludePath>$(SolutionDir)Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libraries\Libs\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -199,7 +207,6 @@
     <ClInclude Include="PacketBuffer.h" />
     <ClInclude Include="PacketRouter.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Protocol.h" />
     <ClInclude Include="SessionPacketBuffer.h" />
     <ClInclude Include="ServerAnalyzer.h" />
     <ClInclude Include="SessionManager.h" />

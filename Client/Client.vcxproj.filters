@@ -10,6 +10,9 @@
     <Filter Include="Window">
       <UniqueIdentifier>{422dfce9-13ee-462f-b313-bd2561ed01e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Protocol">
+      <UniqueIdentifier>{69e1412f-f42a-40c2-ae7d-a827e1e4e7f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -39,6 +42,9 @@
     <ClCompile Include="WinUtils.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\GameServer\Protocol.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -64,6 +70,9 @@
     </ClInclude>
     <ClInclude Include="WinUtils.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameServer\Protocol.pb.h">
+      <Filter>Protocol</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

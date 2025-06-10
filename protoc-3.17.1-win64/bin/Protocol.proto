@@ -1,0 +1,28 @@
+syntax = "proto3";
+package Protocol;
+
+
+enum PacketType
+{
+	None = 0;
+	PKT_EnterChatRoomReq = 1001;
+	PKT_EnterChatRoomAck = 1002;
+}
+
+message PacketHeader
+{
+	uint32 packetType = 1;
+	uint32 packetSize = 2;
+	uint32 seqNum = 3;
+}
+
+message EnterChatRoomReq
+{
+	int32 value = 1;
+	repeated int32 items = 2;
+}
+
+message EnterChatRoomAck
+{
+	uint32 id = 1;
+}

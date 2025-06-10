@@ -139,7 +139,7 @@ private:
     }
 
     // I/O 작업 처리
-    void ProcessIoTask(const IoTask& task);
+    void ProcessIoTask(IoTask task);
 
 private:
     std::atomic<bool> m_IsRunning;

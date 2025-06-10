@@ -26,77 +26,79 @@ enum class PacketType : uint8
 //	Reconnect = 4,
 //};
 
-struct PacketHeader
-{
-	uint8 checkSum[2];	// 체크섬
-	PacketType type;	// 패킷 타입
-	uint32 size;		// 패킷 전체 사이즈
-	uint32 seqNum;		// 시퀀스 넘버
-
-	PacketHeader()
-	{
-		memset(checkSum, 0, sizeof(checkSum));
-		type = PacketType::None;
-		size = 0;
-		seqNum = 0;
-	}
-};
 
 class Packet
 {
 public:
-	static constexpr uint32 MAX_PAYLOAD_SIZE = 4096;
-	static constexpr uint32 HEADER_SIZE = sizeof(PacketHeader);
-	static constexpr uint32 MAX_PACKET_SIZE = HEADER_SIZE + MAX_PAYLOAD_SIZE;
-
-private:
-	PacketHeader m_Header;
-	uint8 m_Payload[MAX_PAYLOAD_SIZE];
-	uint32 m_PayloadSize;	// 실제 사용중인 페이로드 사이즈
-
-public:
+	// 기본 생성자
 	Packet()
+		: m_Data(nullptr), m_Size(0), m_PacketType(0), m_Buffer(nullptr){ }
+
+	Packet(unsigned char* data, uint32 size, uint32 packetType)
+		: m_Size(size), m_PacketType(packetType)
 	{
-		Reset();
+		m_Buffer = std::make_unique<unsigned char>(size);
+		std::memcpy(m_Buffer.get(), data, size);
+		m_Data = m_Buffer.get();
 	}
 
-	Packet(const Packet& packet)
+	// 이동
+	Packet(Packet&& other) noexcept
+		: m_Data(other.m_Data), m_Size(other.m_Size),
+		m_PacketType(other.m_PacketType), m_Buffer(std::move(other.m_Buffer))
 	{
-		m_Header = packet.GetHeader();
-		memcpy(m_Payload, packet.GetPayload(), packet.GetPayloadSize());
-		m_PayloadSize = packet.GetPayloadSize();
+		other.m_Data = nullptr;
+		other.m_Size = 0;
+		other.m_PacketType = 0;
 	}
 
-	void Reset()
+	Packet& operator=(Packet&& other) noexcept
 	{
-		m_Header = PacketHeader();
-		memset(m_Payload, 0, sizeof(m_Payload));
-		m_PayloadSize = 0;
+		if (this != &other)
+		{
+			m_Data = other.m_Data;
+			m_Size = other.m_Size;
+			m_PacketType = other.m_PacketType;
+			m_Buffer = std::move(other.m_Buffer);
+
+			other.m_Data = nullptr;
+			other.m_Size = 0;
+			other.m_PacketType = 0;
+
+		}
+
+		return *this;
 	}
 
-	// 패킷헤더
-	PacketHeader& GetHeader() { return m_Header; }
-	const PacketHeader& GetHeader() const { return m_Header; }
+	// 복사는 명시적 금지. (성능상이유)
+	Packet(const Packet&) = delete;
+	Packet& operator=(const Packet&) = delete;
 
-	// 페이로드
-	uint8* GetPayload() { return m_Payload; }
-	const uint8* GetPayload() const { return m_Payload; }
+	// Getter 함수들
+	unsigned char* GetData() const { return m_Data; }
+	uint32 GetSize() const { return m_Size; }
+	uint32 GetPacketType() const { return m_PacketType; }
+	bool IsValid() const { return m_Data != nullptr && m_Size > 0; }
 
-	uint32 GetPayloadSize() const { return m_PayloadSize; }
-	uint32 GetMaxPayloadSize() const { return MAX_PAYLOAD_SIZE; }
+	// 외부 데이터 참조 (소유권 없음)
+	void SetExternalData(unsigned char* data, uint32 size, uint32 packetType)
+	{
+		m_Buffer.reset(); // 기존 소유 데이터 해제
+		m_Data = data;
+		m_Size = size;
+		m_PacketType = packetType;
+	}
 
-	// 패킷 데이터 설정
-	bool SetPayload(const void* data, uint32 size);
-	bool SetPayload(const std::string& data);
-
-	// 전체 패킷 크기
-	uint32 GetTotalSize() const { return HEADER_SIZE + m_PayloadSize; }
-
-	void Serialize(uint8* buffer);
-	bool Deserialize(const uint8* buffer, uint32 totalSize);
-
-	void SetCheckSum(uint8 byte1, uint8 byte2);
-
-	void SetDefaultCheckSum();
+	// 디버깅용
+	void PrintInfo() const
+	{
+		LOGD << "Packet - Type: " << m_PacketType
+			<< ", Size: " << m_Size
+			<< ", Data: " << (m_Data ? "Valid" : "NULL");
+	}
+private:
+	unsigned char* m_Data;		// 데이터 포인터
+	uint32 m_Size;			// 데이터 크기
+	uint32 m_PacketType;	// 패킷 타입
+	std::unique_ptr<unsigned char> m_Buffer;	// 소유권 관리용
 };
-

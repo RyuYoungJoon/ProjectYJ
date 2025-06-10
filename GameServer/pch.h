@@ -4,9 +4,11 @@
 
 
 #ifdef _DEBUG
-#pragma comment(lib, "Debug\\ServerCore.lib")
+#pragma comment(lib, "ServerCore\\Debug\\ServerCore.lib")
+#pragma comment(lib, "Protobuf\\Debug\\libprotobufd.lib")
 #else
-#pragma comment(lib, "Release\\ServerCore.lib")
+#pragma comment(lib, "ServerCore\\Release\\ServerCore.lib")
+#pragma comment(lib, "Protobuf\\Release\\libprotobuf.lib")
 #endif // _DEBUG
 
 #pragma comment(lib, "Shlwapi.lib")
@@ -15,3 +17,4 @@
 
 using PlayerPtr = shared_ptr<class Player>;
 using ChatRoomPtr = shared_ptr<class ChatRoom>;
+using AsioSessionPtr = std::shared_ptr<class AsioSession>;

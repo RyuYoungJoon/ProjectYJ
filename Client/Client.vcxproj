@@ -71,26 +71,26 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libraries\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Libraries\include\;$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libraries\Libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binaries\Client\</OutDir>
     <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libraries\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Libraries\include\;$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libraries\Libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binaries\Client\</OutDir>
     <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libraries\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Libraries\include\;$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libraries\Libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binaries\Client\</OutDir>
     <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libraries\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Libraries\include\;$(SolutionDir)ServerCore\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libraries\Libs;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binaries\Client\</OutDir>
     <TargetName>$(ProjectName)-$(Platform)-$(Configuration)</TargetName>
   </PropertyGroup>
@@ -175,6 +175,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\GameServer\Protocol.pb.cc" />
     <ClCompile Include="ChatWindow.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ClientManager.cpp" />
@@ -186,6 +187,7 @@
     <ClCompile Include="WinUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\GameServer\Protocol.pb.h" />
     <ClInclude Include="ChatWindow.h" />
     <ClInclude Include="ClientManager.h" />
     <ClInclude Include="ClientSession.h" />

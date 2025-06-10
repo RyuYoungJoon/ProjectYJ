@@ -6,7 +6,7 @@
 #include "TaskQueue.h"
 #include "ServerAnalyzer.h"
 #include "PacketRouter.h"
-#include "ObjectPool.h"
+#include "Pool.h"
 
 #include <..\include\INIReader\ini.h>
 #include <..\include\INIReader\ini.c>

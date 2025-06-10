@@ -17,6 +17,7 @@ public:
 
 	ChatRoomInfo GetRoomInfo();
 
+
 private:
 	std::map<uint16, PlayerPtr>m_ChatRoom;
 	std::mutex m_ChatRoomMutex;
