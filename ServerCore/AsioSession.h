@@ -47,7 +47,7 @@ public:
 
     boost::asio::io_context* GetIocontext() { return m_IoContext; }
 
-    void Send(Protocol::PacketType packetType);
+    void Send(Packet&& packet);
 
 protected:
     virtual void OnSend(int32 len) { }

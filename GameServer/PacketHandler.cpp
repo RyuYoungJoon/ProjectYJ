@@ -70,6 +70,12 @@ void PacketHandler::HandleDummyClient(AsioSessionPtr& session, BYTE* buffer)
     //if (packet->header.type != PacketType::ChatReq)
        // return;
 
+    Protocol::EnterChatRoomReq packet;
+    packet.set_value(1);
+    packet.set_message(2);
+    packet.add_items(3);
+
+    Packet sendPacket = MakePacket(packet, PKT_EnterChatRoomReq);
 
     GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
     if (gameSession == nullptr)
@@ -77,6 +83,8 @@ void PacketHandler::HandleDummyClient(AsioSessionPtr& session, BYTE* buffer)
         LOGE << "Session Nullptr!";
         return;
     }
+
+    gameSession->Send(std::move(sendPacket));
 
     ServerAnalyzer::GetInstance().IncrementRecvCnt();
 

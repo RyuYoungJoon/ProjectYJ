@@ -154,17 +154,13 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 	}
 }
 
-void AsioSession::Send(Protocol::PacketType packetType)
+void AsioSession::Send(Packet&& packet)
 {
-	// 래퍼 생성
-	//Protocol::GamePacket gamePacket;
+	// 이 부분은 풀로 관리.
+	auto sendPacket = PacketPool::GetInstance().Pop();
 
-	// 헤더 설정
-	//Protocol::PacketHeader* header = gamePacket.mutable_header();
-	//header->set_packettype(static_cast<uint32>(packetType));
-	//header->set_seqnum(m_SeqNum.fetch_add(1));
-
-
+	boost::asio::async_write(*m_Socket, boost::asio::buffer(sendPacket->GetData(), sendPacket->GetSize()),
+		std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2, sendPacket));
 }
 
 void AsioSession::HandleWrite(boost::system::error_code ec, int32 length, shared_ptr<Packet> packet)
@@ -180,7 +176,7 @@ void AsioSession::HandleWrite(boost::system::error_code ec, int32 length, shared
 		OnSend(length);
 	}
 
-	//PacketPool::GetInstance().Push(packet);
+	PacketPool::GetInstance().Push(packet);
 }
 
 int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
