@@ -1,21 +1,21 @@
 #pragma once
-enum class PacketType : uint8
-{
-	None = 0,
-	StressTestPacket = 100,
-	ChatReq = 104,
-	ChatAck = 105,
-	LoginReq = 106,
-	LoginAck = 107,
-	RoomListReq = 108,
-	RoomListAck = 109,
-	RoomEnterReq = 110,
-	RoomEnterAck = 111,
-	RoomCreateReq = 112,
-	RoomCreateAck = 113,
-	UserListReq = 114,
-	UserListAck = 115,
-};
+//enum class PacketType : uint8
+//{
+//	None = 0,
+//	StressTestPacket = 100,
+//	ChatReq = 104,
+//	ChatAck = 105,
+//	LoginReq = 106,
+//	LoginAck = 107,
+//	RoomListReq = 108,
+//	RoomListAck = 109,
+//	RoomEnterReq = 110,
+//	RoomEnterAck = 111,
+//	RoomCreateReq = 112,
+//	RoomCreateAck = 113,
+//	UserListReq = 114,
+//	UserListAck = 115,
+//};
 //
 //enum class NetState : uint8
 //{

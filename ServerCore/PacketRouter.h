@@ -3,9 +3,10 @@
 struct PacketQueueItem {
     int32 sessionId;
     BYTE* buffer;
+    int32 len;
 
     PacketQueueItem() = default;
-    PacketQueueItem(int32 id, BYTE* buf) : sessionId(id), buffer(buf) {}
+    PacketQueueItem(int32 id, BYTE* buf, int32 packetSize) : sessionId(id), buffer(buf), len(packetSize) {}
 };
 
 // PacketRouter에서 큐 벡터 선언 변경
@@ -20,7 +21,7 @@ public:
     void SetProcessor(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue,
         bool& isRunning);
     void Run();
-    virtual void HandlePacket(AsioSessionPtr session, BYTE* packet);
+    virtual bool HandlePacket(AsioSessionPtr& session, BYTE* packet, int32 len);
 
 private:
     int32 m_Id;
@@ -41,7 +42,7 @@ public:
 
 	void Init(int32 numThread, PacketHandlerFunc initfunc);
 	void Shutdown();
-	void Dispatch(AsioSessionPtr session, BYTE* buffer);
+	void Dispatch(AsioSessionPtr session, BYTE* buffer, int32 len);
 
     shared_ptr<PacketProcessor> CreatePacketHandler(int32 id, Concurrency::concurrent_queue<PacketQueueItem>* queue,
         bool isRunning);

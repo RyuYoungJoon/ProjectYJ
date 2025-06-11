@@ -61,7 +61,7 @@ void PacketRouter::Shutdown()
     LOGI << "PacketRouter shutdown complete";
 }
 
-void PacketRouter::Dispatch(AsioSessionPtr session, BYTE* buffer)
+void PacketRouter::Dispatch(AsioSessionPtr session, BYTE* buffer, int32 len)
 {
     if (!session || !m_IsRunning)
         return;
@@ -70,7 +70,7 @@ void PacketRouter::Dispatch(AsioSessionPtr session, BYTE* buffer)
     int32 workerIdx = GetWorkerIndex(sessionId);
 
     // 큐에 패킷 항목 추가
-    PacketQueueItem item(sessionId, buffer);
+    PacketQueueItem item(sessionId, buffer, len);
     m_PacketQueue[workerIdx]->push(item);
 }
 
@@ -122,7 +122,7 @@ void PacketProcessor::Run()
         // 세션 찾기
         AsioSessionPtr session = SessionManager::GetInstance().GetSession(sessionId);
         if (session) {
-            HandlePacket(session, item.buffer);
+            HandlePacket(session, item.buffer, item.len);
             //LOGI << "Packet Queue Size : " << m_Queue->unsafe_size();
 
             // 템플릿화 하면서 PacketPool도 리펙토링 필요.
@@ -133,7 +133,8 @@ void PacketProcessor::Run()
     LOGE << "Worker thread " << m_Id << " stopped";
 }
 
-void PacketProcessor::HandlePacket(AsioSessionPtr session, BYTE* packet)
+bool PacketProcessor::HandlePacket(AsioSessionPtr& session, BYTE* packet, int32 len)
 {
     LOGD << "HandlePacket";
+    return true;
 }

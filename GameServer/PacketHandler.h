@@ -4,6 +4,9 @@
 #include "Protocol.pb.h"
 #include "Pool.h"
 
+using HandlerFunc = std::function<bool(AsioSessionPtr&, BYTE*, int32 len)>;
+extern HandlerFunc GPacketHadler[UINT16_MAX];
+
 enum : uint16
 {
 	PKT_EnterChatRoomReq = 1001,
@@ -12,10 +15,11 @@ enum : uint16
 
 class AsioSession;
 
+bool HandleRoomEnterReq(AsioSessionPtr& session, Protocol::EnterChatRoomReq& pkt);
+
 class PacketHandler : public PacketProcessor
 {
 public:
-	using HandlerFunc = std::function<void(AsioSessionPtr&, BYTE*)>;
 	
 	static PacketHandler& GetInstance()
 
@@ -24,30 +28,51 @@ public:
 		return instance;
 	}
 	
+	void Init()
+	{/*
+		for (int32 i = 0; i < UINT16_MAX; ++i)
+			GPacketHadler[i] = HandleInvalid;*/
+		GPacketHadler[PKT_EnterChatRoomReq] = [](AsioSessionPtr& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::EnterChatRoomReq>(HandleRoomEnterReq, session, buffer, len); };
+	}
+
+	virtual bool HandlePacket(AsioSessionPtr& session, BYTE* buffer, int32 len) override
+	{
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		return GPacketHadler[header->packetType](session, buffer, len);
+	}
+
 	// 자동화 영역
 	static Packet MakePacket(Protocol::EnterChatRoomReq& pkt) { return MakePacket(pkt, PKT_EnterChatRoomReq); }
 
 	PacketHandler();
 	~PacketHandler();
 
-	void Init();
-
-	void RegisterHandler(PacketType packetType, HandlerFunc handler);
-
-	virtual void HandlePacket(AsioSessionPtr session, BYTE* packet) override;
+	bool RegisterHandler(uint16 packetType, HandlerFunc handler);
 	
 	void HandleDummyClient(AsioSessionPtr& session, BYTE* buffer);
 	void HandleChatReq(AsioSessionPtr& session, BYTE* buffer);
 	void HandleLoginReq(AsioSessionPtr& session, BYTE* buffer);
-	void HandleRoomEnterReq(AsioSessionPtr& session, BYTE* buffer);
 	void HandleRoomCreateReq(AsioSessionPtr& session, BYTE* buffer);
 	void HandleRoomListReq(AsioSessionPtr& session, BYTE* buffer);
 
 	void Reset(int32 sessionUID);
 
-	static void HandleInvalid(AsioSessionPtr& session, BYTE* buffer);
+	void HandleInvalid(AsioSessionPtr& session, BYTE* buffer);
 
 private:
+	
+	template<typename PacketType, typename HandleFunc>
+	static bool HandlePacket(HandleFunc func, AsioSessionPtr& session, BYTE* buffer, int32 len)
+	{
+		PacketType pkt;
+		int32 packetsize = sizeof(PacketHeader);
+		int temp = len - sizeof(PacketHeader);
+
+		if (pkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader)) == false)
+			return false;
+
+		return func(session, pkt);
+	}
 
 	template<typename T>
 	static Packet MakePacket(T& pkt, uint16 packetType)
@@ -76,8 +101,8 @@ private:
 	}
 
 private:
-	std::map<PacketType, HandlerFunc> m_Handlers;
+	std::map<uint16, HandlerFunc> m_Handlers;
 	std::map<int32, int32> m_NextSeq;
 	std::mutex m_Mutex;
-	std::map<PacketType, std::atomic<int32>> m_RecvCount;
+	std::map<uint16, std::atomic<int32>> m_RecvCount;
 };

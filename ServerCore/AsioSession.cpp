@@ -197,7 +197,7 @@ int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
 		if (dataSize < header.packetSize)
 			break;
 
-		PacketRouter::GetInstance().Dispatch(shared_from_this(), &buffer[processLen]);
+		PacketRouter::GetInstance().Dispatch(shared_from_this(), &buffer[processLen], header.packetSize);
 		processLen += header.packetSize;
 	}
 

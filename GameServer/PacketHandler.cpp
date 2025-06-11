@@ -7,6 +7,7 @@
 #include "ChatRoom.h"
 #include "ChatRoomManager.h"
 
+HandlerFunc GPacketHadler[UINT16_MAX];
 
 atomic<int> a;
 PacketHandler::PacketHandler()
@@ -17,17 +18,17 @@ PacketHandler::PacketHandler()
 PacketHandler::~PacketHandler()
 {
 }
-void PacketHandler::Init()
-{
-    RegisterHandler(PacketType::StressTestPacket, std::bind(&PacketHandler::HandleDummyClient, this, std::placeholders::_1, std::placeholders::_2));
-    RegisterHandler(PacketType::ChatReq, std::bind(&PacketHandler::HandleChatReq, this, std::placeholders::_1, std::placeholders::_2));
-    RegisterHandler(PacketType::LoginReq, std::bind(&PacketHandler::HandleLoginReq, this, std::placeholders::_1, std::placeholders::_2));
-    RegisterHandler(PacketType::RoomEnterReq, std::bind(&PacketHandler::HandleRoomEnterReq , this, std::placeholders::_1, std::placeholders::_2));
-    RegisterHandler(PacketType::RoomCreateReq, std::bind(&PacketHandler::HandleRoomCreateReq, this, std::placeholders::_1, std::placeholders::_2));
-    RegisterHandler(PacketType::RoomListReq, std::bind(&PacketHandler::HandleRoomListReq, this, std::placeholders::_1, std::placeholders::_2));
-}
+//void PacketHandler::Init()
+//{
+//    /*RegisterHandler(PacketType::StressTestPacket, std::bind(&PacketHandler::HandleDummyClient, this, std::placeholders::_1, std::placeholders::_2));
+//    RegisterHandler(PacketType::ChatReq, std::bind(&PacketHandler::HandleChatReq, this, std::placeholders::_1, std::placeholders::_2));
+//    RegisterHandler(PacketType::LoginReq, std::bind(&PacketHandler::HandleLoginReq, this, std::placeholders::_1, std::placeholders::_2));
+//    RegisterHandler(PacketType::RoomEnterReq, std::bind(&PacketHandler::HandleRoomEnterReq , this, std::placeholders::_1, std::placeholders::_2));
+//    RegisterHandler(PacketType::RoomCreateReq, std::bind(&PacketHandler::HandleRoomCreateReq, this, std::placeholders::_1, std::placeholders::_2));
+//    RegisterHandler(PacketType::RoomListReq, std::bind(&PacketHandler::HandleRoomListReq, this, std::placeholders::_1, std::placeholders::_2));*/
+//}
 
-void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
+bool PacketHandler::RegisterHandler(uint16 packetType, HandlerFunc handler)
 {
 	auto iter = m_Handlers.find(packetType);
 	if (iter == m_Handlers.end())
@@ -36,26 +37,32 @@ void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
     auto iter2 = m_RecvCount.find(packetType);
     if (iter2 == m_RecvCount.end())
         m_RecvCount.emplace(packetType, 0);
+
+    return true;
 }
 
-void PacketHandler::HandlePacket(AsioSessionPtr session, BYTE* buffer)
-{
-    PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
-
-    if (!header || !session)
-        return;
-
-    int32 sessionUID = session->GetSessionUID();
-    
-    std::lock_guard<std::mutex> lock(m_Mutex);
-
-    // 처음 받는 패킷이면 시퀀스 번호 초기화 (0부터 시작)
-    if (m_NextSeq.find(sessionUID) == m_NextSeq.end())
-    {
-        m_NextSeq[sessionUID] = 0;
-    }
-
-}
+//void PacketHandler::HandlePacket(AsioSessionPtr session, BYTE* buffer)
+//{
+//    PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+//
+//    if (!header || !session)
+//        return;
+//
+//    int32 sessionUID = session->GetSessionUID();
+//    
+//    std::lock_guard<std::mutex> lock(m_Mutex);
+//
+//    // 처음 받는 패킷이면 시퀀스 번호 초기화 (0부터 시작)
+//    if (m_NextSeq.find(sessionUID) == m_NextSeq.end())
+//    {
+//        m_NextSeq[sessionUID] = 0;
+//    }
+//
+//    auto it = m_Handlers.find(static_cast<PacketType>(header->packetType));
+//    if (it == m_Handlers.end())
+//        it->second(session, buffer);
+//
+//}
 
 void PacketHandler::Reset(int32 sessionUID)
 {
@@ -149,31 +156,6 @@ void PacketHandler::HandleLoginReq(AsioSessionPtr& session, BYTE* buffer)
     //gameSession->Send(ackPacket);
 }
 
-void PacketHandler::HandleRoomEnterReq(AsioSessionPtr& session, BYTE* buffer)
-{
-    //PacketRoomEnterReq* packet = reinterpret_cast<PacketRoomEnterReq*>(buffer);
-
-    //if (packet->header.type != PacketType::RoomEnterReq)
-        //r/eturn;
-
-    GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
-    if (gameSession == nullptr)
-    {
-        LOGE << "Session Nullptr!";
-        return;
-    }
-
-    ChatRoomPtr chatRoom = make_shared<ChatRoom>();
-
-    //PacketRoomEnterAck sendPacket;
-    //sendPacket.header.type = PacketType::RoomEnterAck;
-    //sendPacket.payload.roomID = 1;
-    //sendPacket.payload.roomName = "하이";
-    //sendPacket.payload.message = "안녕하세요.";
-    //
-    //gameSession->Send(sendPacket);
-}
-
 void PacketHandler::HandleRoomCreateReq(AsioSessionPtr& session, BYTE* buffer)
 {
     //PacketRoomCreateReq* packet = reinterpret_cast<PacketRoomCreateReq*>(buffer);
@@ -234,4 +216,10 @@ void PacketHandler::HandleRoomListReq(AsioSessionPtr& session, BYTE* buffer)
     //LOGD << sizeof(sendPacket.header) + sizeof(sendPacket.payload) + sizeof(sendPacket.tail);
 
     //gameSession->Send(sendPacket);
+}
+
+bool HandleRoomEnterReq(AsioSessionPtr& session, Protocol::EnterChatRoomReq& pkt)
+{
+    LOGI << "도착!";
+    return true;
 }

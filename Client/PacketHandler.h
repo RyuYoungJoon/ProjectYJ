@@ -10,13 +10,16 @@ enum : uint16
 	PKT_EnterChatRoomReq = 1001,
 	PKT_EnterChatRoomAck = 1002,
 };
+using HandlerFunc = std::function<bool(AsioSessionPtr&, BYTE*, int32 len)>;
+extern HandlerFunc GPacketHadler[UINT16_MAX];
 
 class AsioSession;
+
+bool HandleRoomEnterAck(AsioSessionPtr& session, Protocol::EnterChatRoomAck& packet);
 
 class PacketHandler : public PacketProcessor
 {
 public:
-	using HandlerFunc = std::function<void(AsioSessionPtr&, BYTE*)>;
 
 	static PacketHandler& GetInstance()
 	{
@@ -30,15 +33,23 @@ public:
 	PacketHandler();
 	~PacketHandler();
 
-	void Init();
+	void Init()
+	{/*
+		for (int32 i = 0; i < UINT16_MAX; ++i)
+			GPacketHadler[i] = HandleInvalid;*/
+		GPacketHadler[PKT_EnterChatRoomAck] = [](AsioSessionPtr& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::EnterChatRoomAck>(HandleRoomEnterAck, session, buffer, len); };
+	}
 
-	void RegisterHandler(PacketType packetType, HandlerFunc handler);
-
-	virtual void HandlePacket(AsioSessionPtr session, BYTE* buffer) override;
+	bool RegisterHandler(uint16 packetType, HandlerFunc handler);
+	
+	virtual bool HandlePacket(AsioSessionPtr& session, BYTE* buffer, int32 len) override
+	{
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+		return GPacketHadler[header->packetType](session, buffer, len);
+	}
 
 	void HandleLoginAck(AsioSessionPtr& session, BYTE* buffer);
 	void HandleChatAck(AsioSessionPtr& session, BYTE* buffer);
-	void HandleRoomEnterAck(AsioSessionPtr& session, BYTE* buffer);
 	void HandleRoomListAck(AsioSessionPtr& session, BYTE* buffer);
 	void HandleRoomCreateAck(AsioSessionPtr& session, BYTE* buffer);
 
@@ -47,6 +58,16 @@ public:
 	static void HandleInvalid(AsioSessionPtr& session, BYTE* buffer);
 
 public:
+	
+	template<typename PacketType, typename HandleFunc>
+	static bool HandlePacket(HandleFunc func, AsioSessionPtr& session, BYTE* buffer, int32 len)
+	{
+		PacketType pkt;
+		if (pkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader)) == false)
+			return false;
+
+		return func(session, pkt);
+	}
 
 	template<typename T>
 	static Packet MakePacket(T& pkt, uint16 packetType)
@@ -81,8 +102,8 @@ public:
 	}
 
 private:
-	std::map<PacketType, HandlerFunc> m_Handlers;
+	std::map<uint16, HandlerFunc> m_Handlers;
 	std::map<int32, int32> m_NextSeq;
 	std::mutex m_Mutex;
-	std::map<PacketType, std::atomic<int32>> m_RecvCount;
+	std::map<uint16, std::atomic<int32>> m_RecvCount;
 };
