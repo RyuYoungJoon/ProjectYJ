@@ -9,13 +9,6 @@ enum PacketType
 	PKT_EnterChatRoomAck = 1002;
 }
 
-message PacketHeader
-{
-	uint32 packetType = 1;
-	uint32 packetSize = 2;
-	uint32 seqNum = 3;
-}
-
 message EnterChatRoomReq
 {
 	int32 value = 1;

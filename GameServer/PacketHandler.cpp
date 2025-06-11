@@ -40,7 +40,7 @@ void PacketHandler::RegisterHandler(PacketType packetType, HandlerFunc handler)
 
 void PacketHandler::HandlePacket(AsioSessionPtr session, BYTE* buffer)
 {
-    Protocol::PacketHeader* header = reinterpret_cast<Protocol::PacketHeader*>(buffer);
+    PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
 
     if (!header || !session)
         return;
@@ -70,11 +70,12 @@ void PacketHandler::HandleDummyClient(AsioSessionPtr& session, BYTE* buffer)
     //if (packet->header.type != PacketType::ChatReq)
        // return;
 
+    // 패킷 가공
     Protocol::EnterChatRoomReq packet;
     packet.set_value(1);
     packet.set_message(2);
-    packet.add_items(3);
 
+    // 패킷 생성
     Packet sendPacket = MakePacket(packet, PKT_EnterChatRoomReq);
 
     GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
@@ -84,6 +85,7 @@ void PacketHandler::HandleDummyClient(AsioSessionPtr& session, BYTE* buffer)
         return;
     }
 
+    // 패킷 Send
     gameSession->Send(std::move(sendPacket));
 
     ServerAnalyzer::GetInstance().IncrementRecvCnt();

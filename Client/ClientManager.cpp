@@ -3,6 +3,7 @@
 #include "ServerAnalyzer.h"
 #include "ClientManager.h"
 #include "ServerAnalyzer.h"
+#include "PacketHandler.h"
 
 extern ClientServicePtr clientService;
 extern int32 maxSessionCnt;
@@ -72,16 +73,20 @@ void ClientManager::DummyClientProcess()
 			for (auto& session : m_Sessions)
 			{
 				int32 sessionId = session.first;
-				PacketDummyClientMessage packet;
-				memcpy(packet.payload.message, messages.c_str(), messages.length());
+				//PacketDummyClientMessage packet;
+				//memcpy(packet.payload.message, messages.c_str(), messages.length());
 
-				for (int i = 0; i < 100; ++i)
-				{
-					session.second->Send(packet);
-				}
+				Protocol::EnterChatRoomReq packet;
+				packet.set_value(200);
+				packet.set_message(213);
+
+				auto sendPacket = PacketHandler::GetInstance().MakePacket(packet);
+
+				session.second->Send(std::move(sendPacket));
 			}
 			
-			m_RunningState = RunningState::Disconnect;
+			run = false;
+			//m_RunningState = RunningState::Disconnect;
 		}
 		break;
 		case RunningState::Disconnect:

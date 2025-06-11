@@ -11,6 +11,40 @@ void AsioAcceptor::Start()
         m_Acceptor.close();
     }
 
+    tcp::endpoint endpoint(tcp::v4(), 7777);
+
+    boost::system::error_code ec;
+
+    m_Acceptor.open(endpoint.protocol(), ec);
+
+    if (ec)
+    {
+        LOGE << "Acceptor open fail";
+        return;
+    }
+
+    m_Acceptor.set_option(boost::asio::socket_base::reuse_address(true), ec);
+
+    if (ec)
+    {
+        LOGE << "SET_OPTION FAIL";
+        return;
+    }
+
+    m_Acceptor.bind(endpoint, ec);
+
+    if (ec)
+    {
+        LOGE << "BIND FAIL";
+        return;
+    }
+
+    m_Acceptor.listen(boost::asio::socket_base::max_listen_connections, ec);
+    if (ec) {
+        LOGE << "Failed to listen on port " << 7777 << ": " << ec.message();
+        return;
+    }
+
     DoAccept();
 }
 
@@ -34,11 +68,19 @@ void AsioAcceptor::DoAccept()
     // 소켓 풀 생성할까.
     auto newSocket = new tcp::socket(*m_IoContext);
 
-    SocketUtil<tcp> socketOption(newSocket);
+   
+
+    /*tcp::endpoint endPoint(tcp::v4(), 7777);
+    newSocket->open(endPoint.protocol());
+    boost::system::error_code ec;
+    newSocket->set_option(boost::asio::socket_base::reuse_address(true), ec);*/
+    /*SocketUtil<tcp> socketOption(newSocket);
     socketOption.SetReuseAddress(true);
     socketOption.SetLinger(false, 0);
     socketOption.SetKeepAlive(true);
-    socketOption.SetNodelay(true);
+    socketOption.SetNodelay(true);*/
+
+    //newSocket->bind(endPoint);
 
     // 새 연결 받기
     m_Acceptor.async_accept(*newSocket, std::bind(&AsioAcceptor::HandleAccept, this, newSocket, std::placeholders::_1));

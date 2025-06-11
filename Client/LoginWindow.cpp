@@ -105,11 +105,11 @@ void LoginWindow::TryLogin()
         if (session)
         {
             // 로그인 요청 패킷 전송
-            PacketLoginReq packet;
-            packet.header.type = PacketType::LoginReq;
-            packet.payload.id = id; 
-            packet.payload.password = password;
-            static_cast<ClientSession*>(session.get())->Send(packet);
+            //PacketLoginReq packet;
+            //packet.header.type = PacketType::LoginReq;
+            //packet.payload.id = id; 
+            //packet.payload.password = password;
+            //static_cast<ClientSession*>(session.get())->Send(packet);
         }
         else
         {

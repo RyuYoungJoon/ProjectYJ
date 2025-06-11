@@ -47,7 +47,7 @@ struct TableStruct_Protocol_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[3]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[4]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -61,6 +61,9 @@ extern EnterChatRoomAckDefaultTypeInternal _EnterChatRoomAck_default_instance_;
 class EnterChatRoomReq;
 struct EnterChatRoomReqDefaultTypeInternal;
 extern EnterChatRoomReqDefaultTypeInternal _EnterChatRoomReq_default_instance_;
+class Packet;
+struct PacketDefaultTypeInternal;
+extern PacketDefaultTypeInternal _Packet_default_instance_;
 class PacketHeader;
 struct PacketHeaderDefaultTypeInternal;
 extern PacketHeaderDefaultTypeInternal _PacketHeader_default_instance_;
@@ -68,6 +71,7 @@ extern PacketHeaderDefaultTypeInternal _PacketHeader_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::Protocol::EnterChatRoomAck* Arena::CreateMaybeMessage<::Protocol::EnterChatRoomAck>(Arena*);
 template<> ::Protocol::EnterChatRoomReq* Arena::CreateMaybeMessage<::Protocol::EnterChatRoomReq>(Arena*);
+template<> ::Protocol::Packet* Arena::CreateMaybeMessage<::Protocol::Packet>(Arena*);
 template<> ::Protocol::PacketHeader* Arena::CreateMaybeMessage<::Protocol::PacketHeader>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace Protocol {
@@ -362,33 +366,29 @@ class EnterChatRoomReq final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kItemsFieldNumber = 3,
-    kMessageFieldNumber = 1,
-    kValueFieldNumber = 2,
+    kHeaderFieldNumber = 1,
+    kMessageFieldNumber = 2,
+    kValueFieldNumber = 3,
   };
-  // repeated int32 items = 3;
-  int items_size() const;
+  // .Protocol.PacketHeader header = 1;
+  bool has_header() const;
   private:
-  int _internal_items_size() const;
+  bool _internal_has_header() const;
   public:
-  void clear_items();
+  void clear_header();
+  const ::Protocol::PacketHeader& header() const;
+  PROTOBUF_FUTURE_MUST_USE_RESULT ::Protocol::PacketHeader* release_header();
+  ::Protocol::PacketHeader* mutable_header();
+  void set_allocated_header(::Protocol::PacketHeader* header);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_items(int index) const;
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
-      _internal_items() const;
-  void _internal_add_items(::PROTOBUF_NAMESPACE_ID::int32 value);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
-      _internal_mutable_items();
+  const ::Protocol::PacketHeader& _internal_header() const;
+  ::Protocol::PacketHeader* _internal_mutable_header();
   public:
-  ::PROTOBUF_NAMESPACE_ID::int32 items(int index) const;
-  void set_items(int index, ::PROTOBUF_NAMESPACE_ID::int32 value);
-  void add_items(::PROTOBUF_NAMESPACE_ID::int32 value);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
-      items() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
-      mutable_items();
+  void unsafe_arena_set_allocated_header(
+      ::Protocol::PacketHeader* header);
+  ::Protocol::PacketHeader* unsafe_arena_release_header();
 
-  // int32 message = 1;
+  // int32 message = 2;
   void clear_message();
   ::PROTOBUF_NAMESPACE_ID::int32 message() const;
   void set_message(::PROTOBUF_NAMESPACE_ID::int32 value);
@@ -397,7 +397,7 @@ class EnterChatRoomReq final :
   void _internal_set_message(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // int32 value = 2;
+  // int32 value = 3;
   void clear_value();
   ::PROTOBUF_NAMESPACE_ID::int32 value() const;
   void set_value(::PROTOBUF_NAMESPACE_ID::int32 value);
@@ -413,8 +413,7 @@ class EnterChatRoomReq final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 > items_;
-  mutable std::atomic<int> _items_cached_byte_size_;
+  ::Protocol::PacketHeader* header_;
   ::PROTOBUF_NAMESPACE_ID::int32 message_;
   ::PROTOBUF_NAMESPACE_ID::int32 value_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -530,9 +529,28 @@ class EnterChatRoomAck final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kIdFieldNumber = 1,
+    kHeaderFieldNumber = 1,
+    kIdFieldNumber = 2,
   };
-  // uint32 id = 1;
+  // .Protocol.PacketHeader header = 1;
+  bool has_header() const;
+  private:
+  bool _internal_has_header() const;
+  public:
+  void clear_header();
+  const ::Protocol::PacketHeader& header() const;
+  PROTOBUF_FUTURE_MUST_USE_RESULT ::Protocol::PacketHeader* release_header();
+  ::Protocol::PacketHeader* mutable_header();
+  void set_allocated_header(::Protocol::PacketHeader* header);
+  private:
+  const ::Protocol::PacketHeader& _internal_header() const;
+  ::Protocol::PacketHeader* _internal_mutable_header();
+  public:
+  void unsafe_arena_set_allocated_header(
+      ::Protocol::PacketHeader* header);
+  ::Protocol::PacketHeader* unsafe_arena_release_header();
+
+  // uint32 id = 2;
   void clear_id();
   ::PROTOBUF_NAMESPACE_ID::uint32 id() const;
   void set_id(::PROTOBUF_NAMESPACE_ID::uint32 value);
@@ -548,8 +566,209 @@ class EnterChatRoomAck final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::Protocol::PacketHeader* header_;
   ::PROTOBUF_NAMESPACE_ID::uint32 id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class Packet final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.Packet) */ {
+ public:
+  inline Packet() : Packet(nullptr) {}
+  ~Packet() override;
+  explicit constexpr Packet(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  Packet(const Packet& from);
+  Packet(Packet&& from) noexcept
+    : Packet() {
+    *this = ::std::move(from);
+  }
+
+  inline Packet& operator=(const Packet& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Packet& operator=(Packet&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const Packet& default_instance() {
+    return *internal_default_instance();
+  }
+  enum PayloadCase {
+    kChatroomReq = 2,
+    kChatroomAck = 3,
+    PAYLOAD_NOT_SET = 0,
+  };
+
+  static inline const Packet* internal_default_instance() {
+    return reinterpret_cast<const Packet*>(
+               &_Packet_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(Packet& a, Packet& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Packet* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(Packet* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Packet* New() const final {
+    return new Packet();
+  }
+
+  Packet* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Packet>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const Packet& from);
+  void MergeFrom(const Packet& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Packet* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.Packet";
+  }
+  protected:
+  explicit Packet(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kHeaderFieldNumber = 1,
+    kChatroomReqFieldNumber = 2,
+    kChatroomAckFieldNumber = 3,
+  };
+  // .Protocol.PacketHeader header = 1;
+  bool has_header() const;
+  private:
+  bool _internal_has_header() const;
+  public:
+  void clear_header();
+  const ::Protocol::PacketHeader& header() const;
+  PROTOBUF_FUTURE_MUST_USE_RESULT ::Protocol::PacketHeader* release_header();
+  ::Protocol::PacketHeader* mutable_header();
+  void set_allocated_header(::Protocol::PacketHeader* header);
+  private:
+  const ::Protocol::PacketHeader& _internal_header() const;
+  ::Protocol::PacketHeader* _internal_mutable_header();
+  public:
+  void unsafe_arena_set_allocated_header(
+      ::Protocol::PacketHeader* header);
+  ::Protocol::PacketHeader* unsafe_arena_release_header();
+
+  // .Protocol.EnterChatRoomReq chatroom_req = 2;
+  bool has_chatroom_req() const;
+  private:
+  bool _internal_has_chatroom_req() const;
+  public:
+  void clear_chatroom_req();
+  const ::Protocol::EnterChatRoomReq& chatroom_req() const;
+  PROTOBUF_FUTURE_MUST_USE_RESULT ::Protocol::EnterChatRoomReq* release_chatroom_req();
+  ::Protocol::EnterChatRoomReq* mutable_chatroom_req();
+  void set_allocated_chatroom_req(::Protocol::EnterChatRoomReq* chatroom_req);
+  private:
+  const ::Protocol::EnterChatRoomReq& _internal_chatroom_req() const;
+  ::Protocol::EnterChatRoomReq* _internal_mutable_chatroom_req();
+  public:
+  void unsafe_arena_set_allocated_chatroom_req(
+      ::Protocol::EnterChatRoomReq* chatroom_req);
+  ::Protocol::EnterChatRoomReq* unsafe_arena_release_chatroom_req();
+
+  // .Protocol.EnterChatRoomAck chatroom_ack = 3;
+  bool has_chatroom_ack() const;
+  private:
+  bool _internal_has_chatroom_ack() const;
+  public:
+  void clear_chatroom_ack();
+  const ::Protocol::EnterChatRoomAck& chatroom_ack() const;
+  PROTOBUF_FUTURE_MUST_USE_RESULT ::Protocol::EnterChatRoomAck* release_chatroom_ack();
+  ::Protocol::EnterChatRoomAck* mutable_chatroom_ack();
+  void set_allocated_chatroom_ack(::Protocol::EnterChatRoomAck* chatroom_ack);
+  private:
+  const ::Protocol::EnterChatRoomAck& _internal_chatroom_ack() const;
+  ::Protocol::EnterChatRoomAck* _internal_mutable_chatroom_ack();
+  public:
+  void unsafe_arena_set_allocated_chatroom_ack(
+      ::Protocol::EnterChatRoomAck* chatroom_ack);
+  ::Protocol::EnterChatRoomAck* unsafe_arena_release_chatroom_ack();
+
+  void clear_payload();
+  PayloadCase payload_case() const;
+  // @@protoc_insertion_point(class_scope:Protocol.Packet)
+ private:
+  class _Internal;
+  void set_has_chatroom_req();
+  void set_has_chatroom_ack();
+
+  inline bool has_payload() const;
+  inline void clear_has_payload();
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::Protocol::PacketHeader* header_;
+  union PayloadUnion {
+    constexpr PayloadUnion() : _constinit_{} {}
+      ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
+    ::Protocol::EnterChatRoomReq* chatroom_req_;
+    ::Protocol::EnterChatRoomAck* chatroom_ack_;
+  } payload_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 _oneof_case_[1];
+
   friend struct ::TableStruct_Protocol_2eproto;
 };
 // ===================================================================
@@ -627,7 +846,90 @@ inline void PacketHeader::set_seqnum(::PROTOBUF_NAMESPACE_ID::uint32 value) {
 
 // EnterChatRoomReq
 
-// int32 message = 1;
+// .Protocol.PacketHeader header = 1;
+inline bool EnterChatRoomReq::_internal_has_header() const {
+  return this != internal_default_instance() && header_ != nullptr;
+}
+inline bool EnterChatRoomReq::has_header() const {
+  return _internal_has_header();
+}
+inline void EnterChatRoomReq::clear_header() {
+  if (GetArenaForAllocation() == nullptr && header_ != nullptr) {
+    delete header_;
+  }
+  header_ = nullptr;
+}
+inline const ::Protocol::PacketHeader& EnterChatRoomReq::_internal_header() const {
+  const ::Protocol::PacketHeader* p = header_;
+  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::PacketHeader&>(
+      ::Protocol::_PacketHeader_default_instance_);
+}
+inline const ::Protocol::PacketHeader& EnterChatRoomReq::header() const {
+  // @@protoc_insertion_point(field_get:Protocol.EnterChatRoomReq.header)
+  return _internal_header();
+}
+inline void EnterChatRoomReq::unsafe_arena_set_allocated_header(
+    ::Protocol::PacketHeader* header) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(header_);
+  }
+  header_ = header;
+  if (header) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.EnterChatRoomReq.header)
+}
+inline ::Protocol::PacketHeader* EnterChatRoomReq::release_header() {
+  
+  ::Protocol::PacketHeader* temp = header_;
+  header_ = nullptr;
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+  return temp;
+}
+inline ::Protocol::PacketHeader* EnterChatRoomReq::unsafe_arena_release_header() {
+  // @@protoc_insertion_point(field_release:Protocol.EnterChatRoomReq.header)
+  
+  ::Protocol::PacketHeader* temp = header_;
+  header_ = nullptr;
+  return temp;
+}
+inline ::Protocol::PacketHeader* EnterChatRoomReq::_internal_mutable_header() {
+  
+  if (header_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Protocol::PacketHeader>(GetArenaForAllocation());
+    header_ = p;
+  }
+  return header_;
+}
+inline ::Protocol::PacketHeader* EnterChatRoomReq::mutable_header() {
+  // @@protoc_insertion_point(field_mutable:Protocol.EnterChatRoomReq.header)
+  return _internal_mutable_header();
+}
+inline void EnterChatRoomReq::set_allocated_header(::Protocol::PacketHeader* header) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete header_;
+  }
+  if (header) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::Protocol::PacketHeader>::GetOwningArena(header);
+    if (message_arena != submessage_arena) {
+      header = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, header, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  header_ = header;
+  // @@protoc_insertion_point(field_set_allocated:Protocol.EnterChatRoomReq.header)
+}
+
+// int32 message = 2;
 inline void EnterChatRoomReq::clear_message() {
   message_ = 0;
 }
@@ -647,7 +949,7 @@ inline void EnterChatRoomReq::set_message(::PROTOBUF_NAMESPACE_ID::int32 value) 
   // @@protoc_insertion_point(field_set:Protocol.EnterChatRoomReq.message)
 }
 
-// int32 value = 2;
+// int32 value = 3;
 inline void EnterChatRoomReq::clear_value() {
   value_ = 0;
 }
@@ -667,58 +969,94 @@ inline void EnterChatRoomReq::set_value(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:Protocol.EnterChatRoomReq.value)
 }
 
-// repeated int32 items = 3;
-inline int EnterChatRoomReq::_internal_items_size() const {
-  return items_.size();
-}
-inline int EnterChatRoomReq::items_size() const {
-  return _internal_items_size();
-}
-inline void EnterChatRoomReq::clear_items() {
-  items_.Clear();
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 EnterChatRoomReq::_internal_items(int index) const {
-  return items_.Get(index);
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 EnterChatRoomReq::items(int index) const {
-  // @@protoc_insertion_point(field_get:Protocol.EnterChatRoomReq.items)
-  return _internal_items(index);
-}
-inline void EnterChatRoomReq::set_items(int index, ::PROTOBUF_NAMESPACE_ID::int32 value) {
-  items_.Set(index, value);
-  // @@protoc_insertion_point(field_set:Protocol.EnterChatRoomReq.items)
-}
-inline void EnterChatRoomReq::_internal_add_items(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  items_.Add(value);
-}
-inline void EnterChatRoomReq::add_items(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_add_items(value);
-  // @@protoc_insertion_point(field_add:Protocol.EnterChatRoomReq.items)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
-EnterChatRoomReq::_internal_items() const {
-  return items_;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
-EnterChatRoomReq::items() const {
-  // @@protoc_insertion_point(field_list:Protocol.EnterChatRoomReq.items)
-  return _internal_items();
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
-EnterChatRoomReq::_internal_mutable_items() {
-  return &items_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
-EnterChatRoomReq::mutable_items() {
-  // @@protoc_insertion_point(field_mutable_list:Protocol.EnterChatRoomReq.items)
-  return _internal_mutable_items();
-}
-
 // -------------------------------------------------------------------
 
 // EnterChatRoomAck
 
-// uint32 id = 1;
+// .Protocol.PacketHeader header = 1;
+inline bool EnterChatRoomAck::_internal_has_header() const {
+  return this != internal_default_instance() && header_ != nullptr;
+}
+inline bool EnterChatRoomAck::has_header() const {
+  return _internal_has_header();
+}
+inline void EnterChatRoomAck::clear_header() {
+  if (GetArenaForAllocation() == nullptr && header_ != nullptr) {
+    delete header_;
+  }
+  header_ = nullptr;
+}
+inline const ::Protocol::PacketHeader& EnterChatRoomAck::_internal_header() const {
+  const ::Protocol::PacketHeader* p = header_;
+  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::PacketHeader&>(
+      ::Protocol::_PacketHeader_default_instance_);
+}
+inline const ::Protocol::PacketHeader& EnterChatRoomAck::header() const {
+  // @@protoc_insertion_point(field_get:Protocol.EnterChatRoomAck.header)
+  return _internal_header();
+}
+inline void EnterChatRoomAck::unsafe_arena_set_allocated_header(
+    ::Protocol::PacketHeader* header) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(header_);
+  }
+  header_ = header;
+  if (header) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.EnterChatRoomAck.header)
+}
+inline ::Protocol::PacketHeader* EnterChatRoomAck::release_header() {
+  
+  ::Protocol::PacketHeader* temp = header_;
+  header_ = nullptr;
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+  return temp;
+}
+inline ::Protocol::PacketHeader* EnterChatRoomAck::unsafe_arena_release_header() {
+  // @@protoc_insertion_point(field_release:Protocol.EnterChatRoomAck.header)
+  
+  ::Protocol::PacketHeader* temp = header_;
+  header_ = nullptr;
+  return temp;
+}
+inline ::Protocol::PacketHeader* EnterChatRoomAck::_internal_mutable_header() {
+  
+  if (header_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Protocol::PacketHeader>(GetArenaForAllocation());
+    header_ = p;
+  }
+  return header_;
+}
+inline ::Protocol::PacketHeader* EnterChatRoomAck::mutable_header() {
+  // @@protoc_insertion_point(field_mutable:Protocol.EnterChatRoomAck.header)
+  return _internal_mutable_header();
+}
+inline void EnterChatRoomAck::set_allocated_header(::Protocol::PacketHeader* header) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete header_;
+  }
+  if (header) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::Protocol::PacketHeader>::GetOwningArena(header);
+    if (message_arena != submessage_arena) {
+      header = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, header, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  header_ = header;
+  // @@protoc_insertion_point(field_set_allocated:Protocol.EnterChatRoomAck.header)
+}
+
+// uint32 id = 2;
 inline void EnterChatRoomAck::clear_id() {
   id_ = 0u;
 }
@@ -738,9 +1076,253 @@ inline void EnterChatRoomAck::set_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   // @@protoc_insertion_point(field_set:Protocol.EnterChatRoomAck.id)
 }
 
+// -------------------------------------------------------------------
+
+// Packet
+
+// .Protocol.PacketHeader header = 1;
+inline bool Packet::_internal_has_header() const {
+  return this != internal_default_instance() && header_ != nullptr;
+}
+inline bool Packet::has_header() const {
+  return _internal_has_header();
+}
+inline void Packet::clear_header() {
+  if (GetArenaForAllocation() == nullptr && header_ != nullptr) {
+    delete header_;
+  }
+  header_ = nullptr;
+}
+inline const ::Protocol::PacketHeader& Packet::_internal_header() const {
+  const ::Protocol::PacketHeader* p = header_;
+  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::PacketHeader&>(
+      ::Protocol::_PacketHeader_default_instance_);
+}
+inline const ::Protocol::PacketHeader& Packet::header() const {
+  // @@protoc_insertion_point(field_get:Protocol.Packet.header)
+  return _internal_header();
+}
+inline void Packet::unsafe_arena_set_allocated_header(
+    ::Protocol::PacketHeader* header) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(header_);
+  }
+  header_ = header;
+  if (header) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.Packet.header)
+}
+inline ::Protocol::PacketHeader* Packet::release_header() {
+  
+  ::Protocol::PacketHeader* temp = header_;
+  header_ = nullptr;
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+  return temp;
+}
+inline ::Protocol::PacketHeader* Packet::unsafe_arena_release_header() {
+  // @@protoc_insertion_point(field_release:Protocol.Packet.header)
+  
+  ::Protocol::PacketHeader* temp = header_;
+  header_ = nullptr;
+  return temp;
+}
+inline ::Protocol::PacketHeader* Packet::_internal_mutable_header() {
+  
+  if (header_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Protocol::PacketHeader>(GetArenaForAllocation());
+    header_ = p;
+  }
+  return header_;
+}
+inline ::Protocol::PacketHeader* Packet::mutable_header() {
+  // @@protoc_insertion_point(field_mutable:Protocol.Packet.header)
+  return _internal_mutable_header();
+}
+inline void Packet::set_allocated_header(::Protocol::PacketHeader* header) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete header_;
+  }
+  if (header) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::Protocol::PacketHeader>::GetOwningArena(header);
+    if (message_arena != submessage_arena) {
+      header = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, header, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  header_ = header;
+  // @@protoc_insertion_point(field_set_allocated:Protocol.Packet.header)
+}
+
+// .Protocol.EnterChatRoomReq chatroom_req = 2;
+inline bool Packet::_internal_has_chatroom_req() const {
+  return payload_case() == kChatroomReq;
+}
+inline bool Packet::has_chatroom_req() const {
+  return _internal_has_chatroom_req();
+}
+inline void Packet::set_has_chatroom_req() {
+  _oneof_case_[0] = kChatroomReq;
+}
+inline void Packet::clear_chatroom_req() {
+  if (_internal_has_chatroom_req()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete payload_.chatroom_req_;
+    }
+    clear_has_payload();
+  }
+}
+inline ::Protocol::EnterChatRoomReq* Packet::release_chatroom_req() {
+  // @@protoc_insertion_point(field_release:Protocol.Packet.chatroom_req)
+  if (_internal_has_chatroom_req()) {
+    clear_has_payload();
+      ::Protocol::EnterChatRoomReq* temp = payload_.chatroom_req_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    payload_.chatroom_req_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::Protocol::EnterChatRoomReq& Packet::_internal_chatroom_req() const {
+  return _internal_has_chatroom_req()
+      ? *payload_.chatroom_req_
+      : reinterpret_cast< ::Protocol::EnterChatRoomReq&>(::Protocol::_EnterChatRoomReq_default_instance_);
+}
+inline const ::Protocol::EnterChatRoomReq& Packet::chatroom_req() const {
+  // @@protoc_insertion_point(field_get:Protocol.Packet.chatroom_req)
+  return _internal_chatroom_req();
+}
+inline ::Protocol::EnterChatRoomReq* Packet::unsafe_arena_release_chatroom_req() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:Protocol.Packet.chatroom_req)
+  if (_internal_has_chatroom_req()) {
+    clear_has_payload();
+    ::Protocol::EnterChatRoomReq* temp = payload_.chatroom_req_;
+    payload_.chatroom_req_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void Packet::unsafe_arena_set_allocated_chatroom_req(::Protocol::EnterChatRoomReq* chatroom_req) {
+  clear_payload();
+  if (chatroom_req) {
+    set_has_chatroom_req();
+    payload_.chatroom_req_ = chatroom_req;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.Packet.chatroom_req)
+}
+inline ::Protocol::EnterChatRoomReq* Packet::_internal_mutable_chatroom_req() {
+  if (!_internal_has_chatroom_req()) {
+    clear_payload();
+    set_has_chatroom_req();
+    payload_.chatroom_req_ = CreateMaybeMessage< ::Protocol::EnterChatRoomReq >(GetArenaForAllocation());
+  }
+  return payload_.chatroom_req_;
+}
+inline ::Protocol::EnterChatRoomReq* Packet::mutable_chatroom_req() {
+  // @@protoc_insertion_point(field_mutable:Protocol.Packet.chatroom_req)
+  return _internal_mutable_chatroom_req();
+}
+
+// .Protocol.EnterChatRoomAck chatroom_ack = 3;
+inline bool Packet::_internal_has_chatroom_ack() const {
+  return payload_case() == kChatroomAck;
+}
+inline bool Packet::has_chatroom_ack() const {
+  return _internal_has_chatroom_ack();
+}
+inline void Packet::set_has_chatroom_ack() {
+  _oneof_case_[0] = kChatroomAck;
+}
+inline void Packet::clear_chatroom_ack() {
+  if (_internal_has_chatroom_ack()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete payload_.chatroom_ack_;
+    }
+    clear_has_payload();
+  }
+}
+inline ::Protocol::EnterChatRoomAck* Packet::release_chatroom_ack() {
+  // @@protoc_insertion_point(field_release:Protocol.Packet.chatroom_ack)
+  if (_internal_has_chatroom_ack()) {
+    clear_has_payload();
+      ::Protocol::EnterChatRoomAck* temp = payload_.chatroom_ack_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    payload_.chatroom_ack_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::Protocol::EnterChatRoomAck& Packet::_internal_chatroom_ack() const {
+  return _internal_has_chatroom_ack()
+      ? *payload_.chatroom_ack_
+      : reinterpret_cast< ::Protocol::EnterChatRoomAck&>(::Protocol::_EnterChatRoomAck_default_instance_);
+}
+inline const ::Protocol::EnterChatRoomAck& Packet::chatroom_ack() const {
+  // @@protoc_insertion_point(field_get:Protocol.Packet.chatroom_ack)
+  return _internal_chatroom_ack();
+}
+inline ::Protocol::EnterChatRoomAck* Packet::unsafe_arena_release_chatroom_ack() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:Protocol.Packet.chatroom_ack)
+  if (_internal_has_chatroom_ack()) {
+    clear_has_payload();
+    ::Protocol::EnterChatRoomAck* temp = payload_.chatroom_ack_;
+    payload_.chatroom_ack_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void Packet::unsafe_arena_set_allocated_chatroom_ack(::Protocol::EnterChatRoomAck* chatroom_ack) {
+  clear_payload();
+  if (chatroom_ack) {
+    set_has_chatroom_ack();
+    payload_.chatroom_ack_ = chatroom_ack;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.Packet.chatroom_ack)
+}
+inline ::Protocol::EnterChatRoomAck* Packet::_internal_mutable_chatroom_ack() {
+  if (!_internal_has_chatroom_ack()) {
+    clear_payload();
+    set_has_chatroom_ack();
+    payload_.chatroom_ack_ = CreateMaybeMessage< ::Protocol::EnterChatRoomAck >(GetArenaForAllocation());
+  }
+  return payload_.chatroom_ack_;
+}
+inline ::Protocol::EnterChatRoomAck* Packet::mutable_chatroom_ack() {
+  // @@protoc_insertion_point(field_mutable:Protocol.Packet.chatroom_ack)
+  return _internal_mutable_chatroom_ack();
+}
+
+inline bool Packet::has_payload() const {
+  return payload_case() != PAYLOAD_NOT_SET;
+}
+inline void Packet::clear_has_payload() {
+  _oneof_case_[0] = PAYLOAD_NOT_SET;
+}
+inline Packet::PayloadCase Packet::payload_case() const {
+  return Packet::PayloadCase(_oneof_case_[0]);
+}
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

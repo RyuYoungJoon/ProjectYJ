@@ -87,8 +87,8 @@ void LobbyWindow::Show(const std::string& userId)
         auto session = sessions.begin()->second;
         if (session)
         {
-            PacketRoomListReq packet;
-            static_cast<ClientSession*>(session.get())->Send(packet);
+            //PacketRoomListReq packet;
+            //static_cast<ClientSession*>(session.get())->Send(packet);
         }
     }
 
@@ -118,8 +118,8 @@ void LobbyWindow::RefreshRoomList()
         auto session = sessions.begin()->second;
         if (session)
         {
-            PacketRoomListReq packet;
-            static_cast<ClientSession*>(session.get())->Send(packet);
+            //PacketRoomListReq packet;
+           // static_cast<ClientSession*>(session.get())->Send(packet);
         }
     }
 }
@@ -165,10 +165,10 @@ void LobbyWindow::EnterChatRoom(int roomId)
                 //static_cast<ClientSession*>(session.get())->Send(std::to_string(roomId), PacketType::RoomEnterReq);
 
                 // 채팅방 입장 처리는 WM_CLIENT_CHATROOM_ENTER 메시지 핸들러에서 처리
-                PacketRoomEnterReq packet;
-                packet.payload.roomID = selectedRoom.roomID;
+                //PacketRoomEnterReq packet;
+                //packet.payload.roomID = selectedRoom.roomID;
 
-                static_cast<ClientSession*>(session.get())->Send(packet);
+                //static_cast<ClientSession*>(session.get())->Send(packet);
 
                 // 테스트를 위한 임시 코드 - 실제로는 서버 응답을 기다림
                 Hide();
@@ -197,9 +197,9 @@ void LobbyWindow::CreateNewChatRoom(const std::string& roomName)
         if (session)
         {
             // 채팅방 생성 요청 패킷 전송 (format: "roomName|maxUsers")
-            PacketRoomCreateReq packet;
-            packet.payload.roomName = roomName;
-            static_cast<ClientSession*>(session.get())->Send(packet);
+            //PacketRoomCreateReq packet;
+            //packet.payload.roomName = roomName;
+            //static_cast<ClientSession*>(session.get())->Send(packet);
 
             // 채팅방 생성 처리는 WM_CLIENT_CHATROOM_CREATE 메시지 핸들러에서 처리
         }

@@ -26,6 +26,19 @@ enum class PacketType : uint8
 //	Reconnect = 4,
 //};
 
+struct PacketHeader
+{
+	uint16 packetType;
+	uint32 packetSize;
+	uint32 seqNum;
+
+	PacketHeader()
+	{
+		packetType = 0;
+		packetSize = 0;
+		seqNum = 0;
+	}
+};
 
 class Packet
 {
@@ -34,10 +47,10 @@ public:
 	Packet()
 		: m_Data(nullptr), m_Size(0), m_PacketType(0), m_Buffer(nullptr){ }
 
-	Packet(unsigned char* data, uint32 size, uint32 packetType)
+	Packet(const char* data, uint32 size, uint32 packetType)
 		: m_Size(size), m_PacketType(packetType)
 	{
-		m_Buffer = std::make_unique<unsigned char>(size);
+		m_Buffer = std::make_unique<char>(size);
 		std::memcpy(m_Buffer.get(), data, size);
 		m_Data = m_Buffer.get();
 	}
@@ -75,13 +88,13 @@ public:
 	Packet& operator=(const Packet&) = delete;
 
 	// Getter 함수들
-	unsigned char* GetData() const { return m_Data; }
+	const char* GetData() const { return m_Data; }
 	uint32 GetSize() const { return m_Size; }
 	uint32 GetPacketType() const { return m_PacketType; }
 	bool IsValid() const { return m_Data != nullptr && m_Size > 0; }
 
 	// 외부 데이터 참조 (소유권 없음)
-	void SetExternalData(unsigned char* data, uint32 size, uint32 packetType)
+	void SetExternalData(const char* data, uint32 size, uint32 packetType)
 	{
 		m_Buffer.reset(); // 기존 소유 데이터 해제
 		m_Data = data;
@@ -97,8 +110,8 @@ public:
 			<< ", Data: " << (m_Data ? "Valid" : "NULL");
 	}
 private:
-	unsigned char* m_Data;		// 데이터 포인터
+	const char* m_Data;		// 데이터 포인터
 	uint32 m_Size;			// 데이터 크기
 	uint32 m_PacketType;	// 패킷 타입
-	std::unique_ptr<unsigned char> m_Buffer;	// 소유권 관리용
+	std::unique_ptr<char> m_Buffer;	// 소유권 관리용
 };

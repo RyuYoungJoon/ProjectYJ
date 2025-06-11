@@ -159,6 +159,10 @@ void AsioSession::Send(Packet&& packet)
 	// 이 부분은 풀로 관리.
 	auto sendPacket = PacketPool::GetInstance().Pop();
 
+	// packet이 shared_ptr이 아니어서 에러.
+	// Question. Packet이 꼭 shared_ptr이어야할까?
+	*sendPacket = std::move(packet);
+
 	boost::asio::async_write(*m_Socket, boost::asio::buffer(sendPacket->GetData(), sendPacket->GetSize()),
 		std::bind(&AsioSession::HandleWrite, shared_from_this(), std::placeholders::_1, std::placeholders::_2, sendPacket));
 }
@@ -186,15 +190,15 @@ int32 AsioSession::ProcessPacket(BYTE* buffer, int32 len)
 	while (true)
 	{
 		uint32 dataSize = len - processLen;
-		if (dataSize < sizeof(Protocol::PacketHeader))
+		if (dataSize < sizeof(PacketHeader))
 			break;
 
-		Protocol::PacketHeader header = *(reinterpret_cast<Protocol::PacketHeader*>(&buffer[processLen]));
-		if (dataSize < header.packetsize())
+		PacketHeader header = *(reinterpret_cast<PacketHeader*>(&buffer[processLen]));
+		if (dataSize < header.packetSize)
 			break;
 
 		PacketRouter::GetInstance().Dispatch(shared_from_this(), &buffer[processLen]);
-		processLen += header.packetsize();
+		processLen += header.packetSize;
 	}
 
 	return processLen;

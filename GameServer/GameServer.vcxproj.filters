@@ -68,7 +68,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\protoc-3.17.1-win64\bin\Protocol.proto">
+    <None Include="..\Libraries\Libs\Protobuf\Protocol\Protocol.proto">
       <Filter>Protocol</Filter>
     </None>
   </ItemGroup>

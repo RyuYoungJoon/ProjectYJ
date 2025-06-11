@@ -2,6 +2,7 @@
 #include "Packet.h"
 #include "PacketRouter.h"
 #include "Protocol.pb.h"
+#include "Pool.h"
 
 enum : uint16
 {
@@ -52,21 +53,24 @@ private:
 	static Packet MakePacket(T& pkt, uint16 packetType)
 	{
 		const uint16 dataSize = static_cast<uint16>(pkt.ByteSizeLong());
-		const uint16 packetSize = dataSize + sizeof(Protocol::PacketHeader);
+		const uint16 packetSize = dataSize + sizeof(PacketHeader);
 		
-		Protocol::PacketHeader header;
-		header.set_packettype(packetType);
-		header.set_packetsize(sizeof(Protocol::PacketHeader) + dataSize);
-		header.set_seqnum(1);
+		PacketHeader header;
+		header.packetType = packetType;
+		header.packetSize = packetSize;
+		header.seqNum = 1;
 
-		auto buffer = std::make_unique<unsigned char>(header.packetsize());
+		auto buffer = std::make_unique<char>(header.packetSize);
 
-		if (!pkt.SerializeToArray(buffer.get() + sizeof(Protocol::PacketHeader), dataSize))
+		if (!pkt.SerializeToArray(buffer.get() + sizeof(PacketHeader), dataSize))
 		{
 			LOGE << "Faile SerializeToArray! PacketType : " << packetType;
 			return Packet();
 		}
-		Packet packet = Packet(buffer.release(), header.packetsize(), packetType);
+
+		auto makePacket = PacketPool::GetInstance().Pop();
+
+		Packet packet = Packet(buffer.release(), header.packetSize, packetType);
 
 		return packet;
 	}
