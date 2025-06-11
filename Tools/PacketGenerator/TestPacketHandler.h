@@ -41,7 +41,8 @@ public:
 	}
 
 	// 패킷 생성
-	static Packet MakePacket(Protocol::EnterChatRoomAck& pkt) { return MakePacket(pkt, EnterChatRoomAck); }
+	static Packet MakePacket(Protocol::EnterChatRoomReq& pkt) { return MakePacket(pkt, EnterChatRoomReq); }
+	static Packet MakePacket(Protocol::LoginReq& pkt) { return MakePacket(pkt, LoginReq); }
 
 	PacketHandler();
 	~PacketHandler();

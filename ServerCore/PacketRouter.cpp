@@ -13,7 +13,7 @@ void PacketRouter::Init(int32 numThread, PacketHandlerFunc initfunc)
 
     m_CreateFunc = initfunc;
 
-    // ¿öÄ¿ ¼ö ¼³Á¤ (±âº»°ª: CPU ÄÚ¾î ¼ö / 2)
+    // ï¿½ï¿½Ä¿ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½âº»ï¿½ï¿½: CPU ï¿½Ú¾ï¿½ ï¿½ï¿½ / 2)
     if (numThread <= 0)
     {
         numThread = std::thread::hardware_concurrency() / 2;
@@ -22,13 +22,13 @@ void PacketRouter::Init(int32 numThread, PacketHandlerFunc initfunc)
 
     m_NumWorkers = numThread;
 
-    // ¿öÄ¿º° Å¥ »ý¼º
+    // ï¿½ï¿½Ä¿ï¿½ï¿½ Å¥ ï¿½ï¿½ï¿½ï¿½
     for (int32 i = 0; i < m_NumWorkers; ++i)
     {
         m_PacketQueue.push_back(std::make_unique<Concurrency::concurrent_queue<PacketQueueItem>>());
     }
 
-    // ¿öÄ¿ ½º·¹µå »ý¼º
+    // ï¿½ï¿½Ä¿ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     for (int32 i = 0; i < m_NumWorkers; ++i)
     {
         m_WorkerThreads.emplace_back([this, i]() {
@@ -47,14 +47,14 @@ void PacketRouter::Shutdown()
 
     m_IsRunning = false;
 
-    // ¿öÄ¿ ½º·¹µå Á¾·á ´ë±â
+    // ï¿½ï¿½Ä¿ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     for (auto& thread : m_WorkerThreads)
     {
         if (thread.joinable())
             thread.join();
     }
 
-    // Å¥ Á¤¸®
+    // Å¥ ï¿½ï¿½ï¿½ï¿½
     m_PacketQueue.clear();
     m_WorkerThreads.clear();
 
@@ -69,7 +69,7 @@ void PacketRouter::Dispatch(AsioSessionPtr session, BYTE* buffer, int32 len)
     int32 sessionId = session->GetSessionUID();
     int32 workerIdx = GetWorkerIndex(sessionId);
 
-    // Å¥¿¡ ÆÐÅ¶ Ç×¸ñ Ãß°¡
+    // Å¥ï¿½ï¿½ ï¿½ï¿½Å¶ ï¿½×¸ï¿½ ï¿½ß°ï¿½
     PacketQueueItem item(sessionId, buffer, len);
     m_PacketQueue[workerIdx]->push(item);
 }
@@ -110,7 +110,7 @@ void PacketProcessor::Run()
     PacketQueueItem item;
 
     while (*m_IsRunning) {
-        // Å¥¿¡¼­ ÆÐÅ¶ °¡Á®¿À±â
+        // Å¥ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (!m_ProcessQueue->try_pop(item))
         {
             std::this_thread::sleep_for(100ms);
@@ -119,13 +119,13 @@ void PacketProcessor::Run()
 
         int32 sessionId = item.sessionId;
 
-        // ¼¼¼Ç Ã£±â
+        // ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½
         AsioSessionPtr session = SessionManager::GetInstance().GetSession(sessionId);
         if (session) {
             HandlePacket(session, item.buffer, item.len);
             //LOGI << "Packet Queue Size : " << m_Queue->unsafe_size();
 
-            // ÅÛÇÃ¸´È­ ÇÏ¸é¼­ PacketPoolµµ ¸®ÆåÅä¸µ ÇÊ¿ä.
+            // ï¿½ï¿½ï¿½Ã¸ï¿½È­ ï¿½Ï¸é¼­ PacketPoolï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ä¸µ ï¿½Ê¿ï¿½.
             //PacketPool::GetInstance().Push(packet);
         }
     }

@@ -6,7 +6,7 @@
 #include <CommCtrl.h>
 #include "WinUtils.h"
 
-// Å¬·¡½º ÀÌ¸§
+// Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
 LPCTSTR lpszChatClass = L"ClassChatWindow";
 
 extern ClientServicePtr clientService;
@@ -17,7 +17,7 @@ std::map<HWND, ChatWindow*> ChatWindow::s_mapWindow;
 
 LRESULT ChatWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    // ÇØ´ç À©µµ¿ìÀÇ ChatWindow °´Ã¼ Ã£±â
+    // ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ChatWindow ï¿½ï¿½Ã¼ Ã£ï¿½ï¿½
     ChatWindow* pThis = NULL;
     if (s_mapWindow.find(hwnd) != s_mapWindow.end()) {
         pThis = s_mapWindow[hwnd];
@@ -55,7 +55,7 @@ LRESULT ChatWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             ChatMessageData* data = (ChatMessageData*)lParam;
             if (data) {
                 pThis->OnMessageRecv(data->sender, data->message);
-                delete data; // ¸Þ¸ð¸® ÇØÁ¦
+                delete data; // ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½
             }
             return 0;
         }
@@ -66,25 +66,25 @@ LRESULT ChatWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             RECT rcClient;
             GetClientRect(hwnd, &rcClient);
 
-            // ¸®½ºÆ®¹Ú½º Å©±â Á¶Á¤
+            // ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ú½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             SetWindowPos(pThis->m_hListChat, NULL,
                 10, 10,
                 rcClient.right - 20, rcClient.bottom - 90,
                 SWP_NOZORDER);
 
-            // ÀÔ·ÂÃ¢ Å©±â Á¶Á¤
+            // ï¿½Ô·ï¿½Ã¢ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             SetWindowPos(pThis->m_hEditMessage, NULL,
                 10, rcClient.bottom - 70,
                 rcClient.right - 100, 30,
                 SWP_NOZORDER);
 
-            // Àü¼Û ¹öÆ° Å©±â Á¶Á¤
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ° Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             SetWindowPos(pThis->m_hSendButton, NULL,
                 rcClient.right - 80, rcClient.bottom - 70,
                 70, 30,
                 SWP_NOZORDER);
 
-            // »óÅÂ¹Ù Å©±â Á¶Á¤
+            // ï¿½ï¿½ï¿½Â¹ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             SendMessage(pThis->m_hStatusBar, WM_SIZE, 0, 0);
 
             return 0;
@@ -106,33 +106,33 @@ void ChatWindow::CreateControl()
 {
     HFONT hFont = CreateFont(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
         DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
-        CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"¸¼Àº °íµñ");
+        CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½");
 
-    // Ã¤ÆÃ ¸®½ºÆ®¹Ú½º
+    // Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ú½ï¿½
     m_hListChat = CreateWindowW(L"LISTBOX", NULL,
         WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL | LBS_NOINTEGRALHEIGHT,
         10, 10, 560, 380, m_hWnd, (HMENU)IDC_LIST_CHAT, NULL, NULL);
     SendMessage(m_hListChat, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // ¸Þ½ÃÁö ÀÔ·ÂÃ¢
+    // ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½Ã¢
     m_hEditMessage = CreateWindowW(L"EDIT", L"",
         WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
         10, 400, 560, 30, m_hWnd, (HMENU)IDC_EDIT_MESSAGE, NULL, NULL);
     SendMessage(m_hEditMessage, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // Àü¼Û ¹öÆ°
-    m_hSendButton = CreateWindowW(L"BUTTON", L"Àü¼Û",
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°
+    m_hSendButton = CreateWindowW(L"BUTTON", L"ï¿½ï¿½ï¿½ï¿½",
         WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
         580, 400, 100, 30, m_hWnd, (HMENU)IDC_BUTTON_SEND, NULL, NULL);
     SendMessage(m_hSendButton, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // »óÅÂ¹Ù
+    // ï¿½ï¿½ï¿½Â¹ï¿½
     m_hStatusBar = CreateWindowW(STATUSCLASSNAME, NULL,
         WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,
         0, 0, 0, 0, m_hWnd, (HMENU)IDC_STATUS_BAR, NULL, NULL);
 
-    // ¼­¹ö ¿¬°á »óÅÂ Ç¥½Ã
-    std::wstring statusText = L"¼­¹ö: " + WinUtils::StringToWString(serverIP) + L":" + WinUtils::StringToWString(serverPort) + L" (¿¬°á Áß...)";
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
+    std::wstring statusText = L"ï¿½ï¿½ï¿½ï¿½: " + WinUtils::StringToWString(serverIP) + L":" + WinUtils::StringToWString(serverPort) + L" (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½...)";
     SendMessage(m_hStatusBar, SB_SETTEXT, 0, (LPARAM)statusText.c_str());
 }
 
@@ -144,18 +144,18 @@ ChatWindow::ChatWindow()
 
 ChatWindow::~ChatWindow()
 {
-	// ¸Ê Á¦°Å
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 }
 
 bool ChatWindow::Init(HINSTANCE hInstance)
 {
-    // ÄÁÆ®·Ñ ÃÊ±âÈ­
+    // ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ê±ï¿½È­
     INITCOMMONCONTROLSEX icc;
     icc.dwSize = sizeof(INITCOMMONCONTROLSEX);
     icc.dwICC = ICC_BAR_CLASSES;
     InitCommonControlsEx(&icc);
 
-    // À©µµ¿ì Å¬·¡½º µî·Ï
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     WNDCLASSEXW wcex = { 0 };
     wcex.cbSize = sizeof(WNDCLASSEXW);
     wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -168,28 +168,28 @@ bool ChatWindow::Init(HINSTANCE hInstance)
 
     if (!RegisterClassExW(&wcex))
     {
-        MessageBoxW(NULL, L"Ã¤ÆÃ À©µµ¿ì Å¬·¡½º µî·Ï ½ÇÆÐ", L"¿À·ù", MB_ICONERROR);
+        MessageBoxW(NULL, L"Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", L"ï¿½ï¿½ï¿½ï¿½", MB_ICONERROR);
         return false;
     }
 
-    // À©µµ¿ì »ý¼º
-    m_hWnd = CreateWindowW(lpszChatClass, L"Ã¤ÆÃ", WS_OVERLAPPEDWINDOW,
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    m_hWnd = CreateWindowW(lpszChatClass, L"Ã¤ï¿½ï¿½", WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, 800, 600, nullptr, nullptr, hInstance, nullptr);
 
     if (!m_hWnd)
     {
-        MessageBoxW(NULL, L"Ã¤ÆÃ À©µµ¿ì »ý¼º ½ÇÆÐ", L"¿À·ù", MB_ICONERROR);
+        MessageBoxW(NULL, L"Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", L"ï¿½ï¿½ï¿½ï¿½", MB_ICONERROR);
         return false;
     }
 
     ClientSession::SetChatWin(m_hWnd);
-    // °´Ã¼ ¿¬°á
+    // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½
     s_mapWindow[m_hWnd] = this;
 
-    // ¼¼¼Ç¿¡ À©µµ¿ì ÇÚµé ¼³Á¤
+    // ï¿½ï¿½ï¿½Ç¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½
     //ClientSession::SetMainWin(m_hWnd);
 
-    // ÄÁÆ®·Ñ »ý¼º
+    // ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     CreateControl();
 
     return true;
@@ -214,13 +214,13 @@ bool ChatWindow::IsVisible() const
 void ChatWindow::OnConnect()
 {
     UpdateStatus(true);
-    AddChatMessage(L"¼­¹ö¿¡ ¿¬°áµÇ¾ú½À´Ï´Ù.");
+    AddChatMessage(L"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
 }
 
 void ChatWindow::OnDisconnect()
 {
     UpdateStatus(false);
-    AddChatMessage(L"¼­¹ö¿Í ¿¬°áÀÌ ²÷¾îÁ³½À´Ï´Ù.");
+    AddChatMessage(L"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
 }
 
 void ChatWindow::OnMessageRecv(const std::string& sender, const std::string& message)
@@ -233,11 +233,11 @@ void ChatWindow::SendChatMessage()
 {
     if (!m_isConnect)
     {
-        MessageBoxW(m_hWnd, L"¼­¹ö¿¡ ¿¬°áµÇ¾îÀÖÁö ¾Ê½À´Ï´Ù.", L"¿À·ù", MB_ICONERROR);
+        MessageBoxW(m_hWnd, L"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½.", L"ï¿½ï¿½ï¿½ï¿½", MB_ICONERROR);
         return;
     }
 
-    // ¿¡µ÷ÄÁÆ®·Ñ¿¡¼­ ÅØ½ºÆ® °¡Á®¿À±â
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ñ¿ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     int length = GetWindowTextLengthW(m_hEditMessage);
     if (length == 0)
         return;
@@ -247,7 +247,7 @@ void ChatWindow::SendChatMessage()
     std::wstring wMessage(buffer.data());
     std::string message = WinUtils::WStringToString(wMessage);
 
-    // ¸Þ½ÃÁö Àü¼Û
+    // ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     auto& ClientManager = ClientManager::GetInstance();
     auto sessions = ClientManager.GetSessions();
 
@@ -258,11 +258,11 @@ void ChatWindow::SendChatMessage()
         {
             //static_cast<ClientSession*>(session.get())->Send(message, PacketType::ChatReq);
 
-            // ³»°¡ º¸³½ ¸Þ½ÃÁö Ç¥½Ã
-            std::wstring myMessage = L"³ª: " + wMessage;
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
+            std::wstring myMessage = L"ï¿½ï¿½: " + wMessage;
             AddChatMessage(myMessage);
 
-            // ÀÔ·ÂÃ¢ ÃÊ±âÈ­
+            // ï¿½Ô·ï¿½Ã¢ ï¿½Ê±ï¿½È­
             SetWindowTextW(m_hEditMessage, L"");
         }
     }
@@ -270,25 +270,25 @@ void ChatWindow::SendChatMessage()
 
 void ChatWindow::AddChatMessage(const std::wstring& message)
 {
-    // Ã¤ÆÃ ¸Þ½ÃÁö ÀúÀå
+    // Ã¤ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     {
         std::lock_guard<std::mutex> lock(m_chatMutex);
         m_chatMessage.push_back(message);
 
-        // ÃÖ´ë ¸Þ½ÃÁö ¼ö Á¦ÇÑ
+        // ï¿½Ö´ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         while (m_chatMessage.size() > 100)
         {
             m_chatMessage.erase(m_chatMessage.begin());
         }
     }
 
-    // ÇöÀç ½Ã°£ °¡Á®¿À±â
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     auto now = std::chrono::system_clock::now();
     std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
     std::tm local_time;
     localtime_s(&local_time, &now_time_t);
 
-    // ½Ã°£°ú ¸Þ½ÃÁö °áÇÕ
+    // ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     std::wstringstream wss;
     wss << L"[" << local_time.tm_year + 1900 << L"-"
         << std::setfill(L'0') << std::setw(2) << local_time.tm_mon + 1 << L"-"
@@ -300,10 +300,10 @@ void ChatWindow::AddChatMessage(const std::wstring& message)
 
     std::wstring chatMessage = wss.str();
 
-    // ¸®½ºÆ® ¹Ú½º¿¡ Ãß°¡
+    // ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
     SendMessage(m_hListChat, LB_ADDSTRING, 0, (LPARAM)chatMessage.c_str());
 
-    // ÀÚµ¿ ½ºÅ©·Ñ
+    // ï¿½Úµï¿½ ï¿½ï¿½Å©ï¿½ï¿½
     int count = SendMessage(m_hListChat, LB_GETCOUNT, 0, 0);
     SendMessage(m_hListChat, LB_SETTOPINDEX, count - 1, 0);
 }
@@ -314,10 +314,10 @@ void ChatWindow::UpdateStatus(bool isConnect)
 
     std::wstring statusText;
     if (isConnect) {
-        statusText = L"¼­¹ö: " + WinUtils::StringToWString(serverIP) + L":" + WinUtils::StringToWString(serverPort) + L" (¿¬°áµÊ)";
+        statusText = L"ï¿½ï¿½ï¿½ï¿½: " + WinUtils::StringToWString(serverIP) + L":" + WinUtils::StringToWString(serverPort) + L" (ï¿½ï¿½ï¿½ï¿½ï¿½)";
     }
     else {
-        statusText = L"¼­¹ö: " + WinUtils::StringToWString(serverIP) + L":" + WinUtils::StringToWString(serverPort) + L" (¿¬°á ²÷±è)";
+        statusText = L"ï¿½ï¿½ï¿½ï¿½: " + WinUtils::StringToWString(serverIP) + L":" + WinUtils::StringToWString(serverPort) + L" (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)";
     }
 
     SendMessage(m_hStatusBar, SB_SETTEXT, 0, (LPARAM)statusText.c_str());

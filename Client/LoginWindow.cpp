@@ -19,7 +19,7 @@ LoginWindow::~LoginWindow()
 
 bool LoginWindow::Init(HINSTANCE hInstance)
 {
-    // À©µµ¿ì Å¬·¡½º µî·Ï
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     WNDCLASSEXW wcex = { 0 };
     wcex.cbSize = sizeof(WNDCLASSEXW);
     wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -32,24 +32,24 @@ bool LoginWindow::Init(HINSTANCE hInstance)
 
     if (!RegisterClassExW(&wcex))
     {
-        MessageBoxW(NULL, L"·Î±×ÀÎ À©µµ¿ì Å¬·¡½º µî·Ï ½ÇÆÐ", L"¿À·ù", MB_ICONERROR);
+        MessageBoxW(NULL, L"ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", L"ï¿½ï¿½ï¿½ï¿½", MB_ICONERROR);
         return false;
     }
 
-    // À©µµ¿ì »ý¼º
-    m_hWnd = CreateWindowW(lpszLoginClass, L"·Î±×ÀÎ", WS_OVERLAPPEDWINDOW,
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    m_hWnd = CreateWindowW(lpszLoginClass, L"ï¿½Î±ï¿½ï¿½ï¿½", WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, 400, 300, m_hParentHandle, nullptr, hInstance, nullptr);
 
     if (!m_hWnd)
     {
-        MessageBoxW(NULL, L"·Î±×ÀÎ À©µµ¿ì »ý¼º ½ÇÆÐ", L"¿À·ù", MB_ICONERROR);
+        MessageBoxW(NULL, L"ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", L"ï¿½ï¿½ï¿½ï¿½", MB_ICONERROR);
         return false;
     }
 
-    // °´Ã¼ ¿¬°á
+    // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½
     s_mapWindow[m_hWnd] = this;
 
-    // ÄÁÆ®·Ñ »ý¼º
+    // ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     CreateControl();
 
     return true;
@@ -73,13 +73,13 @@ bool LoginWindow::IsVisible() const
 
 void LoginWindow::TryLogin()
 {
-    // ID¿Í ºñ¹Ð¹øÈ£ °¡Á®¿À±â
+    // IDï¿½ï¿½ ï¿½ï¿½Ð¹ï¿½È£ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     int idLength = GetWindowTextLengthW(m_hEditId);
     int pwLength = GetWindowTextLengthW(m_hEditPassword);
 
     if (idLength == 0 || pwLength == 0)
     {
-        MessageBoxW(m_hWnd, L"¾ÆÀÌµð¿Í ºñ¹Ð¹øÈ£¸¦ ¸ðµÎ ÀÔ·ÂÇØÁÖ¼¼¿ä.", L"·Î±×ÀÎ ½ÇÆÐ", MB_ICONERROR);
+        MessageBoxW(m_hWnd, L"ï¿½ï¿½ï¿½Ìµï¿½ï¿½ ï¿½ï¿½Ð¹ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.", L"ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", MB_ICONERROR);
         return;
     }
 
@@ -95,7 +95,7 @@ void LoginWindow::TryLogin()
     std::string id = WinUtils::WStringToString(wId);
     std::string password = WinUtils::WStringToString(wPassword);
 
-    // ·Î±×ÀÎ ¿äÃ» ·ÎÁ÷
+    // ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½
     auto& ClientManager = ClientManager::GetInstance();
     auto sessions = ClientManager.GetSessions();
 
@@ -104,7 +104,7 @@ void LoginWindow::TryLogin()
         auto session = sessions.begin()->second;
         if (session)
         {
-            // ·Î±×ÀÎ ¿äÃ» ÆÐÅ¶ Àü¼Û
+            // ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½
             //PacketLoginReq packet;
             //packet.header.type = PacketType::LoginReq;
             //packet.payload.id = id; 
@@ -113,12 +113,12 @@ void LoginWindow::TryLogin()
         }
         else
         {
-            OnLoginFail("¼¼¼ÇÀÌ À¯È¿ÇÏÁö ¾Ê½À´Ï´Ù.");
+            OnLoginFail("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½.");
         }
     }
     else
     {
-        OnLoginFail("¼­¹ö¿¡ ¿¬°áµÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù. ´Ù½Ã ½ÃµµÇØÁÖ¼¼¿ä.");
+        OnLoginFail("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½. ï¿½Ù½ï¿½ ï¿½Ãµï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
     }
 }
 
@@ -135,7 +135,7 @@ void LoginWindow::OnLoginFail(const std::string& error)
 
 LRESULT LoginWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    // ÇØ´ç À©µµ¿ìÀÇ ChatWindow °´Ã¼ Ã£±â
+    // ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ChatWindow ï¿½ï¿½Ã¼ Ã£ï¿½ï¿½
     LoginWindow* pThis = NULL;
     if (s_mapWindow.find(hwnd) != s_mapWindow.end()) {
         pThis = s_mapWindow[hwnd];
@@ -163,34 +163,34 @@ void LoginWindow::CreateControl()
 {
     HFONT hFont = CreateFont(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
         DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
-        CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"¸¼Àº °íµñ");
+        CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½");
 
-    // ID ¶óº§
-    HWND hStaticID = CreateWindowW(L"STATIC", L"¾ÆÀÌµð:",
+    // ID ï¿½ï¿½
+    HWND hStaticID = CreateWindowW(L"STATIC", L"ï¿½ï¿½ï¿½Ìµï¿½:",
         WS_VISIBLE | WS_CHILD | SS_LEFT,
         50, 50, 80, 20, m_hWnd, (HMENU)IDC_STATIC_ID, NULL, NULL);
     SendMessage(hStaticID, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // ID ÀÔ·Â ÇÊµå
+    // ID ï¿½Ô·ï¿½ ï¿½Êµï¿½
     m_hEditId = CreateWindowW(L"EDIT", L"",
         WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
         150, 50, 200, 25, m_hWnd, (HMENU)IDC_EDIT_ID, NULL, NULL);
     SendMessage(m_hEditId, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // ºñ¹Ð¹øÈ£ ¶óº§
-    HWND hStaticPassword = CreateWindowW(L"STATIC", L"ºñ¹Ð¹øÈ£:",
+    // ï¿½ï¿½Ð¹ï¿½È£ ï¿½ï¿½
+    HWND hStaticPassword = CreateWindowW(L"STATIC", L"ï¿½ï¿½Ð¹ï¿½È£:",
         WS_VISIBLE | WS_CHILD | SS_LEFT,
         50, 100, 80, 20, m_hWnd, (HMENU)IDC_STATIC_PASSWORD, NULL, NULL);
     SendMessage(hStaticPassword, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // ºñ¹Ð¹øÈ£ ÀÔ·Â ÇÊµå
+    // ï¿½ï¿½Ð¹ï¿½È£ ï¿½Ô·ï¿½ ï¿½Êµï¿½
     m_hEditPassword = CreateWindowW(L"EDIT", L"",
         WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL | ES_PASSWORD,
         150, 100, 200, 25, m_hWnd, (HMENU)IDC_EDIT_PASSWORD, NULL, NULL);
     SendMessage(m_hEditPassword, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // ·Î±×ÀÎ ¹öÆ°
-    m_hLoginButton = CreateWindowW(L"BUTTON", L"·Î±×ÀÎ",
+    // ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°
+    m_hLoginButton = CreateWindowW(L"BUTTON", L"ï¿½Î±ï¿½ï¿½ï¿½",
         WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
         150, 150, 100, 30, m_hWnd, (HMENU)IDC_BUTTON_LOGIN, NULL, NULL);
     SendMessage(m_hLoginButton, WM_SETFONT, (WPARAM)hFont, TRUE);

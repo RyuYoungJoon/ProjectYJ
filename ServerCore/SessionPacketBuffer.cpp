@@ -20,18 +20,18 @@ void SessionPacketBuffer::AddData(AsioSessionPtr session, const BYTE* data, size
 
     std::lock_guard<std::mutex> lock(m_Mutex);
 
-    // ¹öÆÛ°¡ ¾øÀ¸¸é »õ·Î »ý¼º
+    // ï¿½ï¿½ï¿½Û°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     auto it = m_SessionBuffers.find(sessionId);
     if (it == m_SessionBuffers.end())
     {
         m_SessionBuffers[sessionId] = std::make_unique<PacketBuffer>();
     }
 
-    // µ¥ÀÌÅÍ Ãß°¡
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
     PacketBuffer* buffer = m_SessionBuffers[sessionId].get();
     if (!buffer->OnWrite(data, static_cast<int32>(length)))
     {
-        // ¹öÆÛ ¿À¹öÇÃ·Î¿ì Ã³¸®
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã·Î¿ï¿½ Ã³ï¿½ï¿½
         LOGE << "Buffer overflow for session " << sessionId;
         session->ProcessDisconnect(__FUNCTION__);
     }
@@ -50,7 +50,7 @@ void SessionPacketBuffer::ProcessSessionBuffer(AsioSessionPtr session, size_t le
     if (it == m_SessionBuffers.end())
         return;
 
-    // ¹öÆÛ Á¤¸®
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     PacketBuffer* buffer = it->second.get();
 
     int32 processLen = session->ProcessPacket(buffer->ReadPos(), buffer->DataSize());

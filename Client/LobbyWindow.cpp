@@ -24,7 +24,7 @@ LobbyWindow::~LobbyWindow()
 
 bool LobbyWindow::Init(HINSTANCE hInstance)
 {
-    // À©µµ¿ì Å¬·¡½º µî·Ï
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     WNDCLASSEXW wcex = { 0 };
     wcex.cbSize = sizeof(WNDCLASSEXW);
     wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -37,25 +37,25 @@ bool LobbyWindow::Init(HINSTANCE hInstance)
 
     if (!RegisterClassExW(&wcex))
     {
-        MessageBoxW(NULL, L"Ã¤ÆÃ¹æ ¸ñ·Ï À©µµ¿ì Å¬·¡½º µî·Ï ½ÇÆÐ", L"¿À·ù", MB_ICONERROR);
+        MessageBoxW(NULL, L"Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", L"ï¿½ï¿½ï¿½ï¿½", MB_ICONERROR);
         return false;
     }
 
-    // À©µµ¿ì »ý¼º
-    m_hWnd = CreateWindowW(lpszLobbyClass, L"Ã¤ÆÃ¹æ ¸ñ·Ï", WS_OVERLAPPEDWINDOW,
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    m_hWnd = CreateWindowW(lpszLobbyClass, L"Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½", WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, 600, 500, m_hParentHandle, nullptr, hInstance, nullptr);
 
     if (!m_hWnd)
     {
-        MessageBoxW(NULL, L"Ã¤ÆÃ¹æ ¸ñ·Ï À©µµ¿ì »ý¼º ½ÇÆÐ", L"¿À·ù", MB_ICONERROR);
+        MessageBoxW(NULL, L"Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", L"ï¿½ï¿½ï¿½ï¿½", MB_ICONERROR);
         return false;
     }
 
     ClientSession::SetLobbyWin(m_hWnd);
-    // °´Ã¼ ¿¬°á
+    // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½
     s_mapWindow[m_hWnd] = this;
 
-    // ÄÁÆ®·Ñ »ý¼º
+    // ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     CreateControl();
 
     return true;
@@ -65,20 +65,20 @@ void LobbyWindow::Show(const std::string& userId)
 {
     m_currentUserId = userId;
 
-    // È¯¿µ ¸Þ½ÃÁö ¾÷µ¥ÀÌÆ®
-    std::wstring welcomeMsg = L"¾È³çÇÏ¼¼¿ä, " + WinUtils::StringToWString(userId) + L"´Ô! Ã¤ÆÃ¹æÀ» ¼±ÅÃÇÏ°Å³ª »õ·Î ¸¸µé¾îº¸¼¼¿ä.";
+    // È¯ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
+    std::wstring welcomeMsg = L"ï¿½È³ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½, " + WinUtils::StringToWString(userId) + L"ï¿½ï¿½! Ã¤ï¿½Ã¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°Å³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½îº¸ï¿½ï¿½ï¿½ï¿½.";
     SetWindowTextW(m_hWelcomeLabel, welcomeMsg.c_str());
 
-    // Ã¤ÆÃ¹æ ¸ñ·Ï µ¥ÀÌÅÍ ¿äÃ» (Å×½ºÆ® µ¥ÀÌÅÍ·Î ´ëÃ¼)
-    // ½ÇÁ¦·Î´Â ¼­¹ö¿¡ ¿äÃ»À» º¸³»°í ÀÀ´äÀ» ¹Þ¾Æ¾ß ÇÔ
+    // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» (ï¿½×½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ ï¿½ï¿½Ã¼)
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¾ï¿½ ï¿½ï¿½
     /*std::vector<ChatRoomInfo> testRooms = {
-        {1, "ÀÏ¹Ý ´ëÈ­¹æ", 5, 20},
-        {2, "°ÔÀÓ Åä·Ð¹æ", 10, 30},
-        {3, "À½¾Ç °¨»ó¹æ", 3, 10}
+        {1, "ï¿½Ï¹ï¿½ ï¿½ï¿½È­ï¿½ï¿½", 5, 20},
+        {2, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ð¹ï¿½", 10, 30},
+        {3, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½", 3, 10}
     };
     UpdateLobby(testRooms);*/
 
-    // Ã¤ÆÃ¹æ ¸ñ·Ï ¿äÃ» ÆÐÅ¶ Àü¼Û
+    // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½
     auto& ClientManager = ClientManager::GetInstance();
     auto sessions = ClientManager.GetSessions();
 
@@ -92,7 +92,7 @@ void LobbyWindow::Show(const std::string& userId)
         }
     }
 
-    // Ã¢ Ç¥½Ã
+    // Ã¢ Ç¥ï¿½ï¿½
     ShowWindow(m_hWnd, SW_SHOW);
     UpdateWindow(m_hWnd);
 }
@@ -109,7 +109,7 @@ bool LobbyWindow::IsVisible() const
 
 void LobbyWindow::RefreshRoomList()
 {
-    // ¼­¹ö¿¡ Ã¤ÆÃ¹æ ¸ñ·Ï ¿äÃ» ÆÐÅ¶ Àü¼Û
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½
     auto& ClientManager = ClientManager::GetInstance();
     auto sessions = ClientManager.GetSessions();
 
@@ -126,7 +126,7 @@ void LobbyWindow::RefreshRoomList()
 
 void LobbyWindow::EnterChatRoom(int roomId)
 {
-    // ¼±ÅÃÇÑ Ã¤ÆÃ¹æ¿¡ ÇØ´çÇÏ´Â Á¤º¸ Ã£±â
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½Ã¹æ¿¡ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½
     ChatRoomInfo selectedRoom;
     bool found = false;
 
@@ -142,17 +142,17 @@ void LobbyWindow::EnterChatRoom(int roomId)
 
     if (!found)
     {
-        MessageBoxW(m_hWnd, L"¼±ÅÃÇÑ Ã¤ÆÃ¹æÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù.", L"¿À·ù", MB_ICONERROR);
+        MessageBoxW(m_hWnd, L"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½Ã¹ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.", L"ï¿½ï¿½ï¿½ï¿½", MB_ICONERROR);
         return;
     }
 
-    // Ã¤ÆÃ¹æ ÀÔÀå È®ÀÎ ¸Þ½ÃÁö
+    // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½
     //std::wstring message = L"'" + WinUtils::StringToWString(selectedRoom.roomName) +
-    //    L"' Ã¤ÆÃ¹æ¿¡ ÀÔÀåÇÏ½Ã°Ú½À´Ï±î?";
+    //    L"' Ã¤ï¿½Ã¹æ¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½Ï½Ã°Ú½ï¿½ï¿½Ï±ï¿½?";
 
-    if (MessageBoxW(m_hWnd, L"", L"Ã¤ÆÃ¹æ ÀÔÀå", MB_YESNO | MB_ICONQUESTION) == IDYES)
+    if (MessageBoxW(m_hWnd, L"", L"Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½", MB_YESNO | MB_ICONQUESTION) == IDYES)
     {
-        // ¼­¹ö¿¡ Ã¤ÆÃ¹æ ÀÔÀå ¿äÃ» ÆÐÅ¶ Àü¼Û
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½
         auto& ClientManager = ClientManager::GetInstance();
         auto sessions = ClientManager.GetSessions();
 
@@ -161,33 +161,33 @@ void LobbyWindow::EnterChatRoom(int roomId)
             auto session = sessions.begin()->second;
             if (session)
             {
-                // Ã¤ÆÃ¹æ ÀÔÀå ¿äÃ» ÆÐÅ¶ Àü¼Û
+                // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½
                 //static_cast<ClientSession*>(session.get())->Send(std::to_string(roomId), PacketType::RoomEnterReq);
 
-                // Ã¤ÆÃ¹æ ÀÔÀå Ã³¸®´Â WM_CLIENT_CHATROOM_ENTER ¸Þ½ÃÁö ÇÚµé·¯¿¡¼­ Ã³¸®
+                // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ WM_CLIENT_CHATROOM_ENTER ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½Úµé·¯ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
                 //PacketRoomEnterReq packet;
                 //packet.payload.roomID = selectedRoom.roomID;
 
                 //static_cast<ClientSession*>(session.get())->Send(packet);
 
-                // Å×½ºÆ®¸¦ À§ÇÑ ÀÓ½Ã ÄÚµå - ½ÇÁ¦·Î´Â ¼­¹ö ÀÀ´äÀ» ±â´Ù¸²
+                // ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ó½ï¿½ ï¿½Úµï¿½ - ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ù¸ï¿½
                 Hide();
             }
             else
             {
-                MessageBoxW(m_hWnd, L"¼¼¼ÇÀÌ À¯È¿ÇÏÁö ¾Ê½À´Ï´Ù.", L"¿À·ù", MB_ICONERROR);
+                MessageBoxW(m_hWnd, L"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½.", L"ï¿½ï¿½ï¿½ï¿½", MB_ICONERROR);
             }
         }
         else
         {
-            MessageBoxW(m_hWnd, L"¼­¹ö¿¡ ¿¬°áµÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù.", L"¿À·ù", MB_ICONERROR);
+            MessageBoxW(m_hWnd, L"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½.", L"ï¿½ï¿½ï¿½ï¿½", MB_ICONERROR);
         }
     }
 }
 
 void LobbyWindow::CreateNewChatRoom(const std::string& roomName)
 {
-    // ¼­¹ö¿¡ Ã¤ÆÃ¹æ »ý¼º ¿äÃ» ÆÐÅ¶ Àü¼Û
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½
     auto& ClientManager = ClientManager::GetInstance();
     auto sessions = ClientManager.GetSessions();
 
@@ -196,24 +196,24 @@ void LobbyWindow::CreateNewChatRoom(const std::string& roomName)
         auto session = sessions.begin()->second;
         if (session)
         {
-            // Ã¤ÆÃ¹æ »ý¼º ¿äÃ» ÆÐÅ¶ Àü¼Û (format: "roomName|maxUsers")
+            // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½ (format: "roomName|maxUsers")
             //PacketRoomCreateReq packet;
             //packet.payload.roomName = roomName;
             //static_cast<ClientSession*>(session.get())->Send(packet);
 
-            // Ã¤ÆÃ¹æ »ý¼º Ã³¸®´Â WM_CLIENT_CHATROOM_CREATE ¸Þ½ÃÁö ÇÚµé·¯¿¡¼­ Ã³¸®
+            // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ WM_CLIENT_CHATROOM_CREATE ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½Úµé·¯ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
         }
     }
 
-    //// Å×½ºÆ®¸¦ À§ÇÑ ÀÓ½Ã Ã³¸®
-    //MessageBoxA(m_hWnd, (roomName + " Ã¤ÆÃ¹æÀÌ »ý¼ºµÇ¾ú½À´Ï´Ù.").c_str(), "Ã¤ÆÃ¹æ »ý¼º", MB_ICONINFORMATION);
+    //// ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ó½ï¿½ Ã³ï¿½ï¿½
+    //MessageBoxA(m_hWnd, (roomName + " Ã¤ï¿½Ã¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.").c_str(), "Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½", MB_ICONINFORMATION);
 
-    //// »õ·Î »ý¼ºµÈ Ã¤ÆÃ¹æÀ» ¸ñ·Ï¿¡ Ãß°¡ (½ÇÁ¦·Î´Â ¼­¹ö¿¡¼­ ¸ñ·ÏÀ» ´Ù½Ã ¹Þ¾Æ¾ß ÇÔ)
+    //// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½Ã¹ï¿½ï¿½ï¿½ ï¿½ï¿½Ï¿ï¿½ ï¿½ß°ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½Þ¾Æ¾ï¿½ ï¿½ï¿½)
     //ChatRoomInfo newRoom = {
-    //    (int)m_chatRooms.size() + 1,  // ÀÓ½Ã ID
+    //    (int)m_chatRooms.size() + 1,  // ï¿½Ó½ï¿½ ID
     //    roomName,
-    //    1,  // ÀÚ±â ÀÚ½Å
-    //    20  // ±âº» ÃÖ´ë ÀÎ¿ø
+    //    1,  // ï¿½Ú±ï¿½ ï¿½Ú½ï¿½
+    //    20  // ï¿½âº» ï¿½Ö´ï¿½ ï¿½Î¿ï¿½
     //};
 
     //m_chatRooms.push_back(newRoom);
@@ -224,10 +224,10 @@ void LobbyWindow::UpdateLobby(const std::vector<ChatRoomInfo>& roomList)
 {
     m_chatRooms = roomList;
 
-    // ¸®½ºÆ®¹Ú½º ³»¿ë ÃÊ±âÈ­
+    // ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
     SendMessage(m_hRoomList, LB_RESETCONTENT, 0, 0);
 
-    // °¢ Ã¤ÆÃ¹æ Á¤º¸¸¦ ¸®½ºÆ®¹Ú½º¿¡ Ãß°¡
+    // ï¿½ï¿½ Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
     for (const auto& room : m_chatRooms)
     {
         std::wstring itemText = /*WinUtils::StringToWString(room.roomID) +*/ L" (" + std::to_wstring(room.currentUser) +
@@ -238,7 +238,7 @@ void LobbyWindow::UpdateLobby(const std::vector<ChatRoomInfo>& roomList)
 
 LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    // ÇØ´ç À©µµ¿ìÀÇ ChatRoomList °´Ã¼ Ã£±â
+    // ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ChatRoomList ï¿½ï¿½Ã¼ Ã£ï¿½ï¿½
     LobbyWindow* pThis = NULL;
     if (s_mapWindow.find(hwnd) != s_mapWindow.end()) {
         pThis = s_mapWindow[hwnd];
@@ -251,35 +251,35 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
         if (pThis) {
             if (LOWORD(wParam) == IDC_BUTTON_ENTER) {
-                // ¼±ÅÃµÈ Ã¤ÆÃ¹æ ÀÎµ¦½º °¡Á®¿À±â
+                // ï¿½ï¿½ï¿½Ãµï¿½ Ã¤ï¿½Ã¹ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 int selectedIndex = SendMessage(pThis->m_hRoomList, LB_GETCURSEL, 0, 0);
                 if (selectedIndex != LB_ERR && selectedIndex < pThis->m_chatRooms.size()) {
                     pThis->EnterChatRoom(pThis->m_chatRooms[selectedIndex].roomID);
                 }
                 else {
-                    MessageBoxW(hwnd, L"Ã¤ÆÃ¹æÀ» ¼±ÅÃÇØÁÖ¼¼¿ä.", L"¾Ë¸²", MB_ICONINFORMATION);
+                    MessageBoxW(hwnd, L"Ã¤ï¿½Ã¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.", L"ï¿½Ë¸ï¿½", MB_ICONINFORMATION);
                 }
                 return 0;
             }
             else if (LOWORD(wParam) == IDC_BUTTON_CREATE) {
-                // »õ Ã¤ÆÃ¹æ ÀÌ¸§ °¡Á®¿À±â
+                // ï¿½ï¿½ Ã¤ï¿½Ã¹ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 int nameLength = GetWindowTextLengthW(pThis->m_hRoomNameEdit);
                 if (nameLength > 0) {
                     std::vector<wchar_t> buffer(nameLength + 1);
                     GetWindowTextW(pThis->m_hRoomNameEdit, buffer.data(), nameLength + 1);
                     std::wstring wRoomName(buffer.data());
 
-                    // Ã¤ÆÃ¹æ ÀÌ¸§À» UTF-8·Î º¯È¯
+                    // Ã¤ï¿½Ã¹ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ UTF-8ï¿½ï¿½ ï¿½ï¿½È¯
                     std::string roomName = WinUtils::WStringToString(wRoomName);
 
-                    // »õ Ã¤ÆÃ¹æ »ý¼º
+                    // ï¿½ï¿½ Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½
                     pThis->CreateNewChatRoom(roomName);
 
-                    // ÀÔ·Â ÇÊµå ÃÊ±âÈ­
+                    // ï¿½Ô·ï¿½ ï¿½Êµï¿½ ï¿½Ê±ï¿½È­
                     SetWindowTextW(pThis->m_hRoomNameEdit, L"");
                 }
                 else {
-                    MessageBoxW(hwnd, L"Ã¤ÆÃ¹æ ÀÌ¸§À» ÀÔ·ÂÇØÁÖ¼¼¿ä.", L"¾Ë¸²", MB_ICONINFORMATION);
+                    MessageBoxW(hwnd, L"Ã¤ï¿½Ã¹ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.", L"ï¿½Ë¸ï¿½", MB_ICONINFORMATION);
                 }
                 return 0;
             }
@@ -292,11 +292,11 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_CLIENT_CHATROOM_LIST:
         if (pThis) {
-            // Ã¤ÆÃ¹æ ¸ñ·Ï ÀÀ´ä Ã³¸®
+            // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
             ChatRoomListResponseData* data = (ChatRoomListResponseData*)lParam;
             if (data) 
             {
-                // Ã¤ÆÃ¹æ ¸ñ·Ï ¾÷µ¥ÀÌÆ®
+                // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
                 std::vector<ChatRoomInfo> roomList;
                 for (const auto& roomData : data->rooms) {
                     ChatRoomInfo roomInfo;
@@ -309,7 +309,7 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
                 pThis->UpdateLobby(roomList);
 
-                // ¸Þ¸ð¸® ÇØÁ¦
+                // ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½
                 delete data;
             }
         }
@@ -317,21 +317,21 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_CLIENT_CHATROOM_ENTER:
         if (pThis) {
-            // Ã¤ÆÃ¹æ ÀÔÀå ÀÀ´ä Ã³¸®
+            // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
             ChatRoomResponseData* data = (ChatRoomResponseData*)lParam;
             if (data)
             {
-                // Ã¤ÆÃ¹æ ¸ñ·Ï Ã¢ ¼û±â±â
+                // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ Ã¢ ï¿½ï¿½ï¿½ï¿½ï¿½
                 pThis->Hide();
 
-                // Ã¤ÆÃÃ¢À¸·Î ÀüÈ¯ ¸Þ½ÃÁö Àü¼Û
+                // Ã¤ï¿½ï¿½Ã¢ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 ::PostMessage(GetParent(hwnd), WM_ENTER_CHATROOM, 0, lParam);
-                // lParamÀ» ±×´ë·Î Àü´ÞÇÏ¹Ç·Î ¿©±â¼­´Â ¸Þ¸ð¸® ÇØÁ¦ÇÏÁö ¾ÊÀ½
+                // lParamï¿½ï¿½ ï¿½×´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¹Ç·ï¿½ ï¿½ï¿½ï¿½â¼­ï¿½ï¿½ ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             }
             else
             {
-                //MessageBoxW(hwnd, WinUtils::StringToWString(data->message).c_str(), L"Ã¤ÆÃ¹æ ÀÔÀå ½ÇÆÐ", MB_ICONERROR);
-                // ½ÇÆÐÇÑ °æ¿ì¿¡¸¸ ¸Þ¸ð¸® ÇØÁ¦
+                //MessageBoxW(hwnd, WinUtils::StringToWString(data->message).c_str(), L"Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", MB_ICONERROR);
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ì¿¡ï¿½ï¿½ ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½
                 delete data;
 
             }
@@ -340,24 +340,24 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CLIENT_CHATROOM_CREATE:
         if (pThis)
         {
-            // Ã¤ÆÃ¹æ »ý¼º ÀÀ´ä Ã³¸®
+            // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
             ChatRoomResponseData* data = (ChatRoomResponseData*)lParam;
             if (data)
             {
-                MessageBoxW(hwnd, WinUtils::StringToWString("Ã¤ÆÃ¹æ '" + data->roomName + "'ÀÌ(°¡) »ý¼ºµÇ¾ú½À´Ï´Ù.").c_str(), L"Ã¤ÆÃ¹æ »ý¼º ¼º°ø", MB_ICONINFORMATION);
+                MessageBoxW(hwnd, WinUtils::StringToWString("Ã¤ï¿½Ã¹ï¿½ '" + data->roomName + "'ï¿½ï¿½(ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.").c_str(), L"Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", MB_ICONINFORMATION);
 
                 ChatRoomInfo newRoom = { data->roomId, 1, 10 };
 
                 pThis->m_chatRooms.push_back(newRoom);
                 pThis->UpdateLobby(pThis->m_chatRooms);
-                // ¸ñ·Ï »õ·Î°íÄ§ ¿äÃ»
+                // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î°ï¿½Ä§ ï¿½ï¿½Ã»
                 pThis->RefreshRoomList();
             }
             else {
-                //MessageBoxW(hwnd, WinUtils::StringToWString(data->message).c_str(), L"Ã¤ÆÃ¹æ »ý¼º ½ÇÆÐ", MB_ICONERROR);
+                //MessageBoxW(hwnd, WinUtils::StringToWString(data->message).c_str(), L"Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", MB_ICONERROR);
             }
 
-            // ¸Þ¸ð¸® ÇØÁ¦
+            // ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½
             delete data;
         }
         break;
@@ -374,46 +374,46 @@ void LobbyWindow::CreateControl()
 {
     HFONT hFont = CreateFont(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
         DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
-        CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"¸¼Àº °íµñ");
+        CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½");
 
-    // È¯¿µ ¸Þ½ÃÁö ¶óº§
-    m_hWelcomeLabel = CreateWindowW(L"STATIC", L"Ã¤ÆÃ¹æ ¸ñ·Ï",
+    // È¯ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½
+    m_hWelcomeLabel = CreateWindowW(L"STATIC", L"Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½",
         WS_VISIBLE | WS_CHILD | SS_CENTER,
         20, 20, 560, 25, m_hWnd, (HMENU)IDC_STATIC_WELCOME, NULL, NULL);
     SendMessage(m_hWelcomeLabel, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // Ã¤ÆÃ¹æ ¸ñ·Ï ¸®½ºÆ®¹Ú½º
+    // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ú½ï¿½
     m_hRoomList = CreateWindowW(L"LISTBOX", NULL,
         WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT,
         20, 60, 560, 300, m_hWnd, (HMENU)IDC_LIST_ROOMS, NULL, NULL);
     SendMessage(m_hRoomList, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // Ã¤ÆÃ¹æ ÀÔÀå ¹öÆ°
-    m_hEnterButton = CreateWindowW(L"BUTTON", L"ÀÔÀå",
+    // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°
+    m_hEnterButton = CreateWindowW(L"BUTTON", L"ï¿½ï¿½ï¿½ï¿½",
         WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
         450, 370, 130, 30, m_hWnd, (HMENU)IDC_BUTTON_ENTER, NULL, NULL);
     SendMessage(m_hEnterButton, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // »õ Ã¤ÆÃ¹æ ÀÌ¸§ ¶óº§
-    HWND hStaticRoomName = CreateWindowW(L"STATIC", L"»õ Ã¤ÆÃ¹æ ÀÌ¸§:",
+    // ï¿½ï¿½ Ã¤ï¿½Ã¹ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½
+    HWND hStaticRoomName = CreateWindowW(L"STATIC", L"ï¿½ï¿½ Ã¤ï¿½Ã¹ï¿½ ï¿½Ì¸ï¿½:",
         WS_VISIBLE | WS_CHILD | SS_LEFT,
         20, 380, 130, 20, m_hWnd, (HMENU)IDC_STATIC_ROOM_NAME, NULL, NULL);
     SendMessage(hStaticRoomName, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // »õ Ã¤ÆÃ¹æ ÀÌ¸§ ÀÔ·Â ÇÊµå
+    // ï¿½ï¿½ Ã¤ï¿½Ã¹ï¿½ ï¿½Ì¸ï¿½ ï¿½Ô·ï¿½ ï¿½Êµï¿½
     m_hRoomNameEdit = CreateWindowW(L"EDIT", L"",
         WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
         150, 380, 200, 25, m_hWnd, (HMENU)IDC_EDIT_ROOM_NAME, NULL, NULL);
     SendMessage(m_hRoomNameEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // »õ Ã¤ÆÃ¹æ »ý¼º ¹öÆ°
-    m_hCreateButton = CreateWindowW(L"BUTTON", L"»ý¼º",
+    // ï¿½ï¿½ Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°
+    m_hCreateButton = CreateWindowW(L"BUTTON", L"ï¿½ï¿½ï¿½ï¿½",
         WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
         200, 420, 100, 30, m_hWnd, (HMENU)IDC_BUTTON_CREATE, NULL, NULL);
     SendMessage(m_hCreateButton, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // »õ·Î°íÄ§ ¹öÆ°
-    HWND hRefreshButton = CreateWindowW(L"BUTTON", L"»õ·Î°íÄ§",
+    // ï¿½ï¿½ï¿½Î°ï¿½Ä§ ï¿½ï¿½Æ°
+    HWND hRefreshButton = CreateWindowW(L"BUTTON", L"ï¿½ï¿½ï¿½Î°ï¿½Ä§",
         WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
         20, 420, 100, 30, m_hWnd, (HMENU)IDC_BUTTON_REFRESH, NULL, NULL);
     SendMessage(hRefreshButton, WM_SETFONT, (WPARAM)hFont, TRUE);

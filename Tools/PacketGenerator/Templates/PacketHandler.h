@@ -9,13 +9,16 @@ extern HandlerFunc GPacketHadler[UINT16_MAX];
 
 enum : uint16
 {
-	EnterChatRoomReq = 1000,
-	EnterChatRoomAck = 1001,
-	LoginReq = 1002,
+{%- for packet in parser.total_packet %}
+	{{packet.name}} = {{packet.type}},
+{%- endfor%}
 };
 
 class AsioSession;
-bool HandleEnterChatRoomAck(AsioSessionPtr& session, Protocol::EnterChatRoomAck& pkt);
+
+{%- for packet in parser.ack_packet %}
+bool Handle{{packet.name}}(AsioSessionPtr& session, Protocol::{{packet.name}}& pkt);
+{%- endfor%}
 
 class PacketHandler : public PacketProcessor
 {
@@ -31,7 +34,9 @@ public:
 	{/*
 		for (int32 i = 0; i < UINT16_MAX; ++i)
 			GPacketHadler[i] = HandleInvalid;*/
-		GPacketHadler[EnterChatRoomAck] = [](AsioSessionPtr& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::EnterChatRoomAck>(HandleEnterChatRoomAck, session, buffer, len); };
+{%- for packet in parser.ack_packet %}
+		GPacketHadler[{{packet.name}}] = [](AsioSessionPtr& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::{{packet.name}}>(Handle{{packet.name}}, session, buffer, len); };
+{%- endfor%}
 	}
 
 	virtual bool HandlePacket(AsioSessionPtr& session, BYTE* buffer, int32 len) override
@@ -41,7 +46,9 @@ public:
 	}
 
 	// 패킷 생성
-	static Packet MakePacket(Protocol::EnterChatRoomAck& pkt) { return MakePacket(pkt, EnterChatRoomAck); }
+{%- for packet in parser.request_packet %}
+	static Packet MakePacket(Protocol::{{packet.name}}& pkt) { return MakePacket(pkt, {{packet.name}}); }
+{%- endfor%}
 
 	PacketHandler();
 	~PacketHandler();

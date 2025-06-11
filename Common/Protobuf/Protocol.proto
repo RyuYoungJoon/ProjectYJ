@@ -1,0 +1,23 @@
+syntax = "proto3";
+package Protocol;
+
+import "Enum.proto";
+import "Struct.proto";
+
+message EnterChatRoomReq
+{
+	PacketType type = 1;
+	int32 message = 2;
+	int32 value = 3;
+}
+
+message EnterChatRoomAck
+{
+	uint32 id = 1;
+}
+
+message LoginReq
+{
+	uint32 id = 1;
+	uint32 password = 2;
+}

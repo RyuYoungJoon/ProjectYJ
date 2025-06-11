@@ -5,7 +5,7 @@
 
 void TaskQueue::ProcessIoTask(IoTask task)
 {
-    // SessionManager¿¡¼­ ¼¼¼Ç Ã£±â
+    // SessionManagerï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½
     AsioSessionPtr session = SessionManager::GetInstance().GetSession(task.sessionUID);
     if (!session)
     {
@@ -13,17 +13,17 @@ void TaskQueue::ProcessIoTask(IoTask task)
         return;
     }
 
-    // »óÅÂº° Ã³¸®
+    // ï¿½ï¿½ï¿½Âºï¿½ Ã³ï¿½ï¿½
     switch (task.state)
     {
     case NetState::Disconnect:
         LOGI << "Handling disconnect for session: " << task.sessionUID;
-        // ½ÇÁ¦ ¿¬°á Á¾·á Ã³¸®
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
         session->CloseSession("IoTaskQueue_Disconnect");
         break;
     case NetState::Reconnect:
         LOGI << "Handling reconnect for session: " << task.sessionUID;
-        // Àç¿¬°á ·ÎÁ÷
+        // ï¿½ç¿¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         // session->Reconnect();
         break;
     default:

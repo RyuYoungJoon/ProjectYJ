@@ -111,6 +111,9 @@
       </AdditionalDependencies>
       <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <PreBuildEvent>
+      <Command>CALL $(SolutionDir)Common\Protobuf\GenPackets.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -133,6 +136,9 @@
       </AdditionalDependencies>
       <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <PreBuildEvent>
+      <Command>CALL $(SolutionDir)Common\Protobuf\GenPackets.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -151,6 +157,9 @@
       </AdditionalDependencies>
       <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <PreBuildEvent>
+      <Command>CALL $(SolutionDir)Common\Protobuf\GenPackets.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -173,29 +182,47 @@
       </AdditionalDependencies>
       <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <PreBuildEvent>
+      <Command>CALL $(SolutionDir)Common\Protobuf\GenPackets.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\GameServer\Enum.pb.cc" />
     <ClCompile Include="..\GameServer\Protocol.pb.cc" />
+    <ClCompile Include="..\GameServer\Struct.pb.cc" />
     <ClCompile Include="ChatWindow.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ClientManager.cpp" />
     <ClCompile Include="ClientSession.cpp" />
     <ClCompile Include="LobbyWindow.cpp" />
     <ClCompile Include="LoginWindow.cpp" />
-    <ClCompile Include="PacketHandler.cpp" />
+    <ClCompile Include="ServerPacketHandler.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="WinUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\GameServer\Enum.pb.h" />
     <ClInclude Include="..\GameServer\Protocol.pb.h" />
+    <ClInclude Include="..\GameServer\Struct.pb.h" />
     <ClInclude Include="ChatWindow.h" />
     <ClInclude Include="ClientManager.h" />
     <ClInclude Include="ClientSession.h" />
     <ClInclude Include="LobbyWindow.h" />
     <ClInclude Include="LoginWindow.h" />
-    <ClInclude Include="PacketHandler.h" />
+    <ClInclude Include="ServerPacketHandler.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="WinUtils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Common\Protobuf\Enum.proto" />
+    <None Include="..\Common\Protobuf\GenPackets.bat" />
+    <None Include="..\Common\Protobuf\Protocol.proto" />
+    <None Include="..\Common\Protobuf\Struct.proto" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Include="..\Common\Protobuf\Enum.proto" />
+    <UpToDateCheckInput Include="..\Common\Protobuf\Protocol.proto" />
+    <UpToDateCheckInput Include="..\Common\Protobuf\Struct.proto" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -27,7 +27,7 @@
     <ClCompile Include="ClientSession.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="PacketHandler.cpp">
+    <ClCompile Include="ServerPacketHandler.cpp">
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="ChatWindow.cpp">
@@ -45,6 +45,12 @@
     <ClCompile Include="..\GameServer\Protocol.pb.cc">
       <Filter>Protocol</Filter>
     </ClCompile>
+    <ClCompile Include="..\GameServer\Enum.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GameServer\Struct.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -56,7 +62,7 @@
     <ClInclude Include="ClientSession.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="PacketHandler.h">
+    <ClInclude Include="ServerPacketHandler.h">
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="ChatWindow.h">
@@ -74,5 +80,25 @@
     <ClInclude Include="..\GameServer\Protocol.pb.h">
       <Filter>Protocol</Filter>
     </ClInclude>
+    <ClInclude Include="..\GameServer\Struct.pb.h">
+      <Filter>Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameServer\Enum.pb.h">
+      <Filter>Protocol</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Common\Protobuf\Protocol.proto">
+      <Filter>Protocol</Filter>
+    </None>
+    <None Include="..\Common\Protobuf\Enum.proto">
+      <Filter>Protocol</Filter>
+    </None>
+    <None Include="..\Common\Protobuf\Struct.proto">
+      <Filter>Protocol</Filter>
+    </None>
+    <None Include="..\Common\Protobuf\GenPackets.bat">
+      <Filter>Protocol</Filter>
+    </None>
   </ItemGroup>
 </Project>

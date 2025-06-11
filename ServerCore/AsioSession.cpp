@@ -41,7 +41,7 @@ void AsioSession::ProcessRecv()
 
 void AsioSession::ProcessDisconnect(const char* pCallback)
 {
-	// ÀÌ¹Ì DisconnectÀÓ.
+	// ï¿½Ì¹ï¿½ Disconnectï¿½ï¿½.
 	if (m_NetState == NetState::Disconnect)
 		return;
 
@@ -65,7 +65,7 @@ bool AsioSession::Connect(const string& host, const string& port)
 {
 	m_Resolver = new tcp::resolver(*m_IoContext);
 	m_Socket = new tcp::socket(*m_IoContext);
-	// »õ·Î¿î ¼ÒÄÏ »ý¼º
+	// ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	tcp::resolver::query targetQuery(host, port);
 	auto targetEndpoint = m_Resolver->resolve(targetQuery);
 	
@@ -127,7 +127,7 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 		memcpy(dataCopy.data(), m_PacketBuffer.ReadPos(), dataSize);
 
 		NetworkHandler::GetInstance().RecvData(shared_from_this(), dataCopy.data(), dataSize);
-		// ´ÙÀ½ ºñµ¿±â ÀÐ±â ½ÃÀÛ
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ñµ¿±ï¿½ ï¿½Ð±ï¿½ ï¿½ï¿½ï¿½ï¿½
 		dataCopy.clear();
 		m_PacketBuffer.OnRead(length);
 		m_PacketBuffer.Clear();
@@ -156,11 +156,11 @@ void AsioSession::HandleRead(boost::system::error_code ec, int32 length)
 
 void AsioSession::Send(Packet&& packet)
 {
-	// ÀÌ ºÎºÐÀº Ç®·Î °ü¸®.
+	// ï¿½ï¿½ ï¿½Îºï¿½ï¿½ï¿½ Ç®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 	auto sendPacket = PacketPool::GetInstance().Pop();
 
-	// packetÀÌ shared_ptrÀÌ ¾Æ´Ï¾î¼­ ¿¡·¯.
-	// Question. PacketÀÌ ²À shared_ptrÀÌ¾î¾ßÇÒ±î?
+	// packetï¿½ï¿½ shared_ptrï¿½ï¿½ ï¿½Æ´Ï¾î¼­ ï¿½ï¿½ï¿½ï¿½.
+	// Question. Packetï¿½ï¿½ ï¿½ï¿½ shared_ptrï¿½Ì¾ï¿½ï¿½ï¿½Ò±ï¿½?
 	*sendPacket = std::move(packet);
 
 	boost::asio::async_write(*m_Socket, boost::asio::buffer(sendPacket->GetData(), sendPacket->GetSize()),
