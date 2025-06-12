@@ -8,7 +8,7 @@
 #include "ChatWindow.h"
 #include "LoginWindow.h"
 #include "LobbyWindow.h"
-#include "PacketHandler.h"
+#include "ServerPacketHandler.h"
 #include "WinUtils.h"
 
 #include <..\include\INIReader\ini.h>

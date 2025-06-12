@@ -43,7 +43,7 @@ public:
 		return GPacketHadler[header->packetType](session, buffer, len);
 	}
 
-	// íŒ¨í‚· ìƒì„±
+	// ÆĞÅ¶ »ı¼º
 	static Packet MakePacket(Protocol::EnterChatRoomReq& pkt) { return MakePacket(pkt, EnterChatRoomReq); }
 	static Packet MakePacket(Protocol::LoginReq& pkt) { return MakePacket(pkt, LoginReq); }
 

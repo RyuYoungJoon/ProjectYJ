@@ -26,7 +26,6 @@ public:
 	virtual void OnConnected() override;
 	virtual void OnDisconnected() override;
 
-	// UI ���� �Լ�
 	static void SetMainWin(HWND hwnd) { s_hMainWin = hwnd; }
 	static void SetLobbyWin(HWND hwnd) { s_hLobbyWin = hwnd; }
 	static void SetChatWin(HWND hwnd) { s_hChatWin = hwnd; }

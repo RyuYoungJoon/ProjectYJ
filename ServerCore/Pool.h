@@ -11,7 +11,7 @@ public:
         Clean();
     }
 
-    // InitPool: 미리 count개의 객체를 생성하여 풀에 저장
+    // InitPool
     void InitPool(size_t count) 
     {
         std::lock_guard<std::mutex> lock(m_Mutex);
@@ -20,7 +20,7 @@ public:
         }
     }
 
-    // Pop: 풀에서 객체를 꺼내 shared_ptr로 반환
+    // Pop
     std::shared_ptr<T> Pop() 
     {
         std::lock_guard<std::mutex> lock(m_Mutex);
@@ -31,25 +31,24 @@ public:
             m_Pool.pop();
         }
         else {
-            // 풀에 남은 객체가 없으면 새로 생성
+            // 
             LOGD << "Pool Size Expand! Pool Size : " << GetSize();
             obj = new T();
         }
 
-        // custom deleter를 통해 shared_ptr가 소멸될 때 Push를 호출하여 객체를 풀로 복귀
+        // custom deleter
         return std::shared_ptr<T>(obj, [this](T* ptr) {
             this->Push(ptr);
             });
     }
 
-    // Push: 객체를 풀에 반환 (메모리 환원)
+    // Push
     void Push(T* obj) 
     {
         std::lock_guard<std::mutex> lock(m_Mutex);
         m_Pool.push(obj);
     }
 
-    // 현재 풀에 저장되어 있는 객체 수 반환
     size_t GetSize() const 
     {
         std::lock_guard<std::mutex> lock(m_Mutex);
@@ -58,7 +57,6 @@ public:
 
     void Clean()
     {
-        // 객체 풀에 남아있는 모든 객체 해제
         std::lock_guard<std::mutex> lock(m_Mutex);
         while (!m_Pool.empty())
         {
@@ -69,10 +67,9 @@ public:
 
 private:
     mutable std::mutex m_Mutex;
-    std::stack<T*> m_Pool;  // push/pop 연산에 특화된 컨테이너
+    std::stack<T*> m_Pool;  // push/pop
 };
 
-// MemoryPool을 활용한 Packet 객체 풀
 class PacketPool
 {
 public:
@@ -99,7 +96,6 @@ public:
         return instance;
     }
 
-    // 풀 초기화
     bool Init(uint32 poolSize)
     {
         m_PoolSize = poolSize;
@@ -116,7 +112,6 @@ public:
         return m_TotalCount > 0;
     }
 
-    // 패킷 할당
     PacketPtr Pop()
     {
         PacketPtr packet;
@@ -130,7 +125,6 @@ public:
         }
         else
         {
-            // 패킷이 없으면 그때마다 확장.
             packet = std::make_shared<Packet>();
             m_TotalCount.fetch_add(1, std::memory_order_relaxed);
             m_UseConut.fetch_add(1, std::memory_order_relaxed);

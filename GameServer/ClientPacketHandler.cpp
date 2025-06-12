@@ -48,13 +48,20 @@ bool HandleEnterChatRoomReq(AsioSessionPtr& session, Protocol::EnterChatRoomReq&
 
 bool HandleLoginReq(AsioSessionPtr& session, Protocol::LoginReq& pkt)
 {
-    // DB 확인
     GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
     if (gameSession == nullptr)
     {
         LOGE << "GameSession Nullptr!";
         return false;
     }
+    // DB 확인 로직 필요.
+
+    PlayerPtr player = make_shared<Player>();
+    player->m_PlayerUID = gameSession->GetSessionUID();
+    player->ownerSession = gameSession;
+    player->m_Name = pkt.id();
+
+    gameSession->m_Player.push_back(player);
 
     Protocol::LoginAck loginPacket;
 

@@ -43,8 +43,6 @@ void PacketHandler::HandleInvalid(AsioSessionPtr& session, BYTE* buffer)
 
 bool HandleRoomEnterAck(AsioSessionPtr& session, Protocol::EnterChatRoomAck& packet)
 {
-    LOGI << "����!";
-
     return true;
 }
 
@@ -68,4 +66,6 @@ bool HandleLoginAck(AsioSessionPtr& session, Protocol::LoginAck& pkt)
     loginData->message = "Login Success!";
 
     PostMessage(clientSession->s_hMainWin, WM_LOGIN_SUCCESS, 0, (LPARAM)loginData);
+
+    return true;
 }

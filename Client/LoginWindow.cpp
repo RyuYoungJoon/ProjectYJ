@@ -1,27 +1,26 @@
-#include "pch.h"
+﻿#include "pch.h"
+#include "ServerPacketHandler.h"
 #include "LoginWindow.h"
 #include "ClientManager.h"
 #include "ClientSession.h"
 #include "WinUtils.h"
-#include "ServerPacketHandler.h"
-#include "Protocol.pb.h"
 
 LPCTSTR lpszLoginClass = L"ClassLoginWindow";
 std::map<HWND, LoginWindow*> LoginWindow::s_mapWindow;
 
 LoginWindow::LoginWindow()
-	: m_hWnd(NULL), m_hEditId(NULL), m_hEditPassword(NULL), m_hLoginButton(NULL)
+    : m_hWnd(NULL), m_hEditId(NULL), m_hEditPassword(NULL), m_hLoginButton(NULL)
 {
 }
 
 LoginWindow::~LoginWindow()
 {
-	
+
 }
 
 bool LoginWindow::Init(HINSTANCE hInstance)
 {
-    // ������ Ŭ���� ���
+    // 윈도우 클래스 등록
     WNDCLASSEXW wcex = { 0 };
     wcex.cbSize = sizeof(WNDCLASSEXW);
     wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -34,24 +33,24 @@ bool LoginWindow::Init(HINSTANCE hInstance)
 
     if (!RegisterClassExW(&wcex))
     {
-        MessageBoxW(NULL, L"�α��� ������ Ŭ���� ��� ����", L"����", MB_ICONERROR);
+        MessageBoxW(NULL, L"로그인 윈도우 클래스 등록 실패", L"오류", MB_ICONERROR);
         return false;
     }
 
-    // ������ ����
-    m_hWnd = CreateWindowW(lpszLoginClass, L"�α���", WS_OVERLAPPEDWINDOW,
+    // 윈도우 생성
+    m_hWnd = CreateWindowW(lpszLoginClass, L"로그인", WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, 400, 300, m_hParentHandle, nullptr, hInstance, nullptr);
 
     if (!m_hWnd)
     {
-        MessageBoxW(NULL, L"�α��� ������ ���� ����", L"����", MB_ICONERROR);
+        MessageBoxW(NULL, L"로그인 윈도우 생성 실패", L"오류", MB_ICONERROR);
         return false;
     }
 
-    // ��ü ����
+    // 객체 연결
     s_mapWindow[m_hWnd] = this;
 
-    // ��Ʈ�� ����
+    // 컨트롤 생성
     CreateControl();
 
     return true;
@@ -75,13 +74,13 @@ bool LoginWindow::IsVisible() const
 
 void LoginWindow::TryLogin()
 {
-    // ID�� ��й�ȣ ��������
+    // ID와 비밀번호 가져오기
     int idLength = GetWindowTextLengthW(m_hEditId);
     int pwLength = GetWindowTextLengthW(m_hEditPassword);
 
     if (idLength == 0 || pwLength == 0)
     {
-        MessageBoxW(m_hWnd, L"���̵�� ��й�ȣ�� ��� �Է����ּ���.", L"�α��� ����", MB_ICONERROR);
+        MessageBoxW(m_hWnd, L"아이디와 비밀번호를 모두 입력해주세요.", L"로그인 실패", MB_ICONERROR);
         return;
     }
 
@@ -97,7 +96,7 @@ void LoginWindow::TryLogin()
     std::string id = WinUtils::WStringToString(wId);
     std::string password = WinUtils::WStringToString(wPassword);
 
-    // �α��� ��û ����
+    // 로그인 요청 로직
     auto& ClientManager = ClientManager::GetInstance();
     auto sessions = ClientManager.GetSessions();
 
@@ -106,22 +105,23 @@ void LoginWindow::TryLogin()
         auto session = sessions.begin()->second;
         if (session)
         {
+            // 로그인 요청 패킷 전송
             Protocol::LoginReq loginPacket;
             loginPacket.set_id(id);
             loginPacket.set_password(password);
-            
+
             Packet sendPacket = PacketHandler::GetInstance().MakePacket(loginPacket);
 
             static_cast<ClientSession*>(session.get())->Send(std::move(sendPacket));
         }
         else
         {
-            OnLoginFail("������ ��ȿ���� �ʽ��ϴ�.");
+            OnLoginFail("세션이 유효하지 않습니다.");
         }
     }
     else
     {
-        OnLoginFail("������ ����Ǿ� ���� �ʽ��ϴ�. �ٽ� �õ����ּ���.");
+        OnLoginFail("서버에 연결되어 있지 않습니다. 다시 시도해주세요.");
     }
 }
 
@@ -138,7 +138,7 @@ void LoginWindow::OnLoginFail(const std::string& error)
 
 LRESULT LoginWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    // �ش� �������� ChatWindow ��ü ã��
+    // 해당 윈도우의 ChatWindow 객체 찾기
     LoginWindow* pThis = NULL;
     if (s_mapWindow.find(hwnd) != s_mapWindow.end()) {
         pThis = s_mapWindow[hwnd];
@@ -152,7 +152,7 @@ LRESULT LoginWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             pThis->TryLogin();
         }
         break;
-    break;
+        break;
 
     case WM_DESTROY:
         PostQuitMessage(0);
@@ -166,34 +166,34 @@ void LoginWindow::CreateControl()
 {
     HFONT hFont = CreateFont(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
         DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
-        CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"���� ���");
+        CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"맑은 고딕");
 
-    // ID ��
-    HWND hStaticID = CreateWindowW(L"STATIC", L"���̵�:",
+    // ID 라벨
+    HWND hStaticID = CreateWindowW(L"STATIC", L"아이디:",
         WS_VISIBLE | WS_CHILD | SS_LEFT,
         50, 50, 80, 20, m_hWnd, (HMENU)IDC_STATIC_ID, NULL, NULL);
     SendMessage(hStaticID, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // ID �Է� �ʵ�
+    // ID 입력 필드
     m_hEditId = CreateWindowW(L"EDIT", L"",
         WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
         150, 50, 200, 25, m_hWnd, (HMENU)IDC_EDIT_ID, NULL, NULL);
     SendMessage(m_hEditId, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // ��й�ȣ ��
-    HWND hStaticPassword = CreateWindowW(L"STATIC", L"��й�ȣ:",
+    // 비밀번호 라벨
+    HWND hStaticPassword = CreateWindowW(L"STATIC", L"비밀번호:",
         WS_VISIBLE | WS_CHILD | SS_LEFT,
         50, 100, 80, 20, m_hWnd, (HMENU)IDC_STATIC_PASSWORD, NULL, NULL);
     SendMessage(hStaticPassword, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // ��й�ȣ �Է� �ʵ�
+    // 비밀번호 입력 필드
     m_hEditPassword = CreateWindowW(L"EDIT", L"",
         WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL | ES_PASSWORD,
         150, 100, 200, 25, m_hWnd, (HMENU)IDC_EDIT_PASSWORD, NULL, NULL);
     SendMessage(m_hEditPassword, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // �α��� ��ư
-    m_hLoginButton = CreateWindowW(L"BUTTON", L"�α���",
+    // 로그인 버튼
+    m_hLoginButton = CreateWindowW(L"BUTTON", L"로그인",
         WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
         150, 150, 100, 30, m_hWnd, (HMENU)IDC_BUTTON_LOGIN, NULL, NULL);
     SendMessage(m_hLoginButton, WM_SETFONT, (WPARAM)hFont, TRUE);

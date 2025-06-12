@@ -15,45 +15,37 @@ public:
     LobbyWindow();
     ~LobbyWindow();
 
-    // �ʱ�ȭ �� â ǥ��
     bool Init(HINSTANCE hInstance);
     void Show(const std::string& userId);
     void Hide();
     bool IsVisible() const;
     void SetMainWnd(HWND hwnd) { m_hParentHandle = hwnd; }
 
-    // �̺�Ʈ ó��
     void RefreshRoomList();
     void EnterChatRoom(int roomId);
     void CreateNewChatRoom(const std::string& roomName);
 
-    // ä�ù� ��� ����
     void UpdateLobby(const std::vector<ChatRoomInfo>& roomList);
 
-    // â �ڵ� ���
     HWND GetHandle() const { return m_hWnd; }
-    std::vector<ChatRoomInfo> m_chatRooms;  // ä�ù� ��� ������
+    std::vector<ChatRoomInfo> m_chatRooms;  
 
 private:
-    // ������ �ڵ� �� ��Ʈ��
-    HWND m_hWnd;                   // ���� ������ �ڵ�
-    HWND m_hRoomList;              // ä�ù� ��� ����Ʈ�ڽ�
-    HWND m_hEnterButton;           // ���� ��ư
-    HWND m_hCreateButton;          // ���� ��ư
-    HWND m_hRoomNameEdit;          // ä�ù� �̸� �Է� �ʵ�
-    HWND m_hWelcomeLabel;          // ȯ�� �޽��� ��
+    HWND m_hWnd;                   
+    HWND m_hRoomList;              
+    HWND m_hEnterButton;           
+    HWND m_hCreateButton;          
+    HWND m_hRoomNameEdit;          
+    HWND m_hWelcomeLabel;          
 
     HWND m_hParentHandle;
 
-    std::string m_currentUserId;   // ���� �α����� ����� ID
+    std::string m_currentUserId;   
 
-    // ������ ���ν��� (static���� �����ؾ� Win32 API���� ��� ����)
     static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-    // ������ �ڵ�� ��ü ������ ���� ��
     static std::map<HWND, LobbyWindow*> s_mapWindow;
 
-    // ��Ʈ�� ����
     void CreateControl();
 };
 

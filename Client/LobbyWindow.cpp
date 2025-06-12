@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "LobbyWindow.h"
 #include "ClientManager.h"
 #include "ClientSession.h"
@@ -24,7 +24,7 @@ LobbyWindow::~LobbyWindow()
 
 bool LobbyWindow::Init(HINSTANCE hInstance)
 {
-    // ������ Ŭ���� ���
+    // 윈도우 클래스 등록
     WNDCLASSEXW wcex = { 0 };
     wcex.cbSize = sizeof(WNDCLASSEXW);
     wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -37,25 +37,22 @@ bool LobbyWindow::Init(HINSTANCE hInstance)
 
     if (!RegisterClassExW(&wcex))
     {
-        MessageBoxW(NULL, L"ä�ù� ��� ������ Ŭ���� ��� ����", L"����", MB_ICONERROR);
+        MessageBoxW(NULL, L"채팅방 목록 윈도우 클래스 등록 실패", L"오류", MB_ICONERROR);
         return false;
     }
 
-    // ������ ����
-    m_hWnd = CreateWindowW(lpszLobbyClass, L"ä�ù� ���", WS_OVERLAPPEDWINDOW,
+    m_hWnd = CreateWindowW(lpszLobbyClass, L"채팅방 목록", WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, 600, 500, m_hParentHandle, nullptr, hInstance, nullptr);
 
     if (!m_hWnd)
     {
-        MessageBoxW(NULL, L"ä�ù� ��� ������ ���� ����", L"����", MB_ICONERROR);
+        MessageBoxW(NULL, L"채팅방 목록 윈도우 생성 실패", L"오류", MB_ICONERROR);
         return false;
     }
 
     ClientSession::SetLobbyWin(m_hWnd);
-    // ��ü ����
     s_mapWindow[m_hWnd] = this;
 
-    // ��Ʈ�� ����
     CreateControl();
 
     return true;
@@ -65,20 +62,20 @@ void LobbyWindow::Show(const std::string& userId)
 {
     m_currentUserId = userId;
 
-    // ȯ�� �޽��� ������Ʈ
-    std::wstring welcomeMsg = L"�ȳ��ϼ���, " + WinUtils::StringToWString(userId) + L"��! ä�ù��� �����ϰų� ���� ��������.";
+    // 환영 메시지 업데이트
+    std::wstring welcomeMsg = L"안녕하세요, " + WinUtils::StringToWString(userId) + L"님! 채팅방을 선택하거나 새로 만들어보세요.";
     SetWindowTextW(m_hWelcomeLabel, welcomeMsg.c_str());
 
-    // ä�ù� ��� ������ ��û (�׽�Ʈ �����ͷ� ��ü)
-    // �����δ� ������ ��û�� ������ ������ �޾ƾ� ��
+    // 채팅방 목록 데이터 요청 (테스트 데이터로 대체)
+    // 실제로는 서버에 요청을 보내고 응답을 받아야 함
     /*std::vector<ChatRoomInfo> testRooms = {
-        {1, "�Ϲ� ��ȭ��", 5, 20},
-        {2, "���� ��й�", 10, 30},
-        {3, "���� �����", 3, 10}
+        {1, "일반 대화방", 5, 20},
+        {2, "게임 토론방", 10, 30},
+        {3, "음악 감상방", 3, 10}
     };
     UpdateLobby(testRooms);*/
 
-    // ä�ù� ��� ��û ��Ŷ ����
+    // 채팅방 목록 요청 패킷 전송
     auto& ClientManager = ClientManager::GetInstance();
     auto sessions = ClientManager.GetSessions();
 
@@ -92,7 +89,7 @@ void LobbyWindow::Show(const std::string& userId)
         }
     }
 
-    // â ǥ��
+    // 창 표시
     ShowWindow(m_hWnd, SW_SHOW);
     UpdateWindow(m_hWnd);
 }
@@ -109,7 +106,7 @@ bool LobbyWindow::IsVisible() const
 
 void LobbyWindow::RefreshRoomList()
 {
-    // ������ ä�ù� ��� ��û ��Ŷ ����
+    // 서버에 채팅방 목록 요청 패킷 전송
     auto& ClientManager = ClientManager::GetInstance();
     auto sessions = ClientManager.GetSessions();
 
@@ -119,14 +116,14 @@ void LobbyWindow::RefreshRoomList()
         if (session)
         {
             //PacketRoomListReq packet;
-           // static_cast<ClientSession*>(session.get())->Send(packet);
+            //static_cast<ClientSession*>(session.get())->Send(packet);
         }
     }
 }
 
 void LobbyWindow::EnterChatRoom(int roomId)
 {
-    // ������ ä�ù濡 �ش��ϴ� ���� ã��
+    // 선택한 채팅방에 해당하는 정보 찾기
     ChatRoomInfo selectedRoom;
     bool found = false;
 
@@ -142,17 +139,17 @@ void LobbyWindow::EnterChatRoom(int roomId)
 
     if (!found)
     {
-        MessageBoxW(m_hWnd, L"������ ä�ù��� ã�� �� �����ϴ�.", L"����", MB_ICONERROR);
+        MessageBoxW(m_hWnd, L"선택한 채팅방을 찾을 수 없습니다.", L"오류", MB_ICONERROR);
         return;
     }
 
-    // ä�ù� ���� Ȯ�� �޽���
+    // 채팅방 입장 확인 메시지
     //std::wstring message = L"'" + WinUtils::StringToWString(selectedRoom.roomName) +
-    //    L"' ä�ù濡 �����Ͻðڽ��ϱ�?";
+    //    L"' 채팅방에 입장하시겠습니까?";
 
-    if (MessageBoxW(m_hWnd, L"", L"ä�ù� ����", MB_YESNO | MB_ICONQUESTION) == IDYES)
+    if (MessageBoxW(m_hWnd, L"", L"채팅방 입장", MB_YESNO | MB_ICONQUESTION) == IDYES)
     {
-        // ������ ä�ù� ���� ��û ��Ŷ ����
+        // 서버에 채팅방 입장 요청 패킷 전송
         auto& ClientManager = ClientManager::GetInstance();
         auto sessions = ClientManager.GetSessions();
 
@@ -161,33 +158,33 @@ void LobbyWindow::EnterChatRoom(int roomId)
             auto session = sessions.begin()->second;
             if (session)
             {
-                // ä�ù� ���� ��û ��Ŷ ����
+                // 채팅방 입장 요청 패킷 전송
                 //static_cast<ClientSession*>(session.get())->Send(std::to_string(roomId), PacketType::RoomEnterReq);
 
-                // ä�ù� ���� ó���� WM_CLIENT_CHATROOM_ENTER �޽��� �ڵ鷯���� ó��
+                // 채팅방 입장 처리는 WM_CLIENT_CHATROOM_ENTER 메시지 핸들러에서 처리
                 //PacketRoomEnterReq packet;
                 //packet.payload.roomID = selectedRoom.roomID;
 
                 //static_cast<ClientSession*>(session.get())->Send(packet);
 
-                // �׽�Ʈ�� ���� �ӽ� �ڵ� - �����δ� ���� ������ ��ٸ�
+                // 테스트를 위한 임시 코드 - 실제로는 서버 응답을 기다림
                 Hide();
             }
             else
             {
-                MessageBoxW(m_hWnd, L"������ ��ȿ���� �ʽ��ϴ�.", L"����", MB_ICONERROR);
+                MessageBoxW(m_hWnd, L"세션이 유효하지 않습니다.", L"오류", MB_ICONERROR);
             }
         }
         else
         {
-            MessageBoxW(m_hWnd, L"������ ����Ǿ� ���� �ʽ��ϴ�.", L"����", MB_ICONERROR);
+            MessageBoxW(m_hWnd, L"서버에 연결되어 있지 않습니다.", L"오류", MB_ICONERROR);
         }
     }
 }
 
 void LobbyWindow::CreateNewChatRoom(const std::string& roomName)
 {
-    // ������ ä�ù� ���� ��û ��Ŷ ����
+    // 서버에 채팅방 생성 요청 패킷 전송
     auto& ClientManager = ClientManager::GetInstance();
     auto sessions = ClientManager.GetSessions();
 
@@ -196,24 +193,24 @@ void LobbyWindow::CreateNewChatRoom(const std::string& roomName)
         auto session = sessions.begin()->second;
         if (session)
         {
-            // ä�ù� ���� ��û ��Ŷ ���� (format: "roomName|maxUsers")
+            // 채팅방 생성 요청 패킷 전송 (format: "roomName|maxUsers")
             //PacketRoomCreateReq packet;
             //packet.payload.roomName = roomName;
             //static_cast<ClientSession*>(session.get())->Send(packet);
 
-            // ä�ù� ���� ó���� WM_CLIENT_CHATROOM_CREATE �޽��� �ڵ鷯���� ó��
+            // 채팅방 생성 처리는 WM_CLIENT_CHATROOM_CREATE 메시지 핸들러에서 처리
         }
     }
 
-    //// �׽�Ʈ�� ���� �ӽ� ó��
-    //MessageBoxA(m_hWnd, (roomName + " ä�ù��� �����Ǿ����ϴ�.").c_str(), "ä�ù� ����", MB_ICONINFORMATION);
+    //// 테스트를 위한 임시 처리
+    //MessageBoxA(m_hWnd, (roomName + " 채팅방이 생성되었습니다.").c_str(), "채팅방 생성", MB_ICONINFORMATION);
 
-    //// ���� ������ ä�ù��� ��Ͽ� �߰� (�����δ� �������� ����� �ٽ� �޾ƾ� ��)
+    //// 새로 생성된 채팅방을 목록에 추가 (실제로는 서버에서 목록을 다시 받아야 함)
     //ChatRoomInfo newRoom = {
-    //    (int)m_chatRooms.size() + 1,  // �ӽ� ID
+    //    (int)m_chatRooms.size() + 1,  // 임시 ID
     //    roomName,
-    //    1,  // �ڱ� �ڽ�
-    //    20  // �⺻ �ִ� �ο�
+    //    1,  // 자기 자신
+    //    20  // 기본 최대 인원
     //};
 
     //m_chatRooms.push_back(newRoom);
@@ -224,10 +221,10 @@ void LobbyWindow::UpdateLobby(const std::vector<ChatRoomInfo>& roomList)
 {
     m_chatRooms = roomList;
 
-    // ����Ʈ�ڽ� ���� �ʱ�ȭ
+    // 리스트박스 내용 초기화
     SendMessage(m_hRoomList, LB_RESETCONTENT, 0, 0);
 
-    // �� ä�ù� ������ ����Ʈ�ڽ��� �߰�
+    // 각 채팅방 정보를 리스트박스에 추가
     for (const auto& room : m_chatRooms)
     {
         std::wstring itemText = /*WinUtils::StringToWString(room.roomID) +*/ L" (" + std::to_wstring(room.currentUser) +
@@ -238,7 +235,7 @@ void LobbyWindow::UpdateLobby(const std::vector<ChatRoomInfo>& roomList)
 
 LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    // �ش� �������� ChatRoomList ��ü ã��
+    // 해당 윈도우의 ChatRoomList 객체 찾기
     LobbyWindow* pThis = NULL;
     if (s_mapWindow.find(hwnd) != s_mapWindow.end()) {
         pThis = s_mapWindow[hwnd];
@@ -251,35 +248,35 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
         if (pThis) {
             if (LOWORD(wParam) == IDC_BUTTON_ENTER) {
-                // ���õ� ä�ù� �ε��� ��������
+                // 선택된 채팅방 인덱스 가져오기
                 int selectedIndex = SendMessage(pThis->m_hRoomList, LB_GETCURSEL, 0, 0);
                 if (selectedIndex != LB_ERR && selectedIndex < pThis->m_chatRooms.size()) {
                     pThis->EnterChatRoom(pThis->m_chatRooms[selectedIndex].roomID);
                 }
                 else {
-                    MessageBoxW(hwnd, L"ä�ù��� �������ּ���.", L"�˸�", MB_ICONINFORMATION);
+                    MessageBoxW(hwnd, L"채팅방을 선택해주세요.", L"알림", MB_ICONINFORMATION);
                 }
                 return 0;
             }
             else if (LOWORD(wParam) == IDC_BUTTON_CREATE) {
-                // �� ä�ù� �̸� ��������
+                /// 새 채팅방 이름 가져오기
                 int nameLength = GetWindowTextLengthW(pThis->m_hRoomNameEdit);
                 if (nameLength > 0) {
                     std::vector<wchar_t> buffer(nameLength + 1);
                     GetWindowTextW(pThis->m_hRoomNameEdit, buffer.data(), nameLength + 1);
                     std::wstring wRoomName(buffer.data());
 
-                    // ä�ù� �̸��� UTF-8�� ��ȯ
+                    // 채팅방 이름을 UTF-8로 변환
                     std::string roomName = WinUtils::WStringToString(wRoomName);
 
-                    // �� ä�ù� ����
+                    // 새 채팅방 생성
                     pThis->CreateNewChatRoom(roomName);
 
-                    // �Է� �ʵ� �ʱ�ȭ
+                    // 입력 필드 초기화
                     SetWindowTextW(pThis->m_hRoomNameEdit, L"");
                 }
                 else {
-                    MessageBoxW(hwnd, L"ä�ù� �̸��� �Է����ּ���.", L"�˸�", MB_ICONINFORMATION);
+                    MessageBoxW(hwnd, L"채팅방 이름을 입력해주세요.", L"알림", MB_ICONINFORMATION);
                 }
                 return 0;
             }
@@ -292,11 +289,11 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_CLIENT_CHATROOM_LIST:
         if (pThis) {
-            // ä�ù� ��� ���� ó��
+            // 채팅방 목록 응답 처리
             ChatRoomListResponseData* data = (ChatRoomListResponseData*)lParam;
             if (data) 
             {
-                // ä�ù� ��� ������Ʈ
+                // 채팅방 목록 업데이트
                 std::vector<ChatRoomInfo> roomList;
                 for (const auto& roomData : data->rooms) {
                     ChatRoomInfo roomInfo;
@@ -309,7 +306,7 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
                 pThis->UpdateLobby(roomList);
 
-                // �޸� ����
+                // 메모리 해제
                 delete data;
             }
         }
@@ -317,47 +314,44 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_CLIENT_CHATROOM_ENTER:
         if (pThis) {
-            // ä�ù� ���� ���� ó��
             ChatRoomResponseData* data = (ChatRoomResponseData*)lParam;
             if (data)
             {
-                // ä�ù� ��� â �����
+                // 채팅방 목록 창 숨기기
                 pThis->Hide();
 
-                // ä��â���� ��ȯ �޽��� ����
+                // 채팅창으로 전환 메시지 전송
                 ::PostMessage(GetParent(hwnd), WM_ENTER_CHATROOM, 0, lParam);
-                // lParam�� �״�� �����ϹǷ� ���⼭�� �޸� �������� ����
+                // lParam을 그대로 전달하므로 여기서는 메모리 해제하지 않음
             }
             else
             {
-                //MessageBoxW(hwnd, WinUtils::StringToWString(data->message).c_str(), L"ä�ù� ���� ����", MB_ICONERROR);
-                // ������ ��쿡�� �޸� ����
+                //MessageBoxW(hwnd, WinUtils::StringToWString(data->message).c_str(), L"채팅방 입장 실패", MB_ICONERROR);
+                // 실패한 경우에만 메모리 해제
                 delete data;
-
             }
         }
         break;
     case WM_CLIENT_CHATROOM_CREATE:
         if (pThis)
         {
-            // ä�ù� ���� ���� ó��
             ChatRoomResponseData* data = (ChatRoomResponseData*)lParam;
             if (data)
             {
-                MessageBoxW(hwnd, WinUtils::StringToWString("ä�ù� '" + data->roomName + "'��(��) �����Ǿ����ϴ�.").c_str(), L"ä�ù� ���� ����", MB_ICONINFORMATION);
+                MessageBoxW(hwnd, WinUtils::StringToWString("채팅방 '" + data->roomName + "'이(가) 생성되었습니다.").c_str(), L"채팅방 생성 성공", MB_ICONINFORMATION);
 
                 ChatRoomInfo newRoom = { data->roomId, 1, 10 };
 
                 pThis->m_chatRooms.push_back(newRoom);
                 pThis->UpdateLobby(pThis->m_chatRooms);
-                // ��� ���ΰ�ħ ��û
+                
+                // 목록 새로고침 요청
                 pThis->RefreshRoomList();
             }
             else {
-                //MessageBoxW(hwnd, WinUtils::StringToWString(data->message).c_str(), L"ä�ù� ���� ����", MB_ICONERROR);
+                //MessageBoxW(hwnd, WinUtils::StringToWString(data->message).c_str(), L"채팅방 생성 실패", MB_ICONERROR);
             }
 
-            // �޸� ����
             delete data;
         }
         break;
@@ -374,46 +368,46 @@ void LobbyWindow::CreateControl()
 {
     HFONT hFont = CreateFont(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
         DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
-        CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"���� ���");
+        CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"맑은 고딕");
 
-    // ȯ�� �޽��� ��
-    m_hWelcomeLabel = CreateWindowW(L"STATIC", L"ä�ù� ���",
+    // 환영 메시지 라벨
+    m_hWelcomeLabel = CreateWindowW(L"STATIC", L"채팅방 목록",
         WS_VISIBLE | WS_CHILD | SS_CENTER,
         20, 20, 560, 25, m_hWnd, (HMENU)IDC_STATIC_WELCOME, NULL, NULL);
     SendMessage(m_hWelcomeLabel, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // ä�ù� ��� ����Ʈ�ڽ�
+    // 채팅방 목록 리스트박스
     m_hRoomList = CreateWindowW(L"LISTBOX", NULL,
         WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT,
         20, 60, 560, 300, m_hWnd, (HMENU)IDC_LIST_ROOMS, NULL, NULL);
     SendMessage(m_hRoomList, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // ä�ù� ���� ��ư
-    m_hEnterButton = CreateWindowW(L"BUTTON", L"����",
+    // 채팅방 입장 버튼
+    m_hEnterButton = CreateWindowW(L"BUTTON", L"입장",
         WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
         450, 370, 130, 30, m_hWnd, (HMENU)IDC_BUTTON_ENTER, NULL, NULL);
     SendMessage(m_hEnterButton, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // �� ä�ù� �̸� ��
-    HWND hStaticRoomName = CreateWindowW(L"STATIC", L"�� ä�ù� �̸�:",
+    // 새 채팅방 이름 라벨
+    HWND hStaticRoomName = CreateWindowW(L"STATIC", L"새 채팅방 이름:",
         WS_VISIBLE | WS_CHILD | SS_LEFT,
         20, 380, 130, 20, m_hWnd, (HMENU)IDC_STATIC_ROOM_NAME, NULL, NULL);
     SendMessage(hStaticRoomName, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // �� ä�ù� �̸� �Է� �ʵ�
+    // 새 채팅방 이름 입력 필드
     m_hRoomNameEdit = CreateWindowW(L"EDIT", L"",
         WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
         150, 380, 200, 25, m_hWnd, (HMENU)IDC_EDIT_ROOM_NAME, NULL, NULL);
     SendMessage(m_hRoomNameEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // �� ä�ù� ���� ��ư
-    m_hCreateButton = CreateWindowW(L"BUTTON", L"����",
+    // 새 채팅방 생성 버튼
+    m_hCreateButton = CreateWindowW(L"BUTTON", L"생성",
         WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
         200, 420, 100, 30, m_hWnd, (HMENU)IDC_BUTTON_CREATE, NULL, NULL);
     SendMessage(m_hCreateButton, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-    // ���ΰ�ħ ��ư
-    HWND hRefreshButton = CreateWindowW(L"BUTTON", L"���ΰ�ħ",
+    // 새로고침 버튼
+    HWND hRefreshButton = CreateWindowW(L"BUTTON", L"새로고침",
         WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
         20, 420, 100, 30, m_hWnd, (HMENU)IDC_BUTTON_REFRESH, NULL, NULL);
     SendMessage(hRefreshButton, WM_SETFONT, (WPARAM)hFont, TRUE);

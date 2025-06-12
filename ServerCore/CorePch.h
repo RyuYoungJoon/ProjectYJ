@@ -11,7 +11,6 @@
 #include <unordered_set>
 #include <utility>
 #include <chrono>
-#include <format>
 #include <filesystem>
 #include <random>
 #include <concurrent_queue.h>

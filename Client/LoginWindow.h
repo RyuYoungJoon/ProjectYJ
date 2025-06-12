@@ -17,24 +17,21 @@ public:
     void Hide();
     bool IsVisible() const;
 
-    // �̺�Ʈ ó��
     void TryLogin();
     void OnLoginSuccess(const std::string& userID);
     void OnLoginFail(const std::string& error);
 
     void SetMainWnd(HWND hwnd) { m_hParentHandle = hwnd; }
     
-    // �ڵ� ���
     HWND GetHandle() const { return m_hWnd; }
 
     const std::string& GetUserID() const { return m_UserID; }
 
 private:
-    // ������ �ڵ� �� ��Ʈ��
-    HWND m_hWnd;               // ���� ������ �ڵ�
-    HWND m_hEditId;            // ID �Է� �ʵ�
-    HWND m_hEditPassword;      // ��й�ȣ �Է� �ʵ�
-    HWND m_hLoginButton;       // �α��� ��ư
+    HWND m_hWnd;               
+    HWND m_hEditId;            
+    HWND m_hEditPassword;      
+    HWND m_hLoginButton;       
 
     HWND m_hParentHandle;
 
