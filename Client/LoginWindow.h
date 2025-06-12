@@ -17,24 +17,24 @@ public:
     void Hide();
     bool IsVisible() const;
 
-    // ÀÌº¥Æ® Ã³¸®
+    // ï¿½Ìºï¿½Æ® Ã³ï¿½ï¿½
     void TryLogin();
     void OnLoginSuccess(const std::string& userID);
     void OnLoginFail(const std::string& error);
 
     void SetMainWnd(HWND hwnd) { m_hParentHandle = hwnd; }
     
-    // ÇÚµé ¾ò±â
+    // ï¿½Úµï¿½ ï¿½ï¿½ï¿½
     HWND GetHandle() const { return m_hWnd; }
 
     const std::string& GetUserID() const { return m_UserID; }
 
 private:
-    // À©µµ¿ì ÇÚµé ¹× ÄÁÆ®·Ñ
-    HWND m_hWnd;               // ¸ÞÀÎ À©µµ¿ì ÇÚµé
-    HWND m_hEditId;            // ID ÀÔ·Â ÇÊµå
-    HWND m_hEditPassword;      // ºñ¹Ð¹øÈ£ ÀÔ·Â ÇÊµå
-    HWND m_hLoginButton;       // ·Î±×ÀÎ ¹öÆ°
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½
+    HWND m_hWnd;               // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
+    HWND m_hEditId;            // ID ï¿½Ô·ï¿½ ï¿½Êµï¿½
+    HWND m_hEditPassword;      // ï¿½ï¿½Ð¹ï¿½È£ ï¿½Ô·ï¿½ ï¿½Êµï¿½
+    HWND m_hLoginButton;       // ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°
 
     HWND m_hParentHandle;
 

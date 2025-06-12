@@ -12,6 +12,7 @@ enum : uint16
 	EnterChatRoomReq = 1000,
 	EnterChatRoomAck = 1001,
 	LoginReq = 1002,
+	LoginAck = 1003,
 };
 
 class AsioSession;
@@ -44,6 +45,7 @@ public:
 
 	// 패킷 생성
 	static Packet MakePacket(Protocol::EnterChatRoomAck& pkt) { return MakePacket(pkt, EnterChatRoomAck); }
+	static Packet MakePacket(Protocol::LoginAck& pkt) { return MakePacket(pkt, LoginAck); }
 
 	PacketHandler();
 	~PacketHandler();

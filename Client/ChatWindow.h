@@ -1,6 +1,6 @@
 #pragma once
 
-// ÄÁÆ®·Ñ ID Á¤ÀÇ
+// ï¿½ï¿½Æ®ï¿½ï¿½ ID ï¿½ï¿½ï¿½ï¿½
 #define IDC_EDIT_MESSAGE 1001
 #define IDC_BUTTON_SEND 1002
 #define IDC_LIST_CHAT 1003
@@ -9,38 +9,38 @@
 class ChatWindow
 {
 private:
-	HWND m_hWnd;			// ¸ÞÀÎ À©µµ¿ì ÇÚµé
-	HWND m_hEditMessage;	// ¸Þ½ÃÁö ÀÔ·Â ÇÊµå
-	HWND m_hSendButton;		// Àü¼Û ¹öÆ°
-	HWND m_hListChat;		// Ã¤ÆÃ ±â·Ï ¸®½ºÆ® ¹Ú½º
-	HWND m_hStatusBar;		// »óÅÂ¹Ù
+	HWND m_hWnd;			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
+	HWND m_hEditMessage;	// ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ ï¿½Êµï¿½
+	HWND m_hSendButton;		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°
+	HWND m_hListChat;		// Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ú½ï¿½
+	HWND m_hStatusBar;		// ï¿½ï¿½ï¿½Â¹ï¿½
 
-	// Ã¤ÆÃ µ¥ÀÌÅÍ
+	// Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	std::mutex m_chatMutex;
 	std::vector<std::wstring> m_chatMessage;
 	bool m_isConnect;
 
-	// À©µµ¿ì ÇÁ·Î½ÃÀú (staticÀ¸·Î ¼±¾ðÇØ¾ß WinApi¿¡¼­ »ç¿ë °¡´É)
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î½ï¿½ï¿½ï¿½ (staticï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ WinApiï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMSG, WPARAM wParam, LPARAM lParam);
 
-	// À©µµ¿ì ÇÚµé°ú °´Ã¼ ¿¬°áÀ» À§ÇÑ ¸Ê
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 	static std::map<HWND, ChatWindow*> s_mapWindow;
 
-	// ÄÁÆ®·Ñ »ý¼º
+	// ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	void CreateControl();
 
 public:
 	ChatWindow();
 	~ChatWindow();
 
-	// ÃÊ±âÈ­ ¹× Ã¢ Ç¥½Ã
+	// ï¿½Ê±ï¿½È­ ï¿½ï¿½ Ã¢ Ç¥ï¿½ï¿½
 	bool Init(HINSTANCE hInstance);
 	void Show();
 	void Hide();
 	bool IsVisible() const;
 	void SetMainWnd(HWND hwnd) { m_hWnd = hwnd; }
 
-	// ÀÌº¥Æ® Ã³¸®
+	// ï¿½Ìºï¿½Æ® Ã³ï¿½ï¿½
 	void OnConnect();
 	void OnDisconnect();
 	void OnMessageRecv(const std::string& sender, const std::string& message);
@@ -48,9 +48,9 @@ public:
 	void AddChatMessage(const std::wstring& message);
 	void UpdateStatus(bool isConnect);
 
-	// Ã¢ ÇÚµé ¿­±â
+	// Ã¢ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½
 	HWND GetHandle() const { return m_hWnd; }
 
-	// Ã¢ ¼³Á¤
+	// Ã¢ ï¿½ï¿½ï¿½ï¿½
 	void SetTitle(const std::wstring& title);
 };

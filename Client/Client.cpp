@@ -39,6 +39,9 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void InitWindow(HINSTANCE hInstance, int nCmdShow)
 {
+	if (ClientManager::GetInstance().GetIsStressTest())
+		return;
+
 	// 메인 윈도우 등록 및 생성
 	WNDCLASSEXW wcex = { 0 };
 	wcex.cbSize = sizeof(WNDCLASSEXW);
@@ -94,6 +97,9 @@ void InitWindow(HINSTANCE hInstance, int nCmdShow)
 
 void RunChatWindow()
 {
+	if (ClientManager::GetInstance().GetIsStressTest())
+		return;
+
 	MSG msg = { 0 };
 	while (GetMessage(&msg, nullptr, 0, 0))
 	{
@@ -150,7 +156,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
 
 	try
-
 	{
 		boost::asio::io_context* ioContext = new boost::asio::io_context();
 		work_guard_type work_guard(ioContext->get_executor());

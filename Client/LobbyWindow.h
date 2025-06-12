@@ -15,45 +15,45 @@ public:
     LobbyWindow();
     ~LobbyWindow();
 
-    // ÃÊ±âÈ­ ¹× Ã¢ Ç¥½Ã
+    // ï¿½Ê±ï¿½È­ ï¿½ï¿½ Ã¢ Ç¥ï¿½ï¿½
     bool Init(HINSTANCE hInstance);
     void Show(const std::string& userId);
     void Hide();
     bool IsVisible() const;
     void SetMainWnd(HWND hwnd) { m_hParentHandle = hwnd; }
 
-    // ÀÌº¥Æ® Ã³¸®
+    // ï¿½Ìºï¿½Æ® Ã³ï¿½ï¿½
     void RefreshRoomList();
     void EnterChatRoom(int roomId);
     void CreateNewChatRoom(const std::string& roomName);
 
-    // Ã¤ÆÃ¹æ ¸ñ·Ï °»½Å
+    // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     void UpdateLobby(const std::vector<ChatRoomInfo>& roomList);
 
-    // Ã¢ ÇÚµé ¾ò±â
+    // Ã¢ ï¿½Úµï¿½ ï¿½ï¿½ï¿½
     HWND GetHandle() const { return m_hWnd; }
-    std::vector<ChatRoomInfo> m_chatRooms;  // Ã¤ÆÃ¹æ ¸ñ·Ï µ¥ÀÌÅÍ
+    std::vector<ChatRoomInfo> m_chatRooms;  // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 private:
-    // À©µµ¿ì ÇÚµé ¹× ÄÁÆ®·Ñ
-    HWND m_hWnd;                   // ¸ÞÀÎ À©µµ¿ì ÇÚµé
-    HWND m_hRoomList;              // Ã¤ÆÃ¹æ ¸ñ·Ï ¸®½ºÆ®¹Ú½º
-    HWND m_hEnterButton;           // ÀÔÀå ¹öÆ°
-    HWND m_hCreateButton;          // »ý¼º ¹öÆ°
-    HWND m_hRoomNameEdit;          // Ã¤ÆÃ¹æ ÀÌ¸§ ÀÔ·Â ÇÊµå
-    HWND m_hWelcomeLabel;          // È¯¿µ ¸Þ½ÃÁö ¶óº§
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½
+    HWND m_hWnd;                   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
+    HWND m_hRoomList;              // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ú½ï¿½
+    HWND m_hEnterButton;           // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°
+    HWND m_hCreateButton;          // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°
+    HWND m_hRoomNameEdit;          // Ã¤ï¿½Ã¹ï¿½ ï¿½Ì¸ï¿½ ï¿½Ô·ï¿½ ï¿½Êµï¿½
+    HWND m_hWelcomeLabel;          // È¯ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½
 
     HWND m_hParentHandle;
 
-    std::string m_currentUserId;   // ÇöÀç ·Î±×ÀÎÇÑ »ç¿ëÀÚ ID
+    std::string m_currentUserId;   // ï¿½ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ID
 
-    // À©µµ¿ì ÇÁ·Î½ÃÀú (staticÀ¸·Î ¼±¾ðÇØ¾ß Win32 API¿¡¼­ »ç¿ë °¡´É)
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î½ï¿½ï¿½ï¿½ (staticï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ Win32 APIï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
     static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-    // À©µµ¿ì ÇÚµé°ú °´Ã¼ ¿¬°áÀ» À§ÇÑ ¸Ê
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
     static std::map<HWND, LobbyWindow*> s_mapWindow;
 
-    // ÄÁÆ®·Ñ »ý¼º
+    // ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     void CreateControl();
 };
 

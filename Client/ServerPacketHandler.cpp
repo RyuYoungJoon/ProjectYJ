@@ -48,7 +48,12 @@ bool HandleRoomEnterAck(AsioSessionPtr& session, Protocol::EnterChatRoomAck& pac
     return true;
 }
 
-bool HandleEnterChatRoomReq(AsioSessionPtr& session, Protocol::EnterChatRoomReq& pkt)
+bool HandleEnterChatRoomAck(AsioSessionPtr& session, Protocol::EnterChatRoomAck& pkt)
 {
-    return false;
+    return true;
+}
+
+bool HandleLoginAck(AsioSessionPtr& session, Protocol::LoginAck& pkt)
+{
+    return true;
 }

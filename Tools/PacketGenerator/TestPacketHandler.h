@@ -12,10 +12,12 @@ enum : uint16
 	EnterChatRoomReq = 1000,
 	EnterChatRoomAck = 1001,
 	LoginReq = 1002,
+	LoginAck = 1003,
 };
 
 class AsioSession;
 bool HandleEnterChatRoomAck(AsioSessionPtr& session, Protocol::EnterChatRoomAck& pkt);
+bool HandleLoginAck(AsioSessionPtr& session, Protocol::LoginAck& pkt);
 
 class PacketHandler : public PacketProcessor
 {
@@ -32,6 +34,7 @@ public:
 		for (int32 i = 0; i < UINT16_MAX; ++i)
 			GPacketHadler[i] = HandleInvalid;*/
 		GPacketHadler[EnterChatRoomAck] = [](AsioSessionPtr& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::EnterChatRoomAck>(HandleEnterChatRoomAck, session, buffer, len); };
+		GPacketHadler[LoginAck] = [](AsioSessionPtr& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::LoginAck>(HandleLoginAck, session, buffer, len); };
 	}
 
 	virtual bool HandlePacket(AsioSessionPtr& session, BYTE* buffer, int32 len) override

@@ -21,3 +21,8 @@ message LoginReq
 	uint32 id = 1;
 	uint32 password = 2;
 }
+
+message LoginAck
+{
+	bool success = 1;
+}

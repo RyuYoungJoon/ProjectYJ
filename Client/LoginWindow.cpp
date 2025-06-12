@@ -3,6 +3,8 @@
 #include "ClientManager.h"
 #include "ClientSession.h"
 #include "WinUtils.h"
+#include "ServerPacketHandler.h"
+#include "Protocol.pb.h"
 
 LPCTSTR lpszLoginClass = L"ClassLoginWindow";
 std::map<HWND, LoginWindow*> LoginWindow::s_mapWindow;
@@ -104,12 +106,13 @@ void LoginWindow::TryLogin()
         auto session = sessions.begin()->second;
         if (session)
         {
-            // �α��� ��û ��Ŷ ����
-            //PacketLoginReq packet;
-            //packet.header.type = PacketType::LoginReq;
-            //packet.payload.id = id; 
-            //packet.payload.password = password;
-            //static_cast<ClientSession*>(session.get())->Send(packet);
+            Protocol::LoginReq loginPacket;
+            loginPacket.set_id(std::stoi(id));
+            loginPacket.set_password(std::stoi(password));
+            
+            Packet sendPacket = PacketHandler::GetInstance().MakePacket(loginPacket);
+
+            static_cast<ClientSession*>(session.get())->Send(std::move(sendPacket));
         }
         else
         {

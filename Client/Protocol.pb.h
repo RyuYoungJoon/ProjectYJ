@@ -48,7 +48,7 @@ struct TableStruct_Protocol_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[3]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[4]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -62,6 +62,9 @@ extern EnterChatRoomAckDefaultTypeInternal _EnterChatRoomAck_default_instance_;
 class EnterChatRoomReq;
 struct EnterChatRoomReqDefaultTypeInternal;
 extern EnterChatRoomReqDefaultTypeInternal _EnterChatRoomReq_default_instance_;
+class LoginAck;
+struct LoginAckDefaultTypeInternal;
+extern LoginAckDefaultTypeInternal _LoginAck_default_instance_;
 class LoginReq;
 struct LoginReqDefaultTypeInternal;
 extern LoginReqDefaultTypeInternal _LoginReq_default_instance_;
@@ -69,6 +72,7 @@ extern LoginReqDefaultTypeInternal _LoginReq_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::Protocol::EnterChatRoomAck* Arena::CreateMaybeMessage<::Protocol::EnterChatRoomAck>(Arena*);
 template<> ::Protocol::EnterChatRoomReq* Arena::CreateMaybeMessage<::Protocol::EnterChatRoomReq>(Arena*);
+template<> ::Protocol::LoginAck* Arena::CreateMaybeMessage<::Protocol::LoginAck>(Arena*);
 template<> ::Protocol::LoginReq* Arena::CreateMaybeMessage<::Protocol::LoginReq>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace Protocol {
@@ -502,6 +506,138 @@ class LoginReq final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
+// -------------------------------------------------------------------
+
+class LoginAck final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.LoginAck) */ {
+ public:
+  inline LoginAck() : LoginAck(nullptr) {}
+  ~LoginAck() override;
+  explicit constexpr LoginAck(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  LoginAck(const LoginAck& from);
+  LoginAck(LoginAck&& from) noexcept
+    : LoginAck() {
+    *this = ::std::move(from);
+  }
+
+  inline LoginAck& operator=(const LoginAck& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline LoginAck& operator=(LoginAck&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const LoginAck& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const LoginAck* internal_default_instance() {
+    return reinterpret_cast<const LoginAck*>(
+               &_LoginAck_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(LoginAck& a, LoginAck& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(LoginAck* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(LoginAck* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline LoginAck* New() const final {
+    return new LoginAck();
+  }
+
+  LoginAck* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<LoginAck>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const LoginAck& from);
+  void MergeFrom(const LoginAck& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(LoginAck* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.LoginAck";
+  }
+  protected:
+  explicit LoginAck(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSuccessFieldNumber = 1,
+  };
+  // bool success = 1;
+  void clear_success();
+  bool success() const;
+  void set_success(bool value);
+  private:
+  bool _internal_success() const;
+  void _internal_set_success(bool value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.LoginAck)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  bool success_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_Protocol_2eproto;
+};
 // ===================================================================
 
 
@@ -641,9 +777,35 @@ inline void LoginReq::set_password(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   // @@protoc_insertion_point(field_set:Protocol.LoginReq.password)
 }
 
+// -------------------------------------------------------------------
+
+// LoginAck
+
+// bool success = 1;
+inline void LoginAck::clear_success() {
+  success_ = false;
+}
+inline bool LoginAck::_internal_success() const {
+  return success_;
+}
+inline bool LoginAck::success() const {
+  // @@protoc_insertion_point(field_get:Protocol.LoginAck.success)
+  return _internal_success();
+}
+inline void LoginAck::_internal_set_success(bool value) {
+  
+  success_ = value;
+}
+inline void LoginAck::set_success(bool value) {
+  _internal_set_success(value);
+  // @@protoc_insertion_point(field_set:Protocol.LoginAck.success)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

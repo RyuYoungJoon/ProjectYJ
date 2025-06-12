@@ -6,6 +6,8 @@
 #include "Player.h"
 #include "ChatRoom.h"
 #include "ChatRoomManager.h"
+#include "ServerPacketHandler.h"
+
 
 HandlerFunc GPacketHadler[UINT16_MAX];
 
@@ -46,7 +48,14 @@ bool HandleEnterChatRoomReq(AsioSessionPtr& session, Protocol::EnterChatRoomReq&
 
 bool HandleLoginReq(AsioSessionPtr& session, Protocol::LoginReq& pkt)
 {
-    return false;
+    // DB 확인
+    Protocol::LoginAck loginPacket;
+    loginPacket.set_success(true);
+
+    Packet packet = PacketHandler::MakePacket(loginPacket);
+
+    session->Send(std::move(packet));
+    return true;
 }
 
 bool HandleEnterChatRoomAck(AsioSessionPtr& session, Protocol::EnterChatRoomAck& pkt)

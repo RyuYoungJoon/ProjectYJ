@@ -3,7 +3,7 @@
 #include "ServerAnalyzer.h"
 #include "ClientManager.h"
 #include "ServerAnalyzer.h"
-#include "PacketHandler.h"
+#include "ServerPacketHandler.h"
 
 extern ClientServicePtr clientService;
 extern int32 maxSessionCnt;

@@ -9,7 +9,7 @@ struct PacketQueueItem {
     PacketQueueItem(int32 id, BYTE* buf, int32 packetSize) : sessionId(id), buffer(buf), len(packetSize) {}
 };
 
-// PacketRouter¿¡¼­ Å¥ º¤ÅÍ ¼±¾ð º¯°æ
+// PacketRouterï¿½ï¿½ï¿½ï¿½ Å¥ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 
 class PacketProcessor : public enable_shared_from_this<PacketProcessor>

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "GameSession.h"
-#include "PacketHandler.h"
+#include "ClientPacketHandler.h"
 #include "ServerAnalyzer.h"
 #include "SessionManager.h"
 
