@@ -276,7 +276,7 @@ LRESULT MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			g_lobbyWindow->Show(g_loginWindow->GetUserID());
 		}
-		return 0;
+		break;
 
 	case WM_ENTER_CHATROOM:
 		// 채팅방 입장 시 채팅창 표시
@@ -300,11 +300,10 @@ LRESULT MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				delete data;
 			}
 		}
-		return 0;
-
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
-		return 0;
+		break;
 	}
 
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);

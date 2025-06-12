@@ -84,8 +84,12 @@ void LobbyWindow::Show(const std::string& userId)
         auto session = sessions.begin()->second;
         if (session)
         {
-            //PacketRoomListReq packet;
-            //static_cast<ClientSession*>(session.get())->Send(packet);
+            Protocol::ChatRoomListReq listPacket;
+            listPacket.set_success(true);
+
+            Packet sendPacket = PacketHandler::GetInstance().MakePacket(listPacket);
+
+            static_cast<ClientSession*>(session.get())->Send(std::move(sendPacket));
         }
     }
 
@@ -124,12 +128,12 @@ void LobbyWindow::RefreshRoomList()
 void LobbyWindow::EnterChatRoom(int roomId)
 {
     // 선택한 채팅방에 해당하는 정보 찾기
-    ChatRoomInfo selectedRoom;
+    Protocol::ChatRoomInfo selectedRoom;
     bool found = false;
 
     for (const auto& room : m_chatRooms)
     {
-        if (room.roomID == roomId)
+        if (room.roomid() == roomId)
         {
             selectedRoom = room;
             found = true;
@@ -217,7 +221,7 @@ void LobbyWindow::CreateNewChatRoom(const std::string& roomName)
     //UpdateLobby(m_chatRooms);
 }
 
-void LobbyWindow::UpdateLobby(const std::vector<ChatRoomInfo>& roomList)
+void LobbyWindow::UpdateLobby(const std::vector<Protocol::ChatRoomInfo>& roomList)
 {
     m_chatRooms = roomList;
 
@@ -227,8 +231,8 @@ void LobbyWindow::UpdateLobby(const std::vector<ChatRoomInfo>& roomList)
     // 각 채팅방 정보를 리스트박스에 추가
     for (const auto& room : m_chatRooms)
     {
-        std::wstring itemText = /*WinUtils::StringToWString(room.roomID) +*/ L" (" + std::to_wstring(room.currentUser) +
-            L"/" + std::to_wstring(room.maxUser) + L")";
+        std::wstring itemText = WinUtils::StringToWString(room.roomname()) + L" (" + std::to_wstring(room.currentuser()) +
+            L"/" + std::to_wstring(room.maxuser()) + L")";
         SendMessage(m_hRoomList, LB_ADDSTRING, 0, (LPARAM)itemText.c_str());
     }
 }
@@ -251,7 +255,7 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 // 선택된 채팅방 인덱스 가져오기
                 int selectedIndex = SendMessage(pThis->m_hRoomList, LB_GETCURSEL, 0, 0);
                 if (selectedIndex != LB_ERR && selectedIndex < pThis->m_chatRooms.size()) {
-                    pThis->EnterChatRoom(pThis->m_chatRooms[selectedIndex].roomID);
+                    pThis->EnterChatRoom(pThis->m_chatRooms[selectedIndex].roomid());
                 }
                 else {
                     MessageBoxW(hwnd, L"채팅방을 선택해주세요.", L"알림", MB_ICONINFORMATION);
@@ -290,17 +294,17 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CLIENT_CHATROOM_LIST:
         if (pThis) {
             // 채팅방 목록 응답 처리
-            ChatRoomListResponseData* data = (ChatRoomListResponseData*)lParam;
+            Protocol::ChatRoomListRes* data = (Protocol::ChatRoomListRes*)lParam;
             if (data) 
             {
                 // 채팅방 목록 업데이트
-                std::vector<ChatRoomInfo> roomList;
-                for (const auto& roomData : data->rooms) {
-                    ChatRoomInfo roomInfo;
-                    roomInfo.roomID = roomData.roomID;
-                    //roomInfo.roomName = roomData.roomName;
-                    roomInfo.currentUser = roomData.currentUser;
-                    roomInfo.maxUser = roomData.maxUser;
+                std::vector<Protocol::ChatRoomInfo> roomList;
+                for (const auto& roomData : data->rooms()) {
+                    Protocol::ChatRoomInfo roomInfo;
+                    roomInfo.set_roomid(roomData.roomid());
+                    roomInfo.set_roomname(roomData.roomname());
+                    roomInfo.set_maxuser(roomData.maxuser());
+                    roomInfo.set_currentuser(roomData.currentuser());
                     roomList.push_back(roomInfo);
                 }
 
@@ -340,7 +344,7 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             {
                 MessageBoxW(hwnd, WinUtils::StringToWString("채팅방 '" + data->roomName + "'이(가) 생성되었습니다.").c_str(), L"채팅방 생성 성공", MB_ICONINFORMATION);
 
-                ChatRoomInfo newRoom = { data->roomId, 1, 10 };
+                Protocol::ChatRoomInfo newRoom; /*= { data->roomId, 1, 10 };*/
 
                 pThis->m_chatRooms.push_back(newRoom);
                 pThis->UpdateLobby(pThis->m_chatRooms);

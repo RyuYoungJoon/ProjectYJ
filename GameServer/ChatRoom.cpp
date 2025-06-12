@@ -5,6 +5,19 @@
 
 ChatRoom GRoom;
 
+std::string StringToUTF8(const std::string& wstr)
+{
+	int wideSize = MultiByteToWideChar(CP_ACP, 0, wstr.c_str(), -1, nullptr, 0);
+	std::wstring wideStr(wideSize, 0);
+	MultiByteToWideChar(CP_ACP, 0, wstr.c_str(), -1, &wideStr[0], wideSize);
+
+	int utf8Size = WideCharToMultiByte(CP_UTF8, 0, wideStr.c_str(), -1, nullptr, 0, nullptr, nullptr);
+	std::string utf8Str(utf8Size - 1, 0);
+	WideCharToMultiByte(CP_UTF8, 0, wideStr.c_str(), -1, &utf8Str[0], utf8Size, nullptr, nullptr);
+
+	return utf8Str;
+}
+
 void ChatRoom::Enter(PlayerPtr player)
 {
 	lock_guard<std::mutex> lock(m_ChatRoomMutex);
@@ -39,7 +52,7 @@ void ChatRoom::BroadCast(const std::string& message)
 void ChatRoom::SetRoomInfo(uint16 roomID, const std::string& roomName, uint16 maxUser)
 {
 	m_RoomID = roomID;
-	m_RoomName = roomName;
+	m_RoomName = StringToUTF8(roomName);
 	m_MaxUser = maxUser;
 }
 
@@ -48,13 +61,13 @@ map<uint16, PlayerPtr> ChatRoom::GetChatRoom()
 	return m_ChatRoom;
 }
 
-ChatRoomInfo ChatRoom::GetRoomInfo()
+Protocol::ChatRoomInfo ChatRoom::GetRoomInfo()
 {
-	ChatRoomInfo info;
-	info.roomID = m_RoomID;
-	//info.roomName = m_RoomName;
-	info.currentUser = GetCurrentUser();
-	info.maxUser = m_MaxUser;
+	Protocol::ChatRoomInfo info;
+	info.set_roomid(m_RoomID);
+	info.set_currentuser(GetCurrentUser());
+	info.set_maxuser(m_MaxUser);
+	info.set_roomname(m_RoomName);
 
 	return info;
 }

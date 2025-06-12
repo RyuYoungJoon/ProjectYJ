@@ -1,4 +1,5 @@
 #pragma once
+#include "ServerPacketHandler.h"
 
 #define IDC_LIST_ROOMS 3001
 #define IDC_BUTTON_ENTER 3002
@@ -25,10 +26,10 @@ public:
     void EnterChatRoom(int roomId);
     void CreateNewChatRoom(const std::string& roomName);
 
-    void UpdateLobby(const std::vector<ChatRoomInfo>& roomList);
+    void UpdateLobby(const std::vector<Protocol::ChatRoomInfo>& roomList);
 
     HWND GetHandle() const { return m_hWnd; }
-    std::vector<ChatRoomInfo> m_chatRooms;  
+    std::vector<Protocol::ChatRoomInfo> m_chatRooms;
 
 private:
     HWND m_hWnd;                   

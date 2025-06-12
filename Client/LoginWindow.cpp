@@ -146,14 +146,11 @@ LRESULT LoginWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     switch (uMsg) {
     case WM_CREATE:
         break;
-
     case WM_COMMAND:
         if (LOWORD(wParam) == IDC_BUTTON_LOGIN) {
             pThis->TryLogin();
         }
         break;
-        break;
-
     case WM_DESTROY:
         PostQuitMessage(0);
         break;

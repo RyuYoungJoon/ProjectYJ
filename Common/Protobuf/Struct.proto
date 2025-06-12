@@ -8,6 +8,7 @@ message ChatRoomInfo
 	uint32 roomID = 1;
 	uint32 currentUser = 2;
 	uint32 maxUser = 3;
+	string roomName = 4;
 }
 
 message LoginRes

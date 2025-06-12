@@ -194,10 +194,25 @@ class ChatRoomInfo final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kRoomNameFieldNumber = 4,
     kRoomIDFieldNumber = 1,
     kCurrentUserFieldNumber = 2,
     kMaxUserFieldNumber = 3,
   };
+  // string roomName = 4;
+  void clear_roomname();
+  const std::string& roomname() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_roomname(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_roomname();
+  PROTOBUF_FUTURE_MUST_USE_RESULT std::string* release_roomname();
+  void set_allocated_roomname(std::string* roomname);
+  private:
+  const std::string& _internal_roomname() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_roomname(const std::string& value);
+  std::string* _internal_mutable_roomname();
+  public:
+
   // uint32 roomID = 1;
   void clear_roomid();
   ::PROTOBUF_NAMESPACE_ID::uint32 roomid() const;
@@ -232,6 +247,7 @@ class ChatRoomInfo final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr roomname_;
   ::PROTOBUF_NAMESPACE_ID::uint32 roomid_;
   ::PROTOBUF_NAMESPACE_ID::uint32 currentuser_;
   ::PROTOBUF_NAMESPACE_ID::uint32 maxuser_;
@@ -1077,6 +1093,51 @@ inline void ChatRoomInfo::_internal_set_maxuser(::PROTOBUF_NAMESPACE_ID::uint32 
 inline void ChatRoomInfo::set_maxuser(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   _internal_set_maxuser(value);
   // @@protoc_insertion_point(field_set:Protocol.ChatRoomInfo.maxUser)
+}
+
+// string roomName = 4;
+inline void ChatRoomInfo::clear_roomname() {
+  roomname_.ClearToEmpty();
+}
+inline const std::string& ChatRoomInfo::roomname() const {
+  // @@protoc_insertion_point(field_get:Protocol.ChatRoomInfo.roomName)
+  return _internal_roomname();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ChatRoomInfo::set_roomname(ArgT0&& arg0, ArgT... args) {
+ 
+ roomname_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.ChatRoomInfo.roomName)
+}
+inline std::string* ChatRoomInfo::mutable_roomname() {
+  // @@protoc_insertion_point(field_mutable:Protocol.ChatRoomInfo.roomName)
+  return _internal_mutable_roomname();
+}
+inline const std::string& ChatRoomInfo::_internal_roomname() const {
+  return roomname_.Get();
+}
+inline void ChatRoomInfo::_internal_set_roomname(const std::string& value) {
+  
+  roomname_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* ChatRoomInfo::_internal_mutable_roomname() {
+  
+  return roomname_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* ChatRoomInfo::release_roomname() {
+  // @@protoc_insertion_point(field_release:Protocol.ChatRoomInfo.roomName)
+  return roomname_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void ChatRoomInfo::set_allocated_roomname(std::string* roomname) {
+  if (roomname != nullptr) {
+    
+  } else {
+    
+  }
+  roomname_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), roomname,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:Protocol.ChatRoomInfo.roomName)
 }
 
 // -------------------------------------------------------------------

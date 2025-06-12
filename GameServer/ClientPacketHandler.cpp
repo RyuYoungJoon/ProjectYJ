@@ -74,7 +74,45 @@ bool HandleLoginReq(AsioSessionPtr& session, Protocol::LoginReq& pkt)
     return true;
 }
 
-bool HandleEnterChatRoomAck(AsioSessionPtr& session, Protocol::EnterChatRoomAck& pkt)
+bool HandleChatRoomListReq(AsioSessionPtr& session, Protocol::ChatRoomListReq& pkt)
 {
-    return false;
+    GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
+    if (session == nullptr)
+    {
+        LOGE << "GameSession Nullptr";
+        return false;
+    }
+
+    ChatRoomManager::GetInstance().CreateRoom("HIHIHI", 10);
+    ChatRoomManager::GetInstance().CreateRoom("hihihi333", 10);
+    ChatRoomManager::GetInstance().CreateRoom("한글은?", 10);
+
+    auto roomInfo = ChatRoomManager::GetInstance().GetAllRoom();
+
+    Protocol::ChatRoomListAck sendPacket;
+
+    for (const auto& tempRoom : roomInfo)
+    {
+        ChatRoomPtr room = tempRoom.second;
+        Protocol::ChatRoomInfo info = room->GetRoomInfo();
+        sendPacket.set_success(true);
+
+        Protocol::ChatRoomInfo* newInfo = sendPacket.add_chatroominfo();
+        *newInfo = info;
+    }
+
+    Packet packet = PacketHandler::MakePacket(sendPacket);
+
+    gameSession->Send(std::move(packet));
+
+    return true;
+}
+
+bool HandleCreateChatRoomReq(AsioSessionPtr& session, Protocol::CreateChatRoomReq& pkt)
+{
+    return true;
+}
+bool HandleRefreshChatRoomReq(AsioSessionPtr& session, Protocol::RefreshChatRoomReq& pkt)
+{
+    return true;
 }

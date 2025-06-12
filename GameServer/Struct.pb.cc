@@ -19,7 +19,8 @@ PROTOBUF_PRAGMA_INIT_SEG
 namespace Protocol {
 constexpr ChatRoomInfo::ChatRoomInfo(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : roomid_(0u)
+  : roomname_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , roomid_(0u)
   , currentuser_(0u)
   , maxuser_(0u){}
 struct ChatRoomInfoDefaultTypeInternal {
@@ -112,6 +113,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_Struct_2eproto::offsets[] PROT
   PROTOBUF_FIELD_OFFSET(::Protocol::ChatRoomInfo, roomid_),
   PROTOBUF_FIELD_OFFSET(::Protocol::ChatRoomInfo, currentuser_),
   PROTOBUF_FIELD_OFFSET(::Protocol::ChatRoomInfo, maxuser_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::ChatRoomInfo, roomname_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::LoginRes, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -151,11 +153,11 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_Struct_2eproto::offsets[] PROT
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::Protocol::ChatRoomInfo)},
-  { 8, -1, sizeof(::Protocol::LoginRes)},
-  { 16, -1, sizeof(::Protocol::ChatRoomData)},
-  { 25, -1, sizeof(::Protocol::ChatRoomListRes)},
-  { 31, -1, sizeof(::Protocol::ChatRoomRes)},
-  { 38, -1, sizeof(::Protocol::UserListRes)},
+  { 9, -1, sizeof(::Protocol::LoginRes)},
+  { 17, -1, sizeof(::Protocol::ChatRoomData)},
+  { 26, -1, sizeof(::Protocol::ChatRoomListRes)},
+  { 32, -1, sizeof(::Protocol::ChatRoomRes)},
+  { 39, -1, sizeof(::Protocol::UserListRes)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -168,24 +170,24 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\014Struct.proto\022\010Protocol\032\nEnum.proto\"D\n\014"
+  "\n\014Struct.proto\022\010Protocol\032\nEnum.proto\"V\n\014"
   "ChatRoomInfo\022\016\n\006roomID\030\001 \001(\r\022\023\n\013currentU"
-  "ser\030\002 \001(\r\022\017\n\007maxUser\030\003 \001(\r\"R\n\010LoginRes\022%"
-  "\n\006result\030\001 \001(\0162\025.Protocol.LoginResult\022\016\n"
-  "\006userID\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\"V\n\014ChatRo"
-  "omData\022\016\n\006roomID\030\001 \001(\r\022\020\n\010roomName\030\002 \001(\t"
-  "\022\023\n\013currentUser\030\003 \001(\r\022\017\n\007maxUser\030\004 \001(\r\"8"
-  "\n\017ChatRoomListRes\022%\n\005rooms\030\001 \003(\0132\026.Proto"
-  "col.ChatRoomInfo\"/\n\013ChatRoomRes\022\016\n\006roomI"
-  "D\030\001 \001(\r\022\020\n\010roomName\030\002 \001(\t\"\033\n\013UserListRes"
-  "\022\014\n\004user\030\001 \003(\tb\006proto3"
+  "ser\030\002 \001(\r\022\017\n\007maxUser\030\003 \001(\r\022\020\n\010roomName\030\004"
+  " \001(\t\"R\n\010LoginRes\022%\n\006result\030\001 \001(\0162\025.Proto"
+  "col.LoginResult\022\016\n\006userID\030\002 \001(\t\022\017\n\007messa"
+  "ge\030\003 \001(\t\"V\n\014ChatRoomData\022\016\n\006roomID\030\001 \001(\r"
+  "\022\020\n\010roomName\030\002 \001(\t\022\023\n\013currentUser\030\003 \001(\r\022"
+  "\017\n\007maxUser\030\004 \001(\r\"8\n\017ChatRoomListRes\022%\n\005r"
+  "ooms\030\001 \003(\0132\026.Protocol.ChatRoomInfo\"/\n\013Ch"
+  "atRoomRes\022\016\n\006roomID\030\001 \001(\r\022\020\n\010roomName\030\002 "
+  "\001(\t\"\033\n\013UserListRes\022\014\n\004user\030\001 \003(\tb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Struct_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Struct_2eproto = {
-  false, false, 422, descriptor_table_protodef_Struct_2eproto, "Struct.proto", 
+  false, false, 440, descriptor_table_protodef_Struct_2eproto, "Struct.proto", 
   &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 6,
   schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
   file_level_metadata_Struct_2eproto, file_level_enum_descriptors_Struct_2eproto, file_level_service_descriptors_Struct_2eproto,
@@ -213,6 +215,11 @@ ChatRoomInfo::ChatRoomInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena)
 ChatRoomInfo::ChatRoomInfo(const ChatRoomInfo& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  roomname_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_roomname().empty()) {
+    roomname_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_roomname(), 
+      GetArenaForAllocation());
+  }
   ::memcpy(&roomid_, &from.roomid_,
     static_cast<size_t>(reinterpret_cast<char*>(&maxuser_) -
     reinterpret_cast<char*>(&roomid_)) + sizeof(maxuser_));
@@ -220,6 +227,7 @@ ChatRoomInfo::ChatRoomInfo(const ChatRoomInfo& from)
 }
 
 void ChatRoomInfo::SharedCtor() {
+roomname_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&roomid_) - reinterpret_cast<char*>(this)),
     0, static_cast<size_t>(reinterpret_cast<char*>(&maxuser_) -
@@ -234,6 +242,7 @@ ChatRoomInfo::~ChatRoomInfo() {
 
 void ChatRoomInfo::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  roomname_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void ChatRoomInfo::ArenaDtor(void* object) {
@@ -252,6 +261,7 @@ void ChatRoomInfo::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  roomname_.ClearToEmpty();
   ::memset(&roomid_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&maxuser_) -
       reinterpret_cast<char*>(&roomid_)) + sizeof(maxuser_));
@@ -282,6 +292,15 @@ const char* ChatRoomInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
           maxuser_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string roomName = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
+          auto str = _internal_mutable_roomname();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "Protocol.ChatRoomInfo.roomName"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -332,6 +351,16 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(3, this->_internal_maxuser(), target);
   }
 
+  // string roomName = 4;
+  if (!this->roomname().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_roomname().data(), static_cast<int>(this->_internal_roomname().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.ChatRoomInfo.roomName");
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_roomname(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -347,6 +376,13 @@ size_t ChatRoomInfo::ByteSizeLong() const {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // string roomName = 4;
+  if (!this->roomname().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_roomname());
+  }
 
   // uint32 roomID = 1;
   if (this->roomid() != 0) {
@@ -400,6 +436,9 @@ void ChatRoomInfo::MergeFrom(const ChatRoomInfo& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from.roomname().empty()) {
+    _internal_set_roomname(from._internal_roomname());
+  }
   if (from.roomid() != 0) {
     _internal_set_roomid(from._internal_roomid());
   }
@@ -432,6 +471,11 @@ bool ChatRoomInfo::IsInitialized() const {
 void ChatRoomInfo::InternalSwap(ChatRoomInfo* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &roomname_, GetArenaForAllocation(),
+      &other->roomname_, other->GetArenaForAllocation()
+  );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(ChatRoomInfo, maxuser_)
       + sizeof(ChatRoomInfo::maxuser_)

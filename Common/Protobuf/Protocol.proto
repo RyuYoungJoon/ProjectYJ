@@ -26,3 +26,34 @@ message LoginAck
 	bool success = 1;
 	string userID = 2;
 }
+
+message ChatRoomListReq
+{
+	bool success = 1;
+}
+
+message ChatRoomListAck
+{
+	bool success = 1;
+	repeated ChatRoomInfo chatroomInfo = 2;
+}
+
+message CreateChatRoomReq
+{
+
+}
+
+message CreateChatRoomAck
+{
+
+}
+
+message RefreshChatRoomReq
+{
+
+}
+
+message RefreshChatRoomAck
+{
+
+}

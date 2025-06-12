@@ -69,3 +69,43 @@ bool HandleLoginAck(AsioSessionPtr& session, Protocol::LoginAck& pkt)
 
     return true;
 }
+
+bool HandleChatRoomListAck(AsioSessionPtr& session, Protocol::ChatRoomListAck& pkt)
+{
+    ClientSessionPtr clientSession = static_pointer_cast<ClientSession>(session);
+    if (clientSession == nullptr)
+    {
+        LOGE << "Session Nullptr!";
+        return false;
+    }
+
+    /*
+    ChatRoomListRes 내부 구조
+    message ChatRoomListRes
+    {
+        repeated ChatRoomInfo rooms = 1;
+    }
+    */
+
+    Protocol::ChatRoomListRes* data = new Protocol::ChatRoomListRes();
+
+    for (const auto& roomInfo : pkt.chatroominfo())
+    {
+        Protocol::ChatRoomInfo* newRoom = data->add_rooms();
+        *newRoom = roomInfo;
+    }
+
+    ::PostMessage(clientSession->s_hLobbyWin, WM_CLIENT_CHATROOM_LIST, 0, (LPARAM)data);
+
+    return true;
+}
+
+bool HandleCreateChatRoomAck(AsioSessionPtr& session, Protocol::CreateChatRoomAck& pkt)
+{
+    return true;
+}
+
+bool HandleRefreshChatRoomAck(AsioSessionPtr& session, Protocol::RefreshChatRoomAck& pkt)
+{
+    return true;
+}

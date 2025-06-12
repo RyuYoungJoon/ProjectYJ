@@ -1,4 +1,6 @@
 #pragma once
+#include "Protocol.pb.h"
+
 class ChatRoom
 {
 public:
@@ -15,7 +17,7 @@ public:
 
 	map<uint16, PlayerPtr> GetChatRoom();
 
-	ChatRoomInfo GetRoomInfo();
+	Protocol::ChatRoomInfo GetRoomInfo();
 
 
 private:
