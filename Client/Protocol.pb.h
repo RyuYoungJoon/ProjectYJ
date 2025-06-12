@@ -187,20 +187,10 @@ class EnterChatRoomReq final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kTypeFieldNumber = 1,
-    kMessageFieldNumber = 2,
-    kValueFieldNumber = 3,
+    kMessageFieldNumber = 1,
+    kValueFieldNumber = 2,
   };
-  // .Protocol.PacketType type = 1;
-  void clear_type();
-  ::Protocol::PacketType type() const;
-  void set_type(::Protocol::PacketType value);
-  private:
-  ::Protocol::PacketType _internal_type() const;
-  void _internal_set_type(::Protocol::PacketType value);
-  public:
-
-  // int32 message = 2;
+  // int32 message = 1;
   void clear_message();
   ::PROTOBUF_NAMESPACE_ID::int32 message() const;
   void set_message(::PROTOBUF_NAMESPACE_ID::int32 value);
@@ -209,7 +199,7 @@ class EnterChatRoomReq final :
   void _internal_set_message(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // int32 value = 3;
+  // int32 value = 2;
   void clear_value();
   ::PROTOBUF_NAMESPACE_ID::int32 value() const;
   void set_value(::PROTOBUF_NAMESPACE_ID::int32 value);
@@ -225,7 +215,6 @@ class EnterChatRoomReq final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  int type_;
   ::PROTOBUF_NAMESPACE_ID::int32 message_;
   ::PROTOBUF_NAMESPACE_ID::int32 value_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -476,22 +465,32 @@ class LoginReq final :
     kIdFieldNumber = 1,
     kPasswordFieldNumber = 2,
   };
-  // uint32 id = 1;
+  // string id = 1;
   void clear_id();
-  ::PROTOBUF_NAMESPACE_ID::uint32 id() const;
-  void set_id(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  const std::string& id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_id();
+  PROTOBUF_FUTURE_MUST_USE_RESULT std::string* release_id();
+  void set_allocated_id(std::string* id);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_id() const;
-  void _internal_set_id(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  const std::string& _internal_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_id(const std::string& value);
+  std::string* _internal_mutable_id();
   public:
 
-  // uint32 password = 2;
+  // string password = 2;
   void clear_password();
-  ::PROTOBUF_NAMESPACE_ID::uint32 password() const;
-  void set_password(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  const std::string& password() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_password(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_password();
+  PROTOBUF_FUTURE_MUST_USE_RESULT std::string* release_password();
+  void set_allocated_password(std::string* password);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_password() const;
-  void _internal_set_password(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  const std::string& _internal_password() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_password(const std::string& value);
+  std::string* _internal_mutable_password();
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.LoginReq)
@@ -501,8 +500,8 @@ class LoginReq final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 id_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 password_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr id_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -616,8 +615,23 @@ class LoginAck final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kUserIDFieldNumber = 2,
     kSuccessFieldNumber = 1,
   };
+  // string userID = 2;
+  void clear_userid();
+  const std::string& userid() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_userid(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_userid();
+  PROTOBUF_FUTURE_MUST_USE_RESULT std::string* release_userid();
+  void set_allocated_userid(std::string* userid);
+  private:
+  const std::string& _internal_userid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_userid(const std::string& value);
+  std::string* _internal_mutable_userid();
+  public:
+
   // bool success = 1;
   void clear_success();
   bool success() const;
@@ -634,6 +648,7 @@ class LoginAck final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr userid_;
   bool success_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
@@ -649,27 +664,7 @@ class LoginAck final :
 #endif  // __GNUC__
 // EnterChatRoomReq
 
-// .Protocol.PacketType type = 1;
-inline void EnterChatRoomReq::clear_type() {
-  type_ = 0;
-}
-inline ::Protocol::PacketType EnterChatRoomReq::_internal_type() const {
-  return static_cast< ::Protocol::PacketType >(type_);
-}
-inline ::Protocol::PacketType EnterChatRoomReq::type() const {
-  // @@protoc_insertion_point(field_get:Protocol.EnterChatRoomReq.type)
-  return _internal_type();
-}
-inline void EnterChatRoomReq::_internal_set_type(::Protocol::PacketType value) {
-  
-  type_ = value;
-}
-inline void EnterChatRoomReq::set_type(::Protocol::PacketType value) {
-  _internal_set_type(value);
-  // @@protoc_insertion_point(field_set:Protocol.EnterChatRoomReq.type)
-}
-
-// int32 message = 2;
+// int32 message = 1;
 inline void EnterChatRoomReq::clear_message() {
   message_ = 0;
 }
@@ -689,7 +684,7 @@ inline void EnterChatRoomReq::set_message(::PROTOBUF_NAMESPACE_ID::int32 value) 
   // @@protoc_insertion_point(field_set:Protocol.EnterChatRoomReq.message)
 }
 
-// int32 value = 3;
+// int32 value = 2;
 inline void EnterChatRoomReq::clear_value() {
   value_ = 0;
 }
@@ -737,44 +732,94 @@ inline void EnterChatRoomAck::set_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
 
 // LoginReq
 
-// uint32 id = 1;
+// string id = 1;
 inline void LoginReq::clear_id() {
-  id_ = 0u;
+  id_.ClearToEmpty();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 LoginReq::_internal_id() const {
-  return id_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 LoginReq::id() const {
+inline const std::string& LoginReq::id() const {
   // @@protoc_insertion_point(field_get:Protocol.LoginReq.id)
   return _internal_id();
 }
-inline void LoginReq::_internal_set_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  id_ = value;
-}
-inline void LoginReq::set_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_id(value);
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void LoginReq::set_id(ArgT0&& arg0, ArgT... args) {
+ 
+ id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:Protocol.LoginReq.id)
 }
+inline std::string* LoginReq::mutable_id() {
+  // @@protoc_insertion_point(field_mutable:Protocol.LoginReq.id)
+  return _internal_mutable_id();
+}
+inline const std::string& LoginReq::_internal_id() const {
+  return id_.Get();
+}
+inline void LoginReq::_internal_set_id(const std::string& value) {
+  
+  id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* LoginReq::_internal_mutable_id() {
+  
+  return id_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* LoginReq::release_id() {
+  // @@protoc_insertion_point(field_release:Protocol.LoginReq.id)
+  return id_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void LoginReq::set_allocated_id(std::string* id) {
+  if (id != nullptr) {
+    
+  } else {
+    
+  }
+  id_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), id,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:Protocol.LoginReq.id)
+}
 
-// uint32 password = 2;
+// string password = 2;
 inline void LoginReq::clear_password() {
-  password_ = 0u;
+  password_.ClearToEmpty();
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 LoginReq::_internal_password() const {
-  return password_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 LoginReq::password() const {
+inline const std::string& LoginReq::password() const {
   // @@protoc_insertion_point(field_get:Protocol.LoginReq.password)
   return _internal_password();
 }
-inline void LoginReq::_internal_set_password(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  password_ = value;
-}
-inline void LoginReq::set_password(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_password(value);
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void LoginReq::set_password(ArgT0&& arg0, ArgT... args) {
+ 
+ password_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:Protocol.LoginReq.password)
+}
+inline std::string* LoginReq::mutable_password() {
+  // @@protoc_insertion_point(field_mutable:Protocol.LoginReq.password)
+  return _internal_mutable_password();
+}
+inline const std::string& LoginReq::_internal_password() const {
+  return password_.Get();
+}
+inline void LoginReq::_internal_set_password(const std::string& value) {
+  
+  password_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* LoginReq::_internal_mutable_password() {
+  
+  return password_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* LoginReq::release_password() {
+  // @@protoc_insertion_point(field_release:Protocol.LoginReq.password)
+  return password_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void LoginReq::set_allocated_password(std::string* password) {
+  if (password != nullptr) {
+    
+  } else {
+    
+  }
+  password_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), password,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:Protocol.LoginReq.password)
 }
 
 // -------------------------------------------------------------------
@@ -799,6 +844,51 @@ inline void LoginAck::_internal_set_success(bool value) {
 inline void LoginAck::set_success(bool value) {
   _internal_set_success(value);
   // @@protoc_insertion_point(field_set:Protocol.LoginAck.success)
+}
+
+// string userID = 2;
+inline void LoginAck::clear_userid() {
+  userid_.ClearToEmpty();
+}
+inline const std::string& LoginAck::userid() const {
+  // @@protoc_insertion_point(field_get:Protocol.LoginAck.userID)
+  return _internal_userid();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void LoginAck::set_userid(ArgT0&& arg0, ArgT... args) {
+ 
+ userid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.LoginAck.userID)
+}
+inline std::string* LoginAck::mutable_userid() {
+  // @@protoc_insertion_point(field_mutable:Protocol.LoginAck.userID)
+  return _internal_mutable_userid();
+}
+inline const std::string& LoginAck::_internal_userid() const {
+  return userid_.Get();
+}
+inline void LoginAck::_internal_set_userid(const std::string& value) {
+  
+  userid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* LoginAck::_internal_mutable_userid() {
+  
+  return userid_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* LoginAck::release_userid() {
+  // @@protoc_insertion_point(field_release:Protocol.LoginAck.userID)
+  return userid_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void LoginAck::set_allocated_userid(std::string* userid) {
+  if (userid != nullptr) {
+    
+  } else {
+    
+  }
+  userid_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), userid,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:Protocol.LoginAck.userID)
 }
 
 #ifdef __GNUC__

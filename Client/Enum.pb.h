@@ -56,57 +56,63 @@ PROTOBUF_NAMESPACE_OPEN
 PROTOBUF_NAMESPACE_CLOSE
 namespace Protocol {
 
-enum PlayerType : int {
-  PLAYER_TYPE_NONE = 0,
-  PLAYER_ROOM_MASTER = 1,
-  PLAYER_ROOM_USER = 2,
-  PlayerType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
-  PlayerType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+enum LoginResult : int {
+  LOGIN_None = 0,
+  LOGIN_SUCCESS = 1,
+  LOGIN_FAIL_INVALID_ID = 2,
+  LOGIN_FAIL_INVALID_PW = 3,
+  LOGIN_FAIL_ALREADY = 4,
+  LOGIN_FAIL_SERVER = 5,
+  LoginResult_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  LoginResult_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
-bool PlayerType_IsValid(int value);
-constexpr PlayerType PlayerType_MIN = PLAYER_TYPE_NONE;
-constexpr PlayerType PlayerType_MAX = PLAYER_ROOM_USER;
-constexpr int PlayerType_ARRAYSIZE = PlayerType_MAX + 1;
+bool LoginResult_IsValid(int value);
+constexpr LoginResult LoginResult_MIN = LOGIN_None;
+constexpr LoginResult LoginResult_MAX = LOGIN_FAIL_SERVER;
+constexpr int LoginResult_ARRAYSIZE = LoginResult_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* PlayerType_descriptor();
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* LoginResult_descriptor();
 template<typename T>
-inline const std::string& PlayerType_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, PlayerType>::value ||
+inline const std::string& LoginResult_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, LoginResult>::value ||
     ::std::is_integral<T>::value,
-    "Incorrect type passed to function PlayerType_Name.");
+    "Incorrect type passed to function LoginResult_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    PlayerType_descriptor(), enum_t_value);
+    LoginResult_descriptor(), enum_t_value);
 }
-inline bool PlayerType_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, PlayerType* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<PlayerType>(
-    PlayerType_descriptor(), name, value);
+inline bool LoginResult_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, LoginResult* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<LoginResult>(
+    LoginResult_descriptor(), name, value);
 }
-enum PacketType : int {
-  None = 0,
-  PKT_EnterChatRoomReq = 1001,
-  PKT_EnterChatRoomAck = 1002,
-  PacketType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
-  PacketType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
+enum ChatRoomResult : int {
+  CHATROOM_None = 0,
+  CHATROOM_SUCCESS = 1,
+  CHATROOM_FAIL_NOT_EXIST = 2,
+  CHATROOM_FAIL_FULL = 3,
+  CHATROOM_FAIL_NO_PERMISSION = 4,
+  CHATROOM_FAIL_SERVER = 5,
+  ChatRoomResult_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
+  ChatRoomResult_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
-bool PacketType_IsValid(int value);
-constexpr PacketType PacketType_MIN = None;
-constexpr PacketType PacketType_MAX = PKT_EnterChatRoomAck;
-constexpr int PacketType_ARRAYSIZE = PacketType_MAX + 1;
+bool ChatRoomResult_IsValid(int value);
+constexpr ChatRoomResult ChatRoomResult_MIN = CHATROOM_None;
+constexpr ChatRoomResult ChatRoomResult_MAX = CHATROOM_FAIL_SERVER;
+constexpr int ChatRoomResult_ARRAYSIZE = ChatRoomResult_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* PacketType_descriptor();
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ChatRoomResult_descriptor();
 template<typename T>
-inline const std::string& PacketType_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, PacketType>::value ||
+inline const std::string& ChatRoomResult_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ChatRoomResult>::value ||
     ::std::is_integral<T>::value,
-    "Incorrect type passed to function PacketType_Name.");
+    "Incorrect type passed to function ChatRoomResult_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    PacketType_descriptor(), enum_t_value);
+    ChatRoomResult_descriptor(), enum_t_value);
 }
-inline bool PacketType_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, PacketType* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<PacketType>(
-    PacketType_descriptor(), name, value);
+inline bool ChatRoomResult_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ChatRoomResult* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ChatRoomResult>(
+    ChatRoomResult_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -130,15 +136,15 @@ inline bool PacketType_Parse(
 
 PROTOBUF_NAMESPACE_OPEN
 
-template <> struct is_proto_enum< ::Protocol::PlayerType> : ::std::true_type {};
+template <> struct is_proto_enum< ::Protocol::LoginResult> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::PlayerType>() {
-  return ::Protocol::PlayerType_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::LoginResult>() {
+  return ::Protocol::LoginResult_descriptor();
 }
-template <> struct is_proto_enum< ::Protocol::PacketType> : ::std::true_type {};
+template <> struct is_proto_enum< ::Protocol::ChatRoomResult> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::PacketType>() {
-  return ::Protocol::PacketType_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::ChatRoomResult>() {
+  return ::Protocol::ChatRoomResult_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

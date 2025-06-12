@@ -55,5 +55,17 @@ bool HandleEnterChatRoomAck(AsioSessionPtr& session, Protocol::EnterChatRoomAck&
 
 bool HandleLoginAck(AsioSessionPtr& session, Protocol::LoginAck& pkt)
 {
-    return true;
+    ClientSessionPtr clientSession = static_pointer_cast<ClientSession>(session);
+    if (clientSession == nullptr)
+    {
+        LOGE << "Session Nullptr!";
+        return false;
+    }
+
+    LoginResponseData* loginData = new LoginResponseData();
+    loginData->result = LOGIN_SUCCESS;
+    loginData->userId = pkt.userid();
+    loginData->message = "Login Success!";
+
+    PostMessage(clientSession->s_hMainWin, WM_LOGIN_SUCCESS, 0, (LPARAM)loginData);
 }

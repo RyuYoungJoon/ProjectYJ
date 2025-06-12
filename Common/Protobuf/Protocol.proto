@@ -6,9 +6,8 @@ import "Struct.proto";
 
 message EnterChatRoomReq
 {
-	PacketType type = 1;
-	int32 message = 2;
-	int32 value = 3;
+	int32 message = 1;
+	int32 value = 2;
 }
 
 message EnterChatRoomAck
@@ -18,11 +17,12 @@ message EnterChatRoomAck
 
 message LoginReq
 {
-	uint32 id = 1;
-	uint32 password = 2;
+	string id = 1;
+	string password = 2;
 }
 
 message LoginAck
 {
 	bool success = 1;
+	string userID = 2;
 }

@@ -19,9 +19,7 @@ PROTOBUF_PRAGMA_INIT_SEG
 namespace Protocol {
 constexpr EnterChatRoomReq::EnterChatRoomReq(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : type_(0)
-
-  , message_(0)
+  : message_(0)
   , value_(0){}
 struct EnterChatRoomReqDefaultTypeInternal {
   constexpr EnterChatRoomReqDefaultTypeInternal()
@@ -46,8 +44,8 @@ struct EnterChatRoomAckDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT EnterChatRoomAckDefaultTypeInternal _EnterChatRoomAck_default_instance_;
 constexpr LoginReq::LoginReq(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : id_(0u)
-  , password_(0u){}
+  : id_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , password_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
 struct LoginReqDefaultTypeInternal {
   constexpr LoginReqDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -59,7 +57,8 @@ struct LoginReqDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT LoginReqDefaultTypeInternal _LoginReq_default_instance_;
 constexpr LoginAck::LoginAck(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : success_(false){}
+  : userid_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  , success_(false){}
 struct LoginAckDefaultTypeInternal {
   constexpr LoginAckDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -80,7 +79,6 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_Protocol_2eproto::offsets[] PR
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::Protocol::EnterChatRoomReq, type_),
   PROTOBUF_FIELD_OFFSET(::Protocol::EnterChatRoomReq, message_),
   PROTOBUF_FIELD_OFFSET(::Protocol::EnterChatRoomReq, value_),
   ~0u,  // no _has_bits_
@@ -102,12 +100,13 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_Protocol_2eproto::offsets[] PR
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::Protocol::LoginAck, success_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::LoginAck, userid_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::Protocol::EnterChatRoomReq)},
-  { 8, -1, sizeof(::Protocol::EnterChatRoomAck)},
-  { 14, -1, sizeof(::Protocol::LoginReq)},
-  { 21, -1, sizeof(::Protocol::LoginAck)},
+  { 7, -1, sizeof(::Protocol::EnterChatRoomAck)},
+  { 13, -1, sizeof(::Protocol::LoginReq)},
+  { 20, -1, sizeof(::Protocol::LoginAck)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -119,12 +118,11 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 
 const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\016Protocol.proto\022\010Protocol\032\nEnum.proto\032\014"
-  "Struct.proto\"V\n\020EnterChatRoomReq\022\"\n\004type"
-  "\030\001 \001(\0162\024.Protocol.PacketType\022\017\n\007message\030"
-  "\002 \001(\005\022\r\n\005value\030\003 \001(\005\"\036\n\020EnterChatRoomAck"
-  "\022\n\n\002id\030\001 \001(\r\"(\n\010LoginReq\022\n\n\002id\030\001 \001(\r\022\020\n\010"
-  "password\030\002 \001(\r\"\033\n\010LoginAck\022\017\n\007success\030\001 "
-  "\001(\010b\006proto3"
+  "Struct.proto\"2\n\020EnterChatRoomReq\022\017\n\007mess"
+  "age\030\001 \001(\005\022\r\n\005value\030\002 \001(\005\"\036\n\020EnterChatRoo"
+  "mAck\022\n\n\002id\030\001 \001(\r\"(\n\010LoginReq\022\n\n\002id\030\001 \001(\t"
+  "\022\020\n\010password\030\002 \001(\t\"+\n\010LoginAck\022\017\n\007succes"
+  "s\030\001 \001(\010\022\016\n\006userID\030\002 \001(\tb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -132,7 +130,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Protocol_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Protocol_2eproto = {
-  false, false, 251, descriptor_table_protodef_Protocol_2eproto, "Protocol.proto", 
+  false, false, 231, descriptor_table_protodef_Protocol_2eproto, "Protocol.proto", 
   &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 4,
   schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
   file_level_metadata_Protocol_2eproto, file_level_enum_descriptors_Protocol_2eproto, file_level_service_descriptors_Protocol_2eproto,
@@ -160,17 +158,17 @@ EnterChatRoomReq::EnterChatRoomReq(::PROTOBUF_NAMESPACE_ID::Arena* arena)
 EnterChatRoomReq::EnterChatRoomReq(const EnterChatRoomReq& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&type_, &from.type_,
+  ::memcpy(&message_, &from.message_,
     static_cast<size_t>(reinterpret_cast<char*>(&value_) -
-    reinterpret_cast<char*>(&type_)) + sizeof(value_));
+    reinterpret_cast<char*>(&message_)) + sizeof(value_));
   // @@protoc_insertion_point(copy_constructor:Protocol.EnterChatRoomReq)
 }
 
 void EnterChatRoomReq::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&type_) - reinterpret_cast<char*>(this)),
+    reinterpret_cast<char*>(&message_) - reinterpret_cast<char*>(this)),
     0, static_cast<size_t>(reinterpret_cast<char*>(&value_) -
-    reinterpret_cast<char*>(&type_)) + sizeof(value_));
+    reinterpret_cast<char*>(&message_)) + sizeof(value_));
 }
 
 EnterChatRoomReq::~EnterChatRoomReq() {
@@ -199,9 +197,9 @@ void EnterChatRoomReq::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&type_, 0, static_cast<size_t>(
+  ::memset(&message_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&value_) -
-      reinterpret_cast<char*>(&type_)) + sizeof(value_));
+      reinterpret_cast<char*>(&message_)) + sizeof(value_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -211,24 +209,16 @@ const char* EnterChatRoomReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPA
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .Protocol.PacketType type = 1;
+      // int32 message = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
-          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-          _internal_set_type(static_cast<::Protocol::PacketType>(val));
-        } else goto handle_unusual;
-        continue;
-      // int32 message = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
           message_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // int32 value = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+      // int32 value = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
           value_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
@@ -262,23 +252,16 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .Protocol.PacketType type = 1;
-  if (this->type() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      1, this->_internal_type(), target);
-  }
-
-  // int32 message = 2;
+  // int32 message = 1;
   if (this->message() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_message(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_message(), target);
   }
 
-  // int32 value = 3;
+  // int32 value = 2;
   if (this->value() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_value(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_value(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -297,20 +280,14 @@ size_t EnterChatRoomReq::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .Protocol.PacketType type = 1;
-  if (this->type() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_type());
-  }
-
-  // int32 message = 2;
+  // int32 message = 1;
   if (this->message() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
         this->_internal_message());
   }
 
-  // int32 value = 3;
+  // int32 value = 2;
   if (this->value() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
@@ -348,9 +325,6 @@ void EnterChatRoomReq::MergeFrom(const EnterChatRoomReq& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.type() != 0) {
-    _internal_set_type(from._internal_type());
-  }
   if (from.message() != 0) {
     _internal_set_message(from._internal_message());
   }
@@ -383,9 +357,9 @@ void EnterChatRoomReq::InternalSwap(EnterChatRoomReq* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(EnterChatRoomReq, value_)
       + sizeof(EnterChatRoomReq::value_)
-      - PROTOBUF_FIELD_OFFSET(EnterChatRoomReq, type_)>(
-          reinterpret_cast<char*>(&type_),
-          reinterpret_cast<char*>(&other->type_));
+      - PROTOBUF_FIELD_OFFSET(EnterChatRoomReq, message_)>(
+          reinterpret_cast<char*>(&message_),
+          reinterpret_cast<char*>(&other->message_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata EnterChatRoomReq::GetMetadata() const {
@@ -599,17 +573,22 @@ LoginReq::LoginReq(::PROTOBUF_NAMESPACE_ID::Arena* arena)
 LoginReq::LoginReq(const LoginReq& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&id_, &from.id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&password_) -
-    reinterpret_cast<char*>(&id_)) + sizeof(password_));
+  id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_id().empty()) {
+    id_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_id(), 
+      GetArenaForAllocation());
+  }
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_password().empty()) {
+    password_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_password(), 
+      GetArenaForAllocation());
+  }
   // @@protoc_insertion_point(copy_constructor:Protocol.LoginReq)
 }
 
 void LoginReq::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&id_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&password_) -
-    reinterpret_cast<char*>(&id_)) + sizeof(password_));
+id_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 LoginReq::~LoginReq() {
@@ -620,6 +599,8 @@ LoginReq::~LoginReq() {
 
 void LoginReq::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  id_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  password_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void LoginReq::ArenaDtor(void* object) {
@@ -638,9 +619,8 @@ void LoginReq::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&password_) -
-      reinterpret_cast<char*>(&id_)) + sizeof(password_));
+  id_.ClearToEmpty();
+  password_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -650,17 +630,21 @@ const char* LoginReq::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // uint32 id = 1;
+      // string id = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
-          id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_id();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "Protocol.LoginReq.id"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // uint32 password = 2;
+      // string password = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
-          password_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_password();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "Protocol.LoginReq.password"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -693,16 +677,24 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // uint32 id = 1;
-  if (this->id() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_id(), target);
+  // string id = 1;
+  if (!this->id().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_id().data(), static_cast<int>(this->_internal_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.LoginReq.id");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_id(), target);
   }
 
-  // uint32 password = 2;
-  if (this->password() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(2, this->_internal_password(), target);
+  // string password = 2;
+  if (!this->password().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_password().data(), static_cast<int>(this->_internal_password().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.LoginReq.password");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_password(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -721,17 +713,17 @@ size_t LoginReq::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // uint32 id = 1;
-  if (this->id() != 0) {
+  // string id = 1;
+  if (!this->id().empty()) {
     total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_id());
   }
 
-  // uint32 password = 2;
-  if (this->password() != 0) {
+  // string password = 2;
+  if (!this->password().empty()) {
     total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_password());
   }
 
@@ -766,10 +758,10 @@ void LoginReq::MergeFrom(const LoginReq& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.id() != 0) {
+  if (!from.id().empty()) {
     _internal_set_id(from._internal_id());
   }
-  if (from.password() != 0) {
+  if (!from.password().empty()) {
     _internal_set_password(from._internal_password());
   }
 }
@@ -795,12 +787,16 @@ bool LoginReq::IsInitialized() const {
 void LoginReq::InternalSwap(LoginReq* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(LoginReq, password_)
-      + sizeof(LoginReq::password_)
-      - PROTOBUF_FIELD_OFFSET(LoginReq, id_)>(
-          reinterpret_cast<char*>(&id_),
-          reinterpret_cast<char*>(&other->id_));
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &id_, GetArenaForAllocation(),
+      &other->id_, other->GetArenaForAllocation()
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &password_, GetArenaForAllocation(),
+      &other->password_, other->GetArenaForAllocation()
+  );
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata LoginReq::GetMetadata() const {
@@ -824,11 +820,17 @@ LoginAck::LoginAck(::PROTOBUF_NAMESPACE_ID::Arena* arena)
 LoginAck::LoginAck(const LoginAck& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  userid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_userid().empty()) {
+    userid_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_userid(), 
+      GetArenaForAllocation());
+  }
   success_ = from.success_;
   // @@protoc_insertion_point(copy_constructor:Protocol.LoginAck)
 }
 
 void LoginAck::SharedCtor() {
+userid_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 success_ = false;
 }
 
@@ -840,6 +842,7 @@ LoginAck::~LoginAck() {
 
 void LoginAck::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  userid_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void LoginAck::ArenaDtor(void* object) {
@@ -858,6 +861,7 @@ void LoginAck::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  userid_.ClearToEmpty();
   success_ = false;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -872,6 +876,15 @@ const char* LoginAck::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::i
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
           success_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string userID = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          auto str = _internal_mutable_userid();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "Protocol.LoginAck.userID"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -910,6 +923,16 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(1, this->_internal_success(), target);
   }
 
+  // string userID = 2;
+  if (!this->userid().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_userid().data(), static_cast<int>(this->_internal_userid().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.LoginAck.userID");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_userid(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -925,6 +948,13 @@ size_t LoginAck::ByteSizeLong() const {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // string userID = 2;
+  if (!this->userid().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_userid());
+  }
 
   // bool success = 1;
   if (this->success() != 0) {
@@ -962,6 +992,9 @@ void LoginAck::MergeFrom(const LoginAck& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from.userid().empty()) {
+    _internal_set_userid(from._internal_userid());
+  }
   if (from.success() != 0) {
     _internal_set_success(from._internal_success());
   }
@@ -988,6 +1021,11 @@ bool LoginAck::IsInitialized() const {
 void LoginAck::InternalSwap(LoginAck* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &userid_, GetArenaForAllocation(),
+      &other->userid_, other->GetArenaForAllocation()
+  );
   swap(success_, other->success_);
 }
 

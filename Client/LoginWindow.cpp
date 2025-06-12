@@ -107,8 +107,8 @@ void LoginWindow::TryLogin()
         if (session)
         {
             Protocol::LoginReq loginPacket;
-            loginPacket.set_id(std::stoi(id));
-            loginPacket.set_password(std::stoi(password));
+            loginPacket.set_id(id);
+            loginPacket.set_password(password);
             
             Packet sendPacket = PacketHandler::GetInstance().MakePacket(loginPacket);
 

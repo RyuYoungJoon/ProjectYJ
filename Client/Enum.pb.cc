@@ -25,15 +25,19 @@ static constexpr ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema* schemas = n
 static constexpr ::PROTOBUF_NAMESPACE_ID::Message* const* file_default_instances = nullptr;
 
 const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\nEnum.proto\022\010Protocol*P\n\nPlayerType\022\024\n\020"
-  "PLAYER_TYPE_NONE\020\000\022\026\n\022PLAYER_ROOM_MASTER"
-  "\020\001\022\024\n\020PLAYER_ROOM_USER\020\002*L\n\nPacketType\022\010"
-  "\n\004None\020\000\022\031\n\024PKT_EnterChatRoomReq\020\351\007\022\031\n\024P"
-  "KT_EnterChatRoomAck\020\352\007b\006proto3"
+  "\n\nEnum.proto\022\010Protocol*\225\001\n\013LoginResult\022\016"
+  "\n\nLOGIN_None\020\000\022\021\n\rLOGIN_SUCCESS\020\001\022\031\n\025LOG"
+  "IN_FAIL_INVALID_ID\020\002\022\031\n\025LOGIN_FAIL_INVAL"
+  "ID_PW\020\003\022\026\n\022LOGIN_FAIL_ALREADY\020\004\022\025\n\021LOGIN"
+  "_FAIL_SERVER\020\005*\251\001\n\016ChatRoomResult\022\021\n\rCHA"
+  "TROOM_None\020\000\022\024\n\020CHATROOM_SUCCESS\020\001\022\033\n\027CH"
+  "ATROOM_FAIL_NOT_EXIST\020\002\022\026\n\022CHATROOM_FAIL"
+  "_FULL\020\003\022\037\n\033CHATROOM_FAIL_NO_PERMISSION\020\004"
+  "\022\030\n\024CHATROOM_FAIL_SERVER\020\005b\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Enum_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Enum_2eproto = {
-  false, false, 190, descriptor_table_protodef_Enum_2eproto, "Enum.proto", 
+  false, false, 354, descriptor_table_protodef_Enum_2eproto, "Enum.proto", 
   &descriptor_table_Enum_2eproto_once, nullptr, 0, 0,
   schemas, file_default_instances, TableStruct_Enum_2eproto::offsets,
   nullptr, file_level_enum_descriptors_Enum_2eproto, file_level_service_descriptors_Enum_2eproto,
@@ -45,30 +49,36 @@ PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable
 // Force running AddDescriptors() at dynamic initialization time.
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_Enum_2eproto(&descriptor_table_Enum_2eproto);
 namespace Protocol {
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* PlayerType_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* LoginResult_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
   return file_level_enum_descriptors_Enum_2eproto[0];
 }
-bool PlayerType_IsValid(int value) {
+bool LoginResult_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
     case 2:
+    case 3:
+    case 4:
+    case 5:
       return true;
     default:
       return false;
   }
 }
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* PacketType_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ChatRoomResult_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
   return file_level_enum_descriptors_Enum_2eproto[1];
 }
-bool PacketType_IsValid(int value) {
+bool ChatRoomResult_IsValid(int value) {
   switch (value) {
     case 0:
-    case 1001:
-    case 1002:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
       return true;
     default:
       return false;

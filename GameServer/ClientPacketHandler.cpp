@@ -6,7 +6,7 @@
 #include "Player.h"
 #include "ChatRoom.h"
 #include "ChatRoomManager.h"
-#include "ServerPacketHandler.h"
+#include "ClientPacketHandler.h"
 
 
 HandlerFunc GPacketHadler[UINT16_MAX];
@@ -49,8 +49,17 @@ bool HandleEnterChatRoomReq(AsioSessionPtr& session, Protocol::EnterChatRoomReq&
 bool HandleLoginReq(AsioSessionPtr& session, Protocol::LoginReq& pkt)
 {
     // DB 확인
+    GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
+    if (gameSession == nullptr)
+    {
+        LOGE << "GameSession Nullptr!";
+        return false;
+    }
+
     Protocol::LoginAck loginPacket;
+
     loginPacket.set_success(true);
+    loginPacket.set_userid(pkt.id());
 
     Packet packet = PacketHandler::MakePacket(loginPacket);
 

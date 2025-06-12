@@ -1,47 +1,47 @@
 #pragma once
 
-// ·Î±×ÀÎ ÀÀ´ä °á°ú ÄÚµå
+// ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Úµï¿½
 enum LoginResult
 {
-	LOGIN_SUCCESS = 0,           // ·Î±×ÀÎ ¼º°ø
-	LOGIN_FAIL_INVALID_ID = 1,   // Àß¸øµÈ ID
-	LOGIN_FAIL_INVALID_PW = 2,   // Àß¸øµÈ ºñ¹Ð¹øÈ£
-	LOGIN_FAIL_ALREADY = 3,      // ÀÌ¹Ì ·Î±×ÀÎµÈ °èÁ¤
-	LOGIN_FAIL_SERVER = 4        // ¼­¹ö ¿À·ù
+	LOGIN_SUCCESS = 0,           // ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	LOGIN_FAIL_INVALID_ID = 1,   // ï¿½ß¸ï¿½ï¿½ï¿½ ID
+	LOGIN_FAIL_INVALID_PW = 2,   // ï¿½ß¸ï¿½ï¿½ï¿½ ï¿½ï¿½Ð¹ï¿½È£
+	LOGIN_FAIL_ALREADY = 3,      // ï¿½Ì¹ï¿½ ï¿½Î±ï¿½ï¿½Îµï¿½ ï¿½ï¿½ï¿½ï¿½
+	LOGIN_FAIL_SERVER = 4        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 };
 
-// Ã¤ÆÃ¹æ ÀÀ´ä °á°ú ÄÚµå
+// Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Úµï¿½
 enum ChatRoomResult
 {
-	CHATROOM_SUCCESS = 0,          // ¼º°ø
-	CHATROOM_FAIL_NOT_EXIST = 1,   // Á¸ÀçÇÏÁö ¾Ê´Â Ã¤ÆÃ¹æ
-	CHATROOM_FAIL_FULL = 2,        // Ã¤ÆÃ¹æ Á¤¿ø ÃÊ°ú
-	CHATROOM_FAIL_NO_PERMISSION = 3, // ±ÇÇÑ ¾øÀ½
-	CHATROOM_FAIL_SERVER = 4       // ¼­¹ö ¿À·ù
+	CHATROOM_SUCCESS = 0,          // ï¿½ï¿½ï¿½ï¿½
+	CHATROOM_FAIL_NOT_EXIST = 1,   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´ï¿½ Ã¤ï¿½Ã¹ï¿½
+	CHATROOM_FAIL_FULL = 2,        // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½
+	CHATROOM_FAIL_NO_PERMISSION = 3, // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	CHATROOM_FAIL_SERVER = 4       // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 };
 
-// À©µµ¿ì ¸Þ½ÃÁö Á¤ÀÇ (LoginAck, ChatRoomListAck µî¿¡ ´ëÇÑ Ã³¸®¸¦ À§ÇØ)
-#define WM_CLIENT_LOGIN (WM_USER + 101)         // ·Î±×ÀÎ ÀÀ´ä
-#define WM_CLIENT_CHATROOM_LIST (WM_USER + 102) // Ã¤ÆÃ¹æ ¸ñ·Ï ÀÀ´ä
-#define WM_CLIENT_CHATROOM_ENTER (WM_USER + 103) // Ã¤ÆÃ¹æ ÀÔÀå ÀÀ´ä
-#define WM_CLIENT_CHATROOM_CREATE (WM_USER + 104) // Ã¤ÆÃ¹æ »ý¼º ÀÀ´ä
-#define WM_CLIENT_USER_LIST (WM_USER + 105)     // »ç¿ëÀÚ ¸ñ·Ï ÀÀ´ä
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (LoginAck, ChatRoomListAck ï¿½î¿¡ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+#define WM_CLIENT_LOGIN (WM_USER + 101)         // ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+#define WM_CLIENT_CHATROOM_LIST (WM_USER + 102) // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+#define WM_CLIENT_CHATROOM_ENTER (WM_USER + 103) // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+#define WM_CLIENT_CHATROOM_CREATE (WM_USER + 104) // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+#define WM_CLIENT_USER_LIST (WM_USER + 105)     // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-// ±âÁ¸ ¸Þ½ÃÁöµé
+// ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½
 #define WM_CLIENT_CONNECTED (WM_USER + 1)
 #define WM_CLIENT_DISCONNECT (WM_USER + 2)
 #define WM_CLIENT_RECV (WM_USER + 3)
 
-// ·Î±×ÀÎ °ü·Ã ¸Þ½ÃÁö
-#define WM_CLIENT_LOGIN (WM_USER + 101)         // ·Î±×ÀÎ ÀÀ´ä
-#define WM_LOGIN_SUCCESS (WM_USER + 201)        // ·Î±×ÀÎ ¼º°ø (Ã¢ ÀüÈ¯¿ë)
+// ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½
+#define WM_CLIENT_LOGIN (WM_USER + 101)         // ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+#define WM_LOGIN_SUCCESS (WM_USER + 201)        // ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Ã¢ ï¿½ï¿½È¯ï¿½ï¿½)
 
-// Ã¤ÆÃ¹æ °ü·Ã ¸Þ½ÃÁö
-#define WM_CLIENT_CHATROOM_LIST (WM_USER + 102) // Ã¤ÆÃ¹æ ¸ñ·Ï ÀÀ´ä
-#define WM_CLIENT_CHATROOM_ENTER (WM_USER + 103) // Ã¤ÆÃ¹æ ÀÔÀå ÀÀ´ä
-#define WM_CLIENT_CHATROOM_CREATE (WM_USER + 104) // Ã¤ÆÃ¹æ »ý¼º ÀÀ´ä
-#define WM_CLIENT_USER_LIST (WM_USER + 105)     // »ç¿ëÀÚ ¸ñ·Ï ÀÀ´ä
-#define WM_ENTER_CHATROOM (WM_USER + 202)       // Ã¤ÆÃ¹æ ÀÔÀå (Ã¢ ÀüÈ¯¿ë)
+// Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½
+#define WM_CLIENT_CHATROOM_LIST (WM_USER + 102) // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+#define WM_CLIENT_CHATROOM_ENTER (WM_USER + 103) // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+#define WM_CLIENT_CHATROOM_CREATE (WM_USER + 104) // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+#define WM_CLIENT_USER_LIST (WM_USER + 105)     // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+#define WM_ENTER_CHATROOM (WM_USER + 202)       // Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ (Ã¢ ï¿½ï¿½È¯ï¿½ï¿½)
 
 #pragma pack(push, 1)
 struct ChatRoomInfo
@@ -52,15 +52,15 @@ struct ChatRoomInfo
 	uint16 maxUser;
 };
 
-// ·Î±×ÀÎ ÀÀ´ä µ¥ÀÌÅÍ ±¸Á¶Ã¼
+// ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼
 struct LoginResponseData
 {
 	LoginResult result;
 	std::string userId;
-	std::string message; // ½ÇÆÐ ½Ã »ó¼¼ ¸Þ½ÃÁö
+	std::string message; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½
 };
 
-// Ã¤ÆÃ¹æ Á¤º¸ ±¸Á¶Ã¼
+// Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼
 struct ChatRoomData
 {
 	int roomId;
@@ -69,20 +69,20 @@ struct ChatRoomData
 	int maxUsers;
 };
 
-// Ã¤ÆÃ¹æ ¸ñ·Ï ÀÀ´ä µ¥ÀÌÅÍ ±¸Á¶Ã¼
+// Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼
 struct ChatRoomListResponseData
 {
 	std::vector<ChatRoomInfo> rooms;
 };
 
-// Ã¤ÆÃ¹æ ÀÔÀå/»ý¼º ÀÀ´ä µ¥ÀÌÅÍ ±¸Á¶Ã¼
+// Ã¤ï¿½Ã¹ï¿½ ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼
 struct ChatRoomResponseData
 {
 	int roomId;
 	std::string roomName;
 };
 
-// »ç¿ëÀÚ ¸ñ·Ï ÀÀ´ä µ¥ÀÌÅÍ ±¸Á¶Ã¼
+// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼
 struct UserListResponseData
 {
 	std::vector<std::string> users;

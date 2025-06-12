@@ -3,9 +3,40 @@ package Protocol;
 
 import "Enum.proto";
 
-message BuffData
+message ChatRoomInfo
 {
-	uint64 buffId = 1;
-	float remainTime = 2;
-	repeated uint64 victims = 3;
+	uint32 roomID = 1;
+	uint32 currentUser = 2;
+	uint32 maxUser = 3;
+}
+
+message LoginRes
+{
+	LoginResult result = 1;
+	string userID = 2;
+	string message = 3;
+}
+
+message ChatRoomData
+{
+	uint32 roomID = 1;
+	string roomName = 2;
+	uint32 currentUser = 3;
+	uint32 maxUser = 4;
+}
+
+message ChatRoomListRes
+{
+	repeated ChatRoomInfo rooms = 1;
+}
+
+message ChatRoomRes
+{
+	uint32 roomID = 1;
+	string roomName = 2;
+}
+
+message UserListRes
+{
+	repeated string user = 1;
 }
