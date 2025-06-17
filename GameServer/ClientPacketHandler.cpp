@@ -42,8 +42,27 @@ void PacketHandler::Reset(int32 sessionUID)
 
 bool HandleEnterChatRoomReq(AsioSessionPtr& session, Protocol::EnterChatRoomReq& pkt)
 {
-    LOGI << "����!";
-    return true;
+    GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
+    if (gameSession == nullptr)
+    {
+        LOGE << "GameSession Nullptr!";
+        return false;
+    }
+
+    PlayerPtr player = gameSession->m_Player[0];
+    player->m_ChatRoomID = pkt.roomid();
+
+    ChatRoomPtr selectRoom = ChatRoomManager::GetInstance().GetRoom(pkt.roomid());
+
+    selectRoom->Enter(player);
+
+    LOGI << "Player " << player->m_Name << " entered the created chat room";
+
+    Protocol::EnterChatRoomAck packet;
+    packet.set_roomid(selectRoom->GetRoomID());
+    packet.set_roomname(selectRoom->GetRoomName());
+    Packet sendPacket = PacketHandler::MakePacket(packet);
+    gameSession->Send(std::move(sendPacket));
 }
 
 bool HandleLoginReq(AsioSessionPtr& session, Protocol::LoginReq& pkt)
@@ -83,10 +102,6 @@ bool HandleChatRoomListReq(AsioSessionPtr& session, Protocol::ChatRoomListReq& p
         return false;
     }
 
-    ChatRoomManager::GetInstance().CreateRoom("HIHIHI", 10);
-    ChatRoomManager::GetInstance().CreateRoom("hihihi333", 10);
-    ChatRoomManager::GetInstance().CreateRoom("한글은?", 10);
-
     auto roomInfo = ChatRoomManager::GetInstance().GetAllRoom();
 
     Protocol::ChatRoomListAck sendPacket;
@@ -110,9 +125,61 @@ bool HandleChatRoomListReq(AsioSessionPtr& session, Protocol::ChatRoomListReq& p
 
 bool HandleCreateChatRoomReq(AsioSessionPtr& session, Protocol::CreateChatRoomReq& pkt)
 {
-    return true;
+    GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
+    if (gameSession == nullptr)
+    {
+        LOGE << "GameSession Nullptr";
+        return false;
+    }
+
+    PlayerPtr player = gameSession->m_Player[0];
+
+    ChatRoomPtr newRoom = ChatRoomManager::GetInstance().CreateRoom(pkt.roomname(), 10);
+
+    uint32 roomID = newRoom->GetRoomID();
+
+    LOGI << "Chat room created successfully: " << pkt.roomname() << " (ID: " << roomID << ")";
+
+    newRoom->Enter(player);
+    player->m_ChatRoomID = roomID;
+
+    LOGI << "Player " << player->m_Name << " entered the created chat room";
+
+    Protocol::EnterChatRoomAck packet;
+    packet.set_roomid(roomID);
+
+    packet.set_roomname(pkt.roomname());
+
+    Packet sendPacket = PacketHandler::MakePacket(packet);
+    gameSession->Send(std::move(sendPacket));
 }
 bool HandleRefreshChatRoomReq(AsioSessionPtr& session, Protocol::RefreshChatRoomReq& pkt)
 {
     return true;
+}
+
+bool HandleChatReq(AsioSessionPtr& session, Protocol::ChatReq& pkt)
+{
+    GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
+    if (gameSession == nullptr)
+    {
+        LOGE << "GameSession Nullptr";
+        return false;
+    }
+
+    PlayerPtr player = gameSession->m_Player[0];
+    string message = pkt.message();
+
+    ChatRoomPtr selectRoom = ChatRoomManager::GetInstance().GetRoom(player->m_ChatRoomID);
+
+    Protocol::ChatAck packet;
+    packet.set_sender(player->m_Name);
+    packet.set_message(message);
+
+    Packet sendPacket = PacketHandler::MakePacket(packet);
+    // GRoom에 데이터 없슴. 왜냐? 여태껏 newRoom을 새로 생성해서 만들었거든.
+    // 패킷에 roomID를 넣어서 selectRoom을 찾게 해야함.
+    // 
+    //if (gameSession->GetSessionUID() != pkt.sessionuid())
+    selectRoom->BroadCast(sendPacket);
 }

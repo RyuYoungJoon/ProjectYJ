@@ -41,3 +41,9 @@ message UserListRes
 {
 	repeated string user = 1;
 }
+
+message ChatMessageRes
+{
+	string sender = 1;
+	string message = 2;
+}

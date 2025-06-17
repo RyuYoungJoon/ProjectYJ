@@ -21,31 +21,23 @@ std::string StringToUTF8(const std::string& wstr)
 void ChatRoom::Enter(PlayerPtr player)
 {
 	lock_guard<std::mutex> lock(m_ChatRoomMutex);
-	auto iter = m_ChatRoom.find(player->m_ChatRoomID);
-	if (iter == m_ChatRoom.end())
-		m_ChatRoom.emplace(player->m_ChatRoomID, player);
+	m_ChatRoom.emplace(player->m_ChatRoomID, player);
 }
 
 void ChatRoom::Leave(PlayerPtr player)
 {
 	lock_guard<std::mutex> lock(m_ChatRoomMutex);
-	
-	auto iter = m_ChatRoom.find(player->m_ChatRoomID);
-	if (iter == m_ChatRoom.end())
-		m_ChatRoom.erase(player->m_ChatRoomID);
+	m_ChatRoom.erase(player->m_ChatRoomID);
 }
 
-void ChatRoom::BroadCast(const std::string& message)
+void ChatRoom::BroadCast(Packet packet)
 {
 	lock_guard<std::mutex> lock(m_ChatRoomMutex);
 
-	//PacketChatAck chatPacket;
-	//chatPacket.payload.sender = "Server";
-	//chatPacket.payload.message = message;
-
 	for (auto& player : m_ChatRoom)
 	{
-		//player.second->ownerSession->Send(chatPacket);
+		Packet packetCopy = packet;
+		player.second->ownerSession->Send(std::move(packetCopy));
 	}
 }
 
@@ -56,7 +48,7 @@ void ChatRoom::SetRoomInfo(uint16 roomID, const std::string& roomName, uint16 ma
 	m_MaxUser = maxUser;
 }
 
-map<uint16, PlayerPtr> ChatRoom::GetChatRoom()
+multimap<uint16, PlayerPtr> ChatRoom::GetChatRoom()
 {
 	return m_ChatRoom;
 }

@@ -3,6 +3,7 @@
 #include "ClientManager.h"
 #include "ClientSession.h"
 #include "ServerAnalyzer.h"
+#include "ServerPacketHandler.h"
 #include <CommCtrl.h>
 #include "WinUtils.h"
 
@@ -51,12 +52,11 @@ LRESULT ChatWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_CLIENT_RECV:
         if (pThis) {
-            ChatMessageData* data = (ChatMessageData*)lParam;
+            Protocol::ChatMessageRes* data = (Protocol::ChatMessageRes*)lParam;
             if (data) {
-                pThis->OnMessageRecv(data->sender, data->message);
+                pThis->OnMessageRecv(data->sender(), data->message());
                 delete data;
             }
-            return 0;
         }
         break;
 
@@ -253,11 +253,13 @@ void ChatWindow::SendChatMessage()
         auto session = sessions.begin()->second;
         if (session)
         {
-            //static_cast<ClientSession*>(session.get())->Send(message, PacketType::ChatReq);
+            Protocol::ChatReq chatPacket;
+            chatPacket.set_sessionuid(session->GetSessionUID());
+            chatPacket.set_message(message);
 
-            // 내가 보낸 메시지 표시
-            std::wstring myMessage = L"나: " + wMessage;
-            AddChatMessage(myMessage);
+            Packet sendPacket = PacketHandler::MakePacket(chatPacket);
+
+            static_cast<ClientSession*>(session.get())->Send(std::move(sendPacket));
 
             // 입력창 초기화
             SetWindowTextW(m_hEditMessage, L"");

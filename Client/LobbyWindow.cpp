@@ -119,8 +119,12 @@ void LobbyWindow::RefreshRoomList()
         auto session = sessions.begin()->second;
         if (session)
         {
-            //PacketRoomListReq packet;
-            //static_cast<ClientSession*>(session.get())->Send(packet);
+            Protocol::ChatRoomListReq listPacket;
+            listPacket.set_success(true);
+
+            Packet sendPacket = PacketHandler::GetInstance().MakePacket(listPacket);
+
+            static_cast<ClientSession*>(session.get())->Send(std::move(sendPacket));
         }
     }
 }
@@ -148,8 +152,8 @@ void LobbyWindow::EnterChatRoom(int roomId)
     }
 
     // 채팅방 입장 확인 메시지
-    //std::wstring message = L"'" + WinUtils::StringToWString(selectedRoom.roomName) +
-    //    L"' 채팅방에 입장하시겠습니까?";
+    std::wstring message = L"'" + WinUtils::StringToWString(selectedRoom.roomname()) +
+        L"' 채팅방에 입장하시겠습니까?";
 
     if (MessageBoxW(m_hWnd, L"", L"채팅방 입장", MB_YESNO | MB_ICONQUESTION) == IDYES)
     {
@@ -162,17 +166,13 @@ void LobbyWindow::EnterChatRoom(int roomId)
             auto session = sessions.begin()->second;
             if (session)
             {
+                Protocol::EnterChatRoomReq packet;
+                packet.set_roomid(roomId);
+
+                Packet sendPacket = PacketHandler::MakePacket(packet);
+
                 // 채팅방 입장 요청 패킷 전송
-                //static_cast<ClientSession*>(session.get())->Send(std::to_string(roomId), PacketType::RoomEnterReq);
-
-                // 채팅방 입장 처리는 WM_CLIENT_CHATROOM_ENTER 메시지 핸들러에서 처리
-                //PacketRoomEnterReq packet;
-                //packet.payload.roomID = selectedRoom.roomID;
-
-                //static_cast<ClientSession*>(session.get())->Send(packet);
-
-                // 테스트를 위한 임시 코드 - 실제로는 서버 응답을 기다림
-                Hide();
+                static_cast<ClientSession*>(session.get())->Send(std::move(sendPacket));
             }
             else
             {
@@ -197,6 +197,12 @@ void LobbyWindow::CreateNewChatRoom(const std::string& roomName)
         auto session = sessions.begin()->second;
         if (session)
         {
+            Protocol::CreateChatRoomReq packet;
+            packet.set_roomname(roomName);
+
+            Packet sendPacket = PacketHandler::MakePacket(packet);
+
+            static_cast<ClientSession*>(session.get())->Send(std::move(sendPacket));
             // 채팅방 생성 요청 패킷 전송 (format: "roomName|maxUsers")
             //PacketRoomCreateReq packet;
             //packet.payload.roomName = roomName;
@@ -318,14 +324,14 @@ LRESULT LobbyWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_CLIENT_CHATROOM_ENTER:
         if (pThis) {
-            ChatRoomResponseData* data = (ChatRoomResponseData*)lParam;
+            Protocol::ChatRoomRes* data = (Protocol::ChatRoomRes*)lParam;
             if (data)
             {
                 // 채팅방 목록 창 숨기기
                 pThis->Hide();
 
                 // 채팅창으로 전환 메시지 전송
-                ::PostMessage(GetParent(hwnd), WM_ENTER_CHATROOM, 0, lParam);
+                ::PostMessage(pThis->m_hParentHandle, WM_ENTER_CHATROOM, 0, lParam);
                 // lParam을 그대로 전달하므로 여기서는 메모리 해제하지 않음
             }
             else

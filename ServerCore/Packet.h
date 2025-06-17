@@ -50,7 +50,7 @@ public:
 	Packet(const char* data, uint32 size, uint32 packetType)
 		: m_Size(size), m_PacketType(packetType)
 	{
-		m_Buffer = std::make_unique<char>(size);
+		m_Buffer = std::make_unique<char[]>(size);
 		std::memcpy(m_Buffer.get(), data, size);
 		m_Data = m_Buffer.get();
 	}
@@ -83,9 +83,47 @@ public:
 		return *this;
 	}
 
-	// 복사는 명시적 금지. (성능상이유)
-	Packet(const Packet&) = delete;
-	Packet& operator=(const Packet&) = delete;
+	// 복사 생성자
+	Packet(const Packet& other)
+		: m_Size(other.m_Size), m_PacketType(other.m_PacketType)
+	{
+		if (other.m_Data && other.m_Size > 0)
+		{
+			// 새로운 메모리 할당하고 데이터 복사
+			m_Buffer = std::make_unique<char[]>(other.m_Size);
+			std::memcpy(m_Buffer.get(), other.m_Data, other.m_Size);
+			m_Data = m_Buffer.get();
+		}
+		else
+		{
+			m_Data = nullptr;
+			m_Buffer = nullptr;
+		}
+	}
+
+	// 복사 대입 연산자
+	Packet& operator=(const Packet& other)
+	{
+		if (this != &other) // 자기 자신과의 대입 방지
+		{
+			m_Size = other.m_Size;
+			m_PacketType = other.m_PacketType;
+
+			if (other.m_Data && other.m_Size > 0)
+			{
+				// 새로운 메모리 할당하고 데이터 복사
+				m_Buffer = std::make_unique<char[]>(other.m_Size);
+				std::memcpy(m_Buffer.get(), other.m_Data, other.m_Size);
+				m_Data = m_Buffer.get();
+			}
+			else
+			{
+				m_Data = nullptr;
+				m_Buffer.reset(); // 기존 메모리 해제
+			}
+		}
+		return *this;
+	}
 
 	// Getter 함수들
 	const char* GetData() const { return m_Data; }
@@ -113,5 +151,5 @@ private:
 	const char* m_Data;		// 데이터 포인터
 	uint32 m_Size;			// 데이터 크기
 	uint32 m_PacketType;	// 패킷 타입
-	std::unique_ptr<char> m_Buffer;	// 소유권 관리용
+	std::unique_ptr<char[]> m_Buffer;	// 소유권 관리용
 };

@@ -6,13 +6,13 @@ import "Struct.proto";
 
 message EnterChatRoomReq
 {
-	int32 message = 1;
-	int32 value = 2;
+	int32 roomID = 1;
 }
 
 message EnterChatRoomAck
 {
-	uint32 id = 1;
+	uint32 roomID = 1;
+	string roomName = 2;
 }
 
 message LoginReq
@@ -40,7 +40,7 @@ message ChatRoomListAck
 
 message CreateChatRoomReq
 {
-
+	string roomName = 1;
 }
 
 message CreateChatRoomAck
@@ -56,4 +56,17 @@ message RefreshChatRoomReq
 message RefreshChatRoomAck
 {
 
+}
+
+message ChatReq
+{
+	uint32 sessionUID = 1;
+	string message = 2;
+	uint32 roomID = 3;
+}
+
+message ChatAck
+{
+	string sender = 1;
+	string message = 2;
 }

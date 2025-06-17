@@ -39,9 +39,6 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void InitWindow(HINSTANCE hInstance, int nCmdShow)
 {
-	if (ClientManager::GetInstance().GetIsStressTest())
-		return;
-
 	// 메인 윈도우 등록 및 생성
 	WNDCLASSEXW wcex = { 0 };
 	wcex.cbSize = sizeof(WNDCLASSEXW);
@@ -85,6 +82,7 @@ void InitWindow(HINSTANCE hInstance, int nCmdShow)
 
 	if (!g_loginWindow->Init(hInstance) ||
 		!g_lobbyWindow->Init(hInstance) ||
+
 		!g_chatWindow->Init(hInstance))
 	{
 		MessageBoxW(NULL, L"윈도우 초기화 실패", L"오류", MB_ICONERROR);
@@ -97,9 +95,6 @@ void InitWindow(HINSTANCE hInstance, int nCmdShow)
 
 void RunChatWindow()
 {
-	if (ClientManager::GetInstance().GetIsStressTest())
-		return;
-
 	MSG msg = { 0 };
 	while (GetMessage(&msg, nullptr, 0, 0))
 	{
@@ -110,6 +105,12 @@ void RunChatWindow()
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_DEBUG);
+	//_CrtSetBreakAlloc(14539);
+	
 	// 파일 경로 뽑기
 	char filePath[MAX_PATH] = { 0 };
 	string iniPath = "\\ClientConfig.ini";
@@ -282,18 +283,18 @@ LRESULT MainWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		// 채팅방 입장 시 채팅창 표시
 		if (g_chatWindow)
 		{
-			ChatRoomResponseData* data = (ChatRoomResponseData*)lParam;
+			Protocol::ChatRoomRes* data = (Protocol::ChatRoomRes*)lParam;
 			if (data)
 			{
 				// 채팅창 제목 설정
-				g_chatWindow->SetTitle(WinUtils::StringToWString("채팅방: " + data->roomName));
+				g_chatWindow->SetTitle(WinUtils::StringToWString("채팅방: " + data->roomname()));
 				g_chatWindow->UpdateStatus(true);
 				// 채팅창 표시
 				g_chatWindow->Show();
 
 				// 채팅방 입장 메시지 추가
 				g_chatWindow->AddChatMessage(L"채팅방 '" +
-					WinUtils::StringToWString(data->roomName) +
+					WinUtils::StringToWString(data->roomname()) +
 					L"'에 입장했습니다.");
 
 				// 메모리 해제

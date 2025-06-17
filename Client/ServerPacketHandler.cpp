@@ -48,7 +48,18 @@ bool HandleRoomEnterAck(AsioSessionPtr& session, Protocol::EnterChatRoomAck& pac
 
 bool HandleEnterChatRoomAck(AsioSessionPtr& session, Protocol::EnterChatRoomAck& pkt)
 {
-    return true;
+    ClientSessionPtr clientSession = static_pointer_cast<ClientSession>(session);
+    if (clientSession == nullptr)
+    {
+        LOGE << "Session Nullptr!";
+        return false;
+    }
+
+    Protocol::ChatRoomRes* data = new Protocol::ChatRoomRes();
+    data->set_roomid(pkt.roomid());
+    data->set_roomname(pkt.roomname());
+
+    PostMessage(clientSession->s_hLobbyWin, WM_CLIENT_CHATROOM_ENTER, 0, (LPARAM)data);
 }
 
 bool HandleLoginAck(AsioSessionPtr& session, Protocol::LoginAck& pkt)
@@ -66,8 +77,6 @@ bool HandleLoginAck(AsioSessionPtr& session, Protocol::LoginAck& pkt)
     loginData->message = "Login Success!";
 
     PostMessage(clientSession->s_hMainWin, WM_LOGIN_SUCCESS, 0, (LPARAM)loginData);
-
-    return true;
 }
 
 bool HandleChatRoomListAck(AsioSessionPtr& session, Protocol::ChatRoomListAck& pkt)
@@ -79,14 +88,6 @@ bool HandleChatRoomListAck(AsioSessionPtr& session, Protocol::ChatRoomListAck& p
         return false;
     }
 
-    /*
-    ChatRoomListRes 내부 구조
-    message ChatRoomListRes
-    {
-        repeated ChatRoomInfo rooms = 1;
-    }
-    */
-
     Protocol::ChatRoomListRes* data = new Protocol::ChatRoomListRes();
 
     for (const auto& roomInfo : pkt.chatroominfo())
@@ -96,8 +97,6 @@ bool HandleChatRoomListAck(AsioSessionPtr& session, Protocol::ChatRoomListAck& p
     }
 
     ::PostMessage(clientSession->s_hLobbyWin, WM_CLIENT_CHATROOM_LIST, 0, (LPARAM)data);
-
-    return true;
 }
 
 bool HandleCreateChatRoomAck(AsioSessionPtr& session, Protocol::CreateChatRoomAck& pkt)
@@ -108,4 +107,23 @@ bool HandleCreateChatRoomAck(AsioSessionPtr& session, Protocol::CreateChatRoomAc
 bool HandleRefreshChatRoomAck(AsioSessionPtr& session, Protocol::RefreshChatRoomAck& pkt)
 {
     return true;
+}
+
+bool HandleChatAck(AsioSessionPtr& session, Protocol::ChatAck& pkt)
+{
+    ClientSessionPtr clientSession = static_pointer_cast<ClientSession>(session);
+    if (clientSession == nullptr)
+    {
+        LOGE << "Session Nullptr!";
+        return false;
+    }
+
+    string name = pkt.sender();
+    string message = pkt.message();
+
+    Protocol::ChatMessageRes* data = new Protocol::ChatMessageRes();
+    data->set_sender(pkt.sender());
+    data->set_message(pkt.message());
+
+    PostMessage(clientSession->s_hChatWin, WM_CLIENT_RECV, 0, (LPARAM)data);
 }

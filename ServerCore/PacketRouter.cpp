@@ -125,7 +125,6 @@ void PacketProcessor::Run()
             HandlePacket(session, item.buffer, item.len);
             //LOGI << "Packet Queue Size : " << m_Queue->unsafe_size();
 
-            // ���ø�ȭ �ϸ鼭 PacketPool�� �����丵 �ʿ�.
             //PacketPool::GetInstance().Push(packet);
         }
     }

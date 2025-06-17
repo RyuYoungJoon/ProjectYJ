@@ -48,7 +48,7 @@ struct TableStruct_Protocol_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[10]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[12]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -56,6 +56,12 @@ struct TableStruct_Protocol_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Protocol_2eproto;
 namespace Protocol {
+class ChatAck;
+struct ChatAckDefaultTypeInternal;
+extern ChatAckDefaultTypeInternal _ChatAck_default_instance_;
+class ChatReq;
+struct ChatReqDefaultTypeInternal;
+extern ChatReqDefaultTypeInternal _ChatReq_default_instance_;
 class ChatRoomListAck;
 struct ChatRoomListAckDefaultTypeInternal;
 extern ChatRoomListAckDefaultTypeInternal _ChatRoomListAck_default_instance_;
@@ -88,6 +94,8 @@ struct RefreshChatRoomReqDefaultTypeInternal;
 extern RefreshChatRoomReqDefaultTypeInternal _RefreshChatRoomReq_default_instance_;
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
+template<> ::Protocol::ChatAck* Arena::CreateMaybeMessage<::Protocol::ChatAck>(Arena*);
+template<> ::Protocol::ChatReq* Arena::CreateMaybeMessage<::Protocol::ChatReq>(Arena*);
 template<> ::Protocol::ChatRoomListAck* Arena::CreateMaybeMessage<::Protocol::ChatRoomListAck>(Arena*);
 template<> ::Protocol::ChatRoomListReq* Arena::CreateMaybeMessage<::Protocol::ChatRoomListReq>(Arena*);
 template<> ::Protocol::CreateChatRoomAck* Arena::CreateMaybeMessage<::Protocol::CreateChatRoomAck>(Arena*);
@@ -211,25 +219,15 @@ class EnterChatRoomReq final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kMessageFieldNumber = 1,
-    kValueFieldNumber = 2,
+    kRoomIDFieldNumber = 1,
   };
-  // int32 message = 1;
-  void clear_message();
-  ::PROTOBUF_NAMESPACE_ID::int32 message() const;
-  void set_message(::PROTOBUF_NAMESPACE_ID::int32 value);
+  // int32 roomID = 1;
+  void clear_roomid();
+  ::PROTOBUF_NAMESPACE_ID::int32 roomid() const;
+  void set_roomid(::PROTOBUF_NAMESPACE_ID::int32 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_message() const;
-  void _internal_set_message(::PROTOBUF_NAMESPACE_ID::int32 value);
-  public:
-
-  // int32 value = 2;
-  void clear_value();
-  ::PROTOBUF_NAMESPACE_ID::int32 value() const;
-  void set_value(::PROTOBUF_NAMESPACE_ID::int32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::int32 _internal_value() const;
-  void _internal_set_value(::PROTOBUF_NAMESPACE_ID::int32 value);
+  ::PROTOBUF_NAMESPACE_ID::int32 _internal_roomid() const;
+  void _internal_set_roomid(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.EnterChatRoomReq)
@@ -239,8 +237,7 @@ class EnterChatRoomReq final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::int32 message_;
-  ::PROTOBUF_NAMESPACE_ID::int32 value_;
+  ::PROTOBUF_NAMESPACE_ID::int32 roomid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -354,15 +351,30 @@ class EnterChatRoomAck final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kIdFieldNumber = 1,
+    kRoomNameFieldNumber = 2,
+    kRoomIDFieldNumber = 1,
   };
-  // uint32 id = 1;
-  void clear_id();
-  ::PROTOBUF_NAMESPACE_ID::uint32 id() const;
-  void set_id(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  // string roomName = 2;
+  void clear_roomname();
+  const std::string& roomname() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_roomname(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_roomname();
+  PROTOBUF_FUTURE_MUST_USE_RESULT std::string* release_roomname();
+  void set_allocated_roomname(std::string* roomname);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_id() const;
-  void _internal_set_id(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  const std::string& _internal_roomname() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_roomname(const std::string& value);
+  std::string* _internal_mutable_roomname();
+  public:
+
+  // uint32 roomID = 1;
+  void clear_roomid();
+  ::PROTOBUF_NAMESPACE_ID::uint32 roomid() const;
+  void set_roomid(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_roomid() const;
+  void _internal_set_roomid(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.EnterChatRoomAck)
@@ -372,7 +384,8 @@ class EnterChatRoomAck final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 id_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr roomname_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 roomid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -1070,6 +1083,23 @@ class CreateChatRoomReq final :
 
   // accessors -------------------------------------------------------
 
+  enum : int {
+    kRoomNameFieldNumber = 1,
+  };
+  // string roomName = 1;
+  void clear_roomname();
+  const std::string& roomname() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_roomname(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_roomname();
+  PROTOBUF_FUTURE_MUST_USE_RESULT std::string* release_roomname();
+  void set_allocated_roomname(std::string* roomname);
+  private:
+  const std::string& _internal_roomname() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_roomname(const std::string& value);
+  std::string* _internal_mutable_roomname();
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.CreateChatRoomReq)
  private:
   class _Internal;
@@ -1077,6 +1107,7 @@ class CreateChatRoomReq final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr roomname_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
@@ -1437,6 +1468,318 @@ class RefreshChatRoomAck final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_Protocol_2eproto;
 };
+// -------------------------------------------------------------------
+
+class ChatReq final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.ChatReq) */ {
+ public:
+  inline ChatReq() : ChatReq(nullptr) {}
+  ~ChatReq() override;
+  explicit constexpr ChatReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ChatReq(const ChatReq& from);
+  ChatReq(ChatReq&& from) noexcept
+    : ChatReq() {
+    *this = ::std::move(from);
+  }
+
+  inline ChatReq& operator=(const ChatReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ChatReq& operator=(ChatReq&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ChatReq& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ChatReq* internal_default_instance() {
+    return reinterpret_cast<const ChatReq*>(
+               &_ChatReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  friend void swap(ChatReq& a, ChatReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ChatReq* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ChatReq* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline ChatReq* New() const final {
+    return new ChatReq();
+  }
+
+  ChatReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<ChatReq>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const ChatReq& from);
+  void MergeFrom(const ChatReq& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ChatReq* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.ChatReq";
+  }
+  protected:
+  explicit ChatReq(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kMessageFieldNumber = 2,
+    kSessionUIDFieldNumber = 1,
+    kRoomIDFieldNumber = 3,
+  };
+  // string message = 2;
+  void clear_message();
+  const std::string& message() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_message(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_message();
+  PROTOBUF_FUTURE_MUST_USE_RESULT std::string* release_message();
+  void set_allocated_message(std::string* message);
+  private:
+  const std::string& _internal_message() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_message(const std::string& value);
+  std::string* _internal_mutable_message();
+  public:
+
+  // uint32 sessionUID = 1;
+  void clear_sessionuid();
+  ::PROTOBUF_NAMESPACE_ID::uint32 sessionuid() const;
+  void set_sessionuid(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_sessionuid() const;
+  void _internal_set_sessionuid(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // uint32 roomID = 3;
+  void clear_roomid();
+  ::PROTOBUF_NAMESPACE_ID::uint32 roomid() const;
+  void set_roomid(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_roomid() const;
+  void _internal_set_roomid(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.ChatReq)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr message_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 sessionuid_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 roomid_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class ChatAck final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.ChatAck) */ {
+ public:
+  inline ChatAck() : ChatAck(nullptr) {}
+  ~ChatAck() override;
+  explicit constexpr ChatAck(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ChatAck(const ChatAck& from);
+  ChatAck(ChatAck&& from) noexcept
+    : ChatAck() {
+    *this = ::std::move(from);
+  }
+
+  inline ChatAck& operator=(const ChatAck& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ChatAck& operator=(ChatAck&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ChatAck& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ChatAck* internal_default_instance() {
+    return reinterpret_cast<const ChatAck*>(
+               &_ChatAck_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    11;
+
+  friend void swap(ChatAck& a, ChatAck& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ChatAck* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ChatAck* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline ChatAck* New() const final {
+    return new ChatAck();
+  }
+
+  ChatAck* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<ChatAck>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const ChatAck& from);
+  void MergeFrom(const ChatAck& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ChatAck* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.ChatAck";
+  }
+  protected:
+  explicit ChatAck(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSenderFieldNumber = 1,
+    kMessageFieldNumber = 2,
+  };
+  // string sender = 1;
+  void clear_sender();
+  const std::string& sender() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_sender(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_sender();
+  PROTOBUF_FUTURE_MUST_USE_RESULT std::string* release_sender();
+  void set_allocated_sender(std::string* sender);
+  private:
+  const std::string& _internal_sender() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_sender(const std::string& value);
+  std::string* _internal_mutable_sender();
+  public:
+
+  // string message = 2;
+  void clear_message();
+  const std::string& message() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_message(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_message();
+  PROTOBUF_FUTURE_MUST_USE_RESULT std::string* release_message();
+  void set_allocated_message(std::string* message);
+  private:
+  const std::string& _internal_message() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_message(const std::string& value);
+  std::string* _internal_mutable_message();
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.ChatAck)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr sender_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr message_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_Protocol_2eproto;
+};
 // ===================================================================
 
 
@@ -1448,68 +1791,93 @@ class RefreshChatRoomAck final :
 #endif  // __GNUC__
 // EnterChatRoomReq
 
-// int32 message = 1;
-inline void EnterChatRoomReq::clear_message() {
-  message_ = 0;
+// int32 roomID = 1;
+inline void EnterChatRoomReq::clear_roomid() {
+  roomid_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 EnterChatRoomReq::_internal_message() const {
-  return message_;
+inline ::PROTOBUF_NAMESPACE_ID::int32 EnterChatRoomReq::_internal_roomid() const {
+  return roomid_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::int32 EnterChatRoomReq::message() const {
-  // @@protoc_insertion_point(field_get:Protocol.EnterChatRoomReq.message)
-  return _internal_message();
+inline ::PROTOBUF_NAMESPACE_ID::int32 EnterChatRoomReq::roomid() const {
+  // @@protoc_insertion_point(field_get:Protocol.EnterChatRoomReq.roomID)
+  return _internal_roomid();
 }
-inline void EnterChatRoomReq::_internal_set_message(::PROTOBUF_NAMESPACE_ID::int32 value) {
+inline void EnterChatRoomReq::_internal_set_roomid(::PROTOBUF_NAMESPACE_ID::int32 value) {
   
-  message_ = value;
+  roomid_ = value;
 }
-inline void EnterChatRoomReq::set_message(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_message(value);
-  // @@protoc_insertion_point(field_set:Protocol.EnterChatRoomReq.message)
-}
-
-// int32 value = 2;
-inline void EnterChatRoomReq::clear_value() {
-  value_ = 0;
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 EnterChatRoomReq::_internal_value() const {
-  return value_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::int32 EnterChatRoomReq::value() const {
-  // @@protoc_insertion_point(field_get:Protocol.EnterChatRoomReq.value)
-  return _internal_value();
-}
-inline void EnterChatRoomReq::_internal_set_value(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  
-  value_ = value;
-}
-inline void EnterChatRoomReq::set_value(::PROTOBUF_NAMESPACE_ID::int32 value) {
-  _internal_set_value(value);
-  // @@protoc_insertion_point(field_set:Protocol.EnterChatRoomReq.value)
+inline void EnterChatRoomReq::set_roomid(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  _internal_set_roomid(value);
+  // @@protoc_insertion_point(field_set:Protocol.EnterChatRoomReq.roomID)
 }
 
 // -------------------------------------------------------------------
 
 // EnterChatRoomAck
 
-// uint32 id = 1;
-inline void EnterChatRoomAck::clear_id() {
-  id_ = 0u;
+// uint32 roomID = 1;
+inline void EnterChatRoomAck::clear_roomid() {
+  roomid_ = 0u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 EnterChatRoomAck::_internal_id() const {
-  return id_;
+inline ::PROTOBUF_NAMESPACE_ID::uint32 EnterChatRoomAck::_internal_roomid() const {
+  return roomid_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 EnterChatRoomAck::id() const {
-  // @@protoc_insertion_point(field_get:Protocol.EnterChatRoomAck.id)
-  return _internal_id();
+inline ::PROTOBUF_NAMESPACE_ID::uint32 EnterChatRoomAck::roomid() const {
+  // @@protoc_insertion_point(field_get:Protocol.EnterChatRoomAck.roomID)
+  return _internal_roomid();
 }
-inline void EnterChatRoomAck::_internal_set_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+inline void EnterChatRoomAck::_internal_set_roomid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   
-  id_ = value;
+  roomid_ = value;
 }
-inline void EnterChatRoomAck::set_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_id(value);
-  // @@protoc_insertion_point(field_set:Protocol.EnterChatRoomAck.id)
+inline void EnterChatRoomAck::set_roomid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_roomid(value);
+  // @@protoc_insertion_point(field_set:Protocol.EnterChatRoomAck.roomID)
+}
+
+// string roomName = 2;
+inline void EnterChatRoomAck::clear_roomname() {
+  roomname_.ClearToEmpty();
+}
+inline const std::string& EnterChatRoomAck::roomname() const {
+  // @@protoc_insertion_point(field_get:Protocol.EnterChatRoomAck.roomName)
+  return _internal_roomname();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void EnterChatRoomAck::set_roomname(ArgT0&& arg0, ArgT... args) {
+ 
+ roomname_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.EnterChatRoomAck.roomName)
+}
+inline std::string* EnterChatRoomAck::mutable_roomname() {
+  // @@protoc_insertion_point(field_mutable:Protocol.EnterChatRoomAck.roomName)
+  return _internal_mutable_roomname();
+}
+inline const std::string& EnterChatRoomAck::_internal_roomname() const {
+  return roomname_.Get();
+}
+inline void EnterChatRoomAck::_internal_set_roomname(const std::string& value) {
+  
+  roomname_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* EnterChatRoomAck::_internal_mutable_roomname() {
+  
+  return roomname_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* EnterChatRoomAck::release_roomname() {
+  // @@protoc_insertion_point(field_release:Protocol.EnterChatRoomAck.roomName)
+  return roomname_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void EnterChatRoomAck::set_allocated_roomname(std::string* roomname) {
+  if (roomname != nullptr) {
+    
+  } else {
+    
+  }
+  roomname_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), roomname,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:Protocol.EnterChatRoomAck.roomName)
 }
 
 // -------------------------------------------------------------------
@@ -1763,6 +2131,51 @@ ChatRoomListAck::chatroominfo() const {
 
 // CreateChatRoomReq
 
+// string roomName = 1;
+inline void CreateChatRoomReq::clear_roomname() {
+  roomname_.ClearToEmpty();
+}
+inline const std::string& CreateChatRoomReq::roomname() const {
+  // @@protoc_insertion_point(field_get:Protocol.CreateChatRoomReq.roomName)
+  return _internal_roomname();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void CreateChatRoomReq::set_roomname(ArgT0&& arg0, ArgT... args) {
+ 
+ roomname_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.CreateChatRoomReq.roomName)
+}
+inline std::string* CreateChatRoomReq::mutable_roomname() {
+  // @@protoc_insertion_point(field_mutable:Protocol.CreateChatRoomReq.roomName)
+  return _internal_mutable_roomname();
+}
+inline const std::string& CreateChatRoomReq::_internal_roomname() const {
+  return roomname_.Get();
+}
+inline void CreateChatRoomReq::_internal_set_roomname(const std::string& value) {
+  
+  roomname_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* CreateChatRoomReq::_internal_mutable_roomname() {
+  
+  return roomname_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* CreateChatRoomReq::release_roomname() {
+  // @@protoc_insertion_point(field_release:Protocol.CreateChatRoomReq.roomName)
+  return roomname_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void CreateChatRoomReq::set_allocated_roomname(std::string* roomname) {
+  if (roomname != nullptr) {
+    
+  } else {
+    
+  }
+  roomname_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), roomname,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:Protocol.CreateChatRoomReq.roomName)
+}
+
 // -------------------------------------------------------------------
 
 // CreateChatRoomAck
@@ -1775,9 +2188,196 @@ ChatRoomListAck::chatroominfo() const {
 
 // RefreshChatRoomAck
 
+// -------------------------------------------------------------------
+
+// ChatReq
+
+// uint32 sessionUID = 1;
+inline void ChatReq::clear_sessionuid() {
+  sessionuid_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 ChatReq::_internal_sessionuid() const {
+  return sessionuid_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 ChatReq::sessionuid() const {
+  // @@protoc_insertion_point(field_get:Protocol.ChatReq.sessionUID)
+  return _internal_sessionuid();
+}
+inline void ChatReq::_internal_set_sessionuid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  sessionuid_ = value;
+}
+inline void ChatReq::set_sessionuid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_sessionuid(value);
+  // @@protoc_insertion_point(field_set:Protocol.ChatReq.sessionUID)
+}
+
+// string message = 2;
+inline void ChatReq::clear_message() {
+  message_.ClearToEmpty();
+}
+inline const std::string& ChatReq::message() const {
+  // @@protoc_insertion_point(field_get:Protocol.ChatReq.message)
+  return _internal_message();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ChatReq::set_message(ArgT0&& arg0, ArgT... args) {
+ 
+ message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.ChatReq.message)
+}
+inline std::string* ChatReq::mutable_message() {
+  // @@protoc_insertion_point(field_mutable:Protocol.ChatReq.message)
+  return _internal_mutable_message();
+}
+inline const std::string& ChatReq::_internal_message() const {
+  return message_.Get();
+}
+inline void ChatReq::_internal_set_message(const std::string& value) {
+  
+  message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* ChatReq::_internal_mutable_message() {
+  
+  return message_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* ChatReq::release_message() {
+  // @@protoc_insertion_point(field_release:Protocol.ChatReq.message)
+  return message_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void ChatReq::set_allocated_message(std::string* message) {
+  if (message != nullptr) {
+    
+  } else {
+    
+  }
+  message_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), message,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:Protocol.ChatReq.message)
+}
+
+// uint32 roomID = 3;
+inline void ChatReq::clear_roomid() {
+  roomid_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 ChatReq::_internal_roomid() const {
+  return roomid_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 ChatReq::roomid() const {
+  // @@protoc_insertion_point(field_get:Protocol.ChatReq.roomID)
+  return _internal_roomid();
+}
+inline void ChatReq::_internal_set_roomid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  roomid_ = value;
+}
+inline void ChatReq::set_roomid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_roomid(value);
+  // @@protoc_insertion_point(field_set:Protocol.ChatReq.roomID)
+}
+
+// -------------------------------------------------------------------
+
+// ChatAck
+
+// string sender = 1;
+inline void ChatAck::clear_sender() {
+  sender_.ClearToEmpty();
+}
+inline const std::string& ChatAck::sender() const {
+  // @@protoc_insertion_point(field_get:Protocol.ChatAck.sender)
+  return _internal_sender();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ChatAck::set_sender(ArgT0&& arg0, ArgT... args) {
+ 
+ sender_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.ChatAck.sender)
+}
+inline std::string* ChatAck::mutable_sender() {
+  // @@protoc_insertion_point(field_mutable:Protocol.ChatAck.sender)
+  return _internal_mutable_sender();
+}
+inline const std::string& ChatAck::_internal_sender() const {
+  return sender_.Get();
+}
+inline void ChatAck::_internal_set_sender(const std::string& value) {
+  
+  sender_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* ChatAck::_internal_mutable_sender() {
+  
+  return sender_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* ChatAck::release_sender() {
+  // @@protoc_insertion_point(field_release:Protocol.ChatAck.sender)
+  return sender_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void ChatAck::set_allocated_sender(std::string* sender) {
+  if (sender != nullptr) {
+    
+  } else {
+    
+  }
+  sender_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), sender,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:Protocol.ChatAck.sender)
+}
+
+// string message = 2;
+inline void ChatAck::clear_message() {
+  message_.ClearToEmpty();
+}
+inline const std::string& ChatAck::message() const {
+  // @@protoc_insertion_point(field_get:Protocol.ChatAck.message)
+  return _internal_message();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ChatAck::set_message(ArgT0&& arg0, ArgT... args) {
+ 
+ message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.ChatAck.message)
+}
+inline std::string* ChatAck::mutable_message() {
+  // @@protoc_insertion_point(field_mutable:Protocol.ChatAck.message)
+  return _internal_mutable_message();
+}
+inline const std::string& ChatAck::_internal_message() const {
+  return message_.Get();
+}
+inline void ChatAck::_internal_set_message(const std::string& value) {
+  
+  message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* ChatAck::_internal_mutable_message() {
+  
+  return message_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* ChatAck::release_message() {
+  // @@protoc_insertion_point(field_release:Protocol.ChatAck.message)
+  return message_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void ChatAck::set_allocated_message(std::string* message) {
+  if (message != nullptr) {
+    
+  } else {
+    
+  }
+  message_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), message,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:Protocol.ChatAck.message)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

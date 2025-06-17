@@ -159,8 +159,6 @@ void AsioSession::Send(Packet&& packet)
 	// �� �κ��� Ǯ�� ����.
 	auto sendPacket = PacketPool::GetInstance().Pop();
 
-	// packet�� shared_ptr�� �ƴϾ ����.
-	// Question. Packet�� �� shared_ptr�̾���ұ�?
 	*sendPacket = std::move(packet);
 
 	boost::asio::async_write(*m_Socket, boost::asio::buffer(sendPacket->GetData(), sendPacket->GetSize()),
