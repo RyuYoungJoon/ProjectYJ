@@ -70,3 +70,13 @@ message ChatAck
 	string sender = 1;
 	string message = 2;
 }
+
+message DummyPacketReq
+{
+	string message = 1;
+}
+
+message DummyPacketAck
+{
+	string message = 1;
+}

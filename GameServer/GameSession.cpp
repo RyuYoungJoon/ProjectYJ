@@ -29,8 +29,6 @@ void GameSession::OnDisconnected()
 
 int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 {
-	//Packet* packet = reinterpret_cast<Packet*>(buffer);
-
 	AsioSessionPtr gameSession = GetSession();
 	ServerAnalyzer::GetInstance().IncrementRecvCnt();
 

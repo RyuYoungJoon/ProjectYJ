@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameServer", "GameServer\GameServer.vcxproj", "{F7DA4CAC-91E7-42FA-8EFE-496DC7A8FCC5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E3DE6819-9777-42E5-A2A3-A650A9DC4F3F} = {E3DE6819-9777-42E5-A2A3-A650A9DC4F3F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcxproj", "{EAB89416-9C67-4BFE-AEAB-3385C3C2088F}"
 EndProject

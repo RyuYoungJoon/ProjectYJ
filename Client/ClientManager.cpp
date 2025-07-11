@@ -76,8 +76,9 @@ void ClientManager::DummyClientProcess()
 				//PacketDummyClientMessage packet;
 				//memcpy(packet.payload.message, messages.c_str(), messages.length());
 
-				Protocol::EnterChatRoomReq packet;
-				packet.set_roomid(1);
+				Protocol::DummyPacketReq packet;
+
+				packet.set_message(messages);
 
 				auto sendPacket = PacketHandler::GetInstance().MakePacket(packet);
 

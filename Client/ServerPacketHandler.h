@@ -21,6 +21,8 @@ enum : uint16
 	RefreshChatRoomAck = 1009,
 	ChatReq = 1010,
 	ChatAck = 1011,
+	DummyPacketReq = 1012,
+	DummyPacketAck = 1013,
 };
 
 class AsioSession;
@@ -30,6 +32,7 @@ bool HandleChatRoomListAck(AsioSessionPtr& session, Protocol::ChatRoomListAck& p
 bool HandleCreateChatRoomAck(AsioSessionPtr& session, Protocol::CreateChatRoomAck& pkt);
 bool HandleRefreshChatRoomAck(AsioSessionPtr& session, Protocol::RefreshChatRoomAck& pkt);
 bool HandleChatAck(AsioSessionPtr& session, Protocol::ChatAck& pkt);
+bool HandleDummyPacketAck(AsioSessionPtr& session, Protocol::DummyPacketAck& pkt);
 
 class PacketHandler : public PacketProcessor
 {
@@ -51,6 +54,7 @@ public:
 		GPacketHadler[CreateChatRoomAck] = [](AsioSessionPtr& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::CreateChatRoomAck>(HandleCreateChatRoomAck, session, buffer, len); };
 		GPacketHadler[RefreshChatRoomAck] = [](AsioSessionPtr& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::RefreshChatRoomAck>(HandleRefreshChatRoomAck, session, buffer, len); };
 		GPacketHadler[ChatAck] = [](AsioSessionPtr& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::ChatAck>(HandleChatAck, session, buffer, len); };
+		GPacketHadler[DummyPacketAck] = [](AsioSessionPtr& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::DummyPacketAck>(HandleDummyPacketAck, session, buffer, len); };
 	}
 
 	virtual bool HandlePacket(AsioSessionPtr& session, BYTE* buffer, int32 len) override
@@ -66,6 +70,7 @@ public:
 	static Packet MakePacket(Protocol::CreateChatRoomReq& pkt) { return MakePacket(pkt, CreateChatRoomReq); }
 	static Packet MakePacket(Protocol::RefreshChatRoomReq& pkt) { return MakePacket(pkt, RefreshChatRoomReq); }
 	static Packet MakePacket(Protocol::ChatReq& pkt) { return MakePacket(pkt, ChatReq); }
+	static Packet MakePacket(Protocol::DummyPacketReq& pkt) { return MakePacket(pkt, DummyPacketReq); }
 
 	PacketHandler();
 	~PacketHandler();

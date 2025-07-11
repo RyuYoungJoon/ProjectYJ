@@ -8,10 +8,8 @@
 #include "ChatRoomManager.h"
 #include "ClientPacketHandler.h"
 
-
 HandlerFunc GPacketHadler[UINT16_MAX];
 
-atomic<int> a;
 PacketHandler::PacketHandler()
     : PacketProcessor()
 {
@@ -182,4 +180,28 @@ bool HandleChatReq(AsioSessionPtr& session, Protocol::ChatReq& pkt)
     // 
     //if (gameSession->GetSessionUID() != pkt.sessionuid())
     selectRoom->BroadCast(sendPacket);
+}
+
+bool HandleDummyPacketReq(AsioSessionPtr& session, Protocol::DummyPacketReq& pkt)
+{
+    GameSessionPtr gameSession = static_pointer_cast<GameSession>(session);
+    if (gameSession == nullptr)
+    {
+        LOGE << "GameSession Nullptr";
+        return false;
+    }
+    
+    string recvMessage = pkt.message();
+
+    LOGI << "[SessionID : " << gameSession->GetSessionUID() << "] Send Meesage : " << recvMessage;
+
+    Protocol::DummyPacketAck packet;
+
+    packet.set_message(recvMessage);
+
+    Packet sendPacket = PacketHandler::MakePacket(packet);
+
+    gameSession->Send(std::move(sendPacket));
+
+    return false;
 }

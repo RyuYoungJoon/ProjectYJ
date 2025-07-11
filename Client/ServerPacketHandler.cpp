@@ -127,3 +127,19 @@ bool HandleChatAck(AsioSessionPtr& session, Protocol::ChatAck& pkt)
 
     PostMessage(clientSession->s_hChatWin, WM_CLIENT_RECV, 0, (LPARAM)data);
 }
+
+bool HandleDummyPacketAck(AsioSessionPtr& session, Protocol::DummyPacketAck& pkt)
+{
+    ClientSessionPtr clientSession = static_pointer_cast<ClientSession>(session);
+    if (clientSession == nullptr)
+    {
+        LOGE << "Session Nullptr!";
+        return false;
+    }
+
+    string recvMessage = pkt.message();
+
+    LOGI << "[ClientSessionUID : " << clientSession->GetSessionUID() << "] Recv Message " << recvMessage;
+
+    return false;
+}
